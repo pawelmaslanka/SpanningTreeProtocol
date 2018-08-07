@@ -1,0 +1,13 @@
+ABBREVIATIONS:
+SM: State Machine
+PIM: Port Information Machine
+PRS: Port Role Selection Machine 
+PRT: Port Role Transitions Machine 
+PRX: Port Receive Machine
+PST: Port State Transitions Machine 
+TCM: Topology Change Machine 
+PPM: Port Protocol Migration Machine 
+PTX: Port Transmit Machine
+PTI: Port TImers Machine
+BDM: Bridge Detection Machine 
+NOTE: All timer variables are decremented by one machine -- PTI (not shown).
