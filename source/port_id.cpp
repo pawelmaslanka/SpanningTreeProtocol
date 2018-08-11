@@ -28,8 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 ***************************************************************************************************/
 
 // This project's headers
-#include "port_id.hpp"
-#include "priority_vector.hpp"
+#include "stp/port_id.hpp"
+#include "stp/priority_vector.hpp"
 
 namespace SpanningTree {
 

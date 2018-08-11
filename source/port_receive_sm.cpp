@@ -1,10 +1,8 @@
 // This project's headers
-#include "port_receive_sm.hpp"
+#include "stp/sm/port_receive.hpp"
 
-#include "perf_params.hpp"
-#include "sm_procedures.hpp"
-
-static std::string SmPrefixName { "PRX @ " };
+#include "stp/perf_params.hpp"
+#include "stp/sm_procedures.hpp"
 
 namespace SpanningTree {
 namespace PortReceive {
@@ -37,13 +35,24 @@ void BeginState::Execute(MachineH machine) {
 }
 
 bool BeginState::GoToDiscard(MachineH machine) {
-    return (machine.BridgeInstance().Begin()
-            || ((machine.PortInstance().RcvdBpdu()
-                 || (machine.PortInstance().SmTimersInstance().EdgeDelayWhile()
-                     != PerfParams::MigrateTime()))
-                && not machine.PortInstance().PortEnabled()))
-            ? true
-            : false;
+    if (machine.BridgeInstance().Begin()) {
+        return true;
+    }
+
+    if (machine.PortInstance().PortEnabled()) {
+        return false;
+    }
+
+    if (machine.PortInstance().RcvdBpdu()) {
+        return true;
+    }
+
+    if (machine.PortInstance().SmTimersInstance().EdgeDelayWhile()
+            == PerfParams::MigrateTime()) {
+        return false;
+    }
+
+    return true;
 }
 
 StateH DiscardState::Instance() {
@@ -58,10 +67,15 @@ void DiscardState::Execute(MachineH machine) {
 }
 
 bool DiscardState::GoToReceive(MachineH machine) {
-    return (machine.PortInstance().RcvdBpdu() && machine.PortInstance().PortEnabled()
-            && not machine.PortInstance().RcvdMsg())
-            ? true
-            : false;
+    if (not machine.PortInstance().RcvdBpdu()) {
+        return false;
+    }
+
+    if (not machine.PortInstance().PortEnabled()) {
+        return false;
+    }
+
+    return true;
 }
 
 StateH ReceiveState::Instance() {
@@ -76,10 +90,19 @@ void ReceiveState::Execute(MachineH machine) {
 }
 
 bool ReceiveState::GoToReceive(MachineH machine) {
-    return (machine.PortInstance().RcvdBpdu() && machine.PortInstance().PortEnabled()
-            && not machine.PortInstance().RcvdMsg())
-            ? true
-            : false;
+    if (not machine.PortInstance().RcvdBpdu()) {
+        return false;
+    }
+
+    if (not machine.PortInstance().PortEnabled()) {
+        return false;
+    }
+
+    if (machine.PortInstance().RcvdMsg()) {
+        return false;
+    }
+
+    return true;
 }
 
 }

@@ -1,6 +1,6 @@
-#include "port_protocol_migration_sm.hpp"
+#include "stp/sm/port_protocol_migration.hpp"
 //#include "mock.hpp"
-#include "port.hpp"
+#include "stp/port.hpp"
 
 #include <iostream>
 

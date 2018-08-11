@@ -47,6 +47,7 @@ protected:
     StateH CurrentState() const noexcept;
 
 private:
+    /// @todo static member because all ports working on single Bridge instance
     BridgeH _bridge;
     PortH _port;
     State* _state;

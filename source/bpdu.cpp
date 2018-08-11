@@ -28,7 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 ***************************************************************************************************/
 
 // This project's headers
-#include "bpdu.hpp"
+#include "stp/bpdu.hpp"
 
 // C Standard Library
 #include <cstring>

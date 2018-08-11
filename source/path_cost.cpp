@@ -28,7 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 ***************************************************************************************************/
 
 // This project's headers
-#include "path_cost.hpp"
+#include "stp/path_cost.hpp"
 
 namespace SpanningTree {
 

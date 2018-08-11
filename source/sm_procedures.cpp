@@ -1,7 +1,7 @@
 // This project's headers
-#include "sm_procedures.hpp"
+#include "stp/sm_procedures.hpp"
 
-#include "bpdu.hpp"
+#include "stp/bpdu.hpp"
 
 namespace SpanningTree {
 

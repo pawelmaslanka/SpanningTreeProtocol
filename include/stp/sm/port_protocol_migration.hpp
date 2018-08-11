@@ -1,10 +1,10 @@
 #pragma once
 
 // This project's headers
-#include "bridge.hpp"
-#include "specifiers.hpp"
-#include "port.hpp"
-#include "utils.hpp"
+#include "stp/bridge.hpp"
+#include "stp/specifiers.hpp"
+#include "stp/port.hpp"
+#include "stp/utils.hpp"
 
 // C++ Standard Library
 #include <memory>

@@ -1,5 +1,5 @@
 // This project's headers
-#include "port_timers_sm.hpp"
+#include "stp/sm/port_timers.hpp"
 
 namespace SpanningTree {
 namespace PortTimers {

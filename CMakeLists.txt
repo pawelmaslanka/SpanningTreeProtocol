@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(SpanningTree)
+project(SpanningTreeProtocol)
 
 set(CMAKE_BUILD_TYPE Debug)
 #set(CMAKE_BUILD_TYPE RelWithDebInfo)
@@ -23,11 +23,12 @@ endif()
 
 set(INCLUDE ${CMAKE_SOURCE_DIR}/include)
 include_directories(${INCLUDE})
-file(GLOB_RECURSE PROJECT_INCLUDE "${INCLUDE}/*.hpp")
+file(GLOB_RECURSE PROJECT_INCLUDE "${INCLUDE}/stp/*.hpp" "${INCLUDE}/stp/sm/*.hpp")
 
 set(SOURCE ${CMAKE_SOURCE_DIR}/source)
 
 file(GLOB SPANNING_TREE_SOURCE
+    ${SOURCE}/bridge_detection_sm.cpp
     ${SOURCE}/port_protocol_migration_sm.cpp
     ${SOURCE}/port_receive_sm.cpp
     ${SOURCE}/port_timers_sm.cpp

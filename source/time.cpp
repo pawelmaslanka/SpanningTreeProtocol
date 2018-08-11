@@ -28,7 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 ***************************************************************************************************/
 
 // This project's headers
-#include "time.hpp"
+#include "stp/time.hpp"
 
 namespace SpanningTree {
 

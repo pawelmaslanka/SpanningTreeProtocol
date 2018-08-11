@@ -8,7 +8,8 @@ namespace SpanningTree {
 class SmConditions {
 public:
 //    static StateMachineParameters& Instance() noexcept;
-
+    static bool AdminEdge(PortH port) noexcept;
+    static bool AutoEdge(PortH port) noexcept;
     static bool RstpVersion(BridgeH bridge) noexcept;
 };
 
@@ -76,7 +77,15 @@ public:
 //    return (uint8_t)Port::RecommendedValue::TransmitHoldCount;
 //}
 
-bool SmConditions::RstpVersion(BridgeH bridge) noexcept {
+inline bool SmConditions::AdminEdge(PortH port) noexcept {
+    return port.adminEdge;
+}
+
+inline bool SmConditions::AutoEdge(PortH port) noexcept {
+    return port.autoEdge;
+}
+
+inline bool SmConditions::RstpVersion(BridgeH bridge) noexcept {
     return bridge.ForceProtocolVersion >= 2;
 }
 

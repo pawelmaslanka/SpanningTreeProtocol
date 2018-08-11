@@ -1,7 +1,7 @@
 #pragma once
 
 // This project's headers
-#include <state_machine.hpp>
+#include <stp/state_machine.hpp>
 
 // GTest headers
 #include <gmock/gmock.h>

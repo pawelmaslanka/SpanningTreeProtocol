@@ -1,5 +1,5 @@
 // Tested project's headers
-#include "port_timers_sm.hpp"
+#include <stp/sm/port_timers.hpp>
 // UT dependencies
 #include <mock/port_timers_sm.hpp>
 #include "sut_machine.hpp"

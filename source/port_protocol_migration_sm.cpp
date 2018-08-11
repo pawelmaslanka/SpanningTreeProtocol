@@ -1,8 +1,8 @@
 // This project's headers
-#include "port_protocol_migration_sm.hpp"
+#include "stp/sm/port_protocol_migration.hpp"
 
-#include "perf_params.hpp"
-#include "sm_conditions.hpp"
+#include "stp/perf_params.hpp"
+#include "stp/sm_conditions.hpp"
 
 namespace SpanningTree {
 namespace PortProtocolMigration {
@@ -46,14 +46,19 @@ void CheckingRstpState::Execute(MachineH machine) {
 }
 
 bool CheckingRstpState::GoToCheckingRstp(MachineH machine) {
-    return (machine.PortInstance().SmTimersInstance().MdelayWhile() != PerfParams::MigrateTime())
-            && not machine.PortInstance().PortEnabled();
+    if (machine.PortInstance().PortEnabled()) {
+        return false;
+    }
+
+    if (machine.PortInstance().SmTimersInstance().MdelayWhile() == PerfParams::MigrateTime()) {
+        return false;
+    }
+
+    return true;
 }
 
 bool CheckingRstpState::GoToSensing(MachineH machine) {
-    return not machine.PortInstance().PortEnabled() || machine.PortInstance().Mcheck()
-            || (SmConditions::RstpVersion(machine.BridgeInstance())
-                && not machine.PortInstance().SendRstp() && machine.PortInstance().RcvdRstp());
+    return SmTimers::TimedOut(machine.PortInstance().SmTimersInstance().MdelayWhile());
 }
 
 void SensingState::Execute(MachineH machine) {
@@ -68,13 +73,40 @@ void SensingState::Execute(MachineH machine) {
 }
 
 bool SensingState::GoToCheckingRstp(MachineH machine) {
-    return not machine.PortInstance().PortEnabled() || machine.PortInstance().Mcheck()
-            || (SmConditions::RstpVersion(machine.BridgeInstance())
-                && not machine.PortInstance().SendRstp() && machine.PortInstance().RcvdRstp());
+    if (not machine.PortInstance().PortEnabled()) {
+        return true;
+    }
+
+    if (machine.PortInstance().Mcheck()) {
+        return true;
+    }
+
+    if (not SmConditions::RstpVersion(machine.BridgeInstance())) {
+        return false;
+    }
+
+    if (machine.PortInstance().SendRstp()) {
+        return false;
+    }
+
+    if (not machine.PortInstance().RcvdRstp()) {
+        return false;
+    }
+
+    return true;
 }
 
 bool SensingState::GoToSelectingStp(MachineH machine) {
-    return machine.PortInstance().SendRstp() && machine.PortInstance().RcvdStp();}
+    if (not machine.PortInstance().SendRstp()) {
+        return false;
+    }
+
+    if (not machine.PortInstance().RcvdStp()) {
+        return false;
+    }
+
+    return true;
+}
 
 void SelectingStpState::Execute(MachineH machine) {
     if (GoToSensing(machine)) {
@@ -84,8 +116,19 @@ void SelectingStpState::Execute(MachineH machine) {
 }
 
 bool SelectingStpState::GoToSensing(MachineH machine) {
-    return SmTimers::TimedOut(machine.PortInstance().SmTimersInstance().MdelayWhile())
-            || not machine.PortInstance().PortEnabled() || machine.PortInstance().Mcheck();
+    if (SmTimers::TimedOut(machine.PortInstance().SmTimersInstance().MdelayWhile())) {
+        return true;
+    }
+
+    if (not machine.PortInstance().PortEnabled()) {
+        return true;
+    }
+
+    if (machine.PortInstance().Mcheck()) {
+        return true;
+    }
+
+    return false;
 }
 
 } // namespace PortProtocolMigration

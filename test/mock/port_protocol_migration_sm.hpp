@@ -1,7 +1,7 @@
 #pragma once
 
 // Tested project's headers
-#include <port_protocol_migration_sm.hpp>
+#include <stp/sm/port_protocol_migration.hpp>
 
 // GTest headers
 #include <gmock/gmock.h>

@@ -28,8 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 ***************************************************************************************************/
 
 // This project's headers
-#include "bridge.hpp"
-#include "port.hpp"
+#include "stp/bridge.hpp"
+#include "stp/port.hpp"
 
 namespace SpanningTree {
 

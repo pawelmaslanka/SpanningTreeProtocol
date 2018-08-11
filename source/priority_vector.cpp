@@ -27,7 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 ***************************************************************************************************/
 
-#include "priority_vector.hpp"
+#include "stp/priority_vector.hpp"
 
 namespace SpanningTree {
 

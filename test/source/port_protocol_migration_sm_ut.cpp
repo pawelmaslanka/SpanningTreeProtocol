@@ -1,5 +1,5 @@
 // Tested project's headers
-#include "port_protocol_migration_sm.hpp"
+#include <stp/sm/port_protocol_migration.hpp>
 // UT dependencies
 #include <mock/port_protocol_migration_sm.hpp>
 

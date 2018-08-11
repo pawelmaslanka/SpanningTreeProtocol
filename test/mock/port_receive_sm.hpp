@@ -1,7 +1,7 @@
 #pragma once
 
 // Tested project's headers
-#include <port_receive_sm.hpp>
+#include <stp/sm/port_receive.hpp>
 
 // GTest headers
 #include <gmock/gmock.h>
