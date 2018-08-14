@@ -10,8 +10,6 @@ namespace Mock {
 using namespace SpanningTree;
 
 namespace Ppm {
-using PortProtocolMigration::MachineH;
-using PortProtocolMigration::StateH;
 
 class BeginState : public PortProtocolMigration::BeginState {
 public:
@@ -26,6 +24,10 @@ public:
 
     void RealExecute(MachineH machine) {
         PortProtocolMigration::BeginState::Execute(machine);
+    }
+
+    void RealChangeState(MachineH machine, StateH newState) {
+        PortProtocolMigration::BeginState::ChangeState(machine, newState);
     }
 };
 
@@ -44,6 +46,10 @@ public:
     void RealExecute(MachineH machine) {
         PortProtocolMigration::CheckingRstpState::Execute(machine);
     }
+
+    void RealChangeState(MachineH machine, StateH newState) {
+        PortProtocolMigration::CheckingRstpState::ChangeState(machine, newState);
+    }
 };
 
 class SensingState : public PortProtocolMigration::SensingState {
@@ -61,6 +67,10 @@ public:
     void RealExecute(MachineH machine) {
         PortProtocolMigration::SensingState::Execute(machine);
     }
+
+    void RealChangeState(MachineH machine, StateH newState) {
+        PortProtocolMigration::SensingState::ChangeState(machine, newState);
+    }
 };
 
 class SelectingStpState : public PortProtocolMigration::SelectingStpState {
@@ -76,6 +86,10 @@ public:
 
     void RealExecute(MachineH machine) {
         PortProtocolMigration::SelectingStpState::Execute(machine);
+    }
+
+    void RealChangeState(MachineH machine, StateH newState) {
+        PortProtocolMigration::SelectingStpState::ChangeState(machine, newState);
     }
 };
 

@@ -43,7 +43,7 @@ file(GLOB SPANNING_TREE_SOURCE
     ${SOURCE}/port_id.cpp
     ${SOURCE}/priority_vector.cpp
     ${SOURCE}/sm_procedures.cpp
-#    ${SOURCE}/state_machine.cpp
+    ${SOURCE}/state_machine.cpp
     ${SOURCE}/time.cpp
     )
 

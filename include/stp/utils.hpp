@@ -42,10 +42,6 @@ H& GetStateInstance() {
     return state;
 }
 
-#define RETURN_SINGLETON_INSTANCE(B, D)     \
-    static D instance { };                  \
-    return dynamic_cast<B&>(instance)
-
 /**
  * @tparam B Base class
  * @tparam D Derived class (optional)
@@ -61,21 +57,6 @@ inline B& SingletonInstance() {
 //    }
 
     return dynamic_cast<B&>(instance);
-}
-
-/**
- * @tparam B Base class
- * @tparam D Derived class (optional)
- */
-template<typename B, typename D = B>
-std::shared_ptr<B>& SharableSingleInstance() {
-    static std::shared_ptr<B> state { };
-
-    if (IsNull(state)) {
-        state.reset(dynamic_cast<B*>(new D));
-    }
-
-    return state;
 }
 
 //template<typename T>

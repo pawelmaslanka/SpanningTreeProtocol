@@ -8,9 +8,10 @@ using namespace SpanningTree;
 using namespace std;
 
 int main() {
-    SpanningTree::Bridge bridge;
-    SpanningTree::Port port;
-    PortProtocolMigration::Machine machine(bridge, port);
+    sptr<SpanningTree::Bridge> bridge { make_shared<SpanningTree::Bridge>() };
+    sptr<SpanningTree::Port> port { make_shared<SpanningTree::Port>() };
+
+    Machine machine(bridge, port, PortProtocolMigration::BeginState::Instance());
     machine.Run();
     machine.Run();
     machine.Run();

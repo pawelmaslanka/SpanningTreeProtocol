@@ -3,6 +3,7 @@
 // This project's headers
 #include "stp/bridge.hpp"
 #include "stp/specifiers.hpp"
+#include "stp/state_machine.hpp"
 #include "stp/port.hpp"
 #include "stp/utils.hpp"
 
@@ -12,159 +13,79 @@
 namespace SpanningTree {
 namespace PortProtocolMigration {
 
-class Machine;
-class State;
-using MachineH = Machine&;
-using StateH = State&;
-
-/**
- * @brief Represents states of Port Receive State Machine.
- * @note State Class
- */
-class State {
-public:
-    virtual ~State() = default;
-    virtual void Execute(MachineH machine) = 0;
-
+class PpmState : public State {
 protected:
-    /**
-     * @tparam D Derived class
-     * @exception std::bad_cast if D is out of State class inheritance hierarchy
-     */
-    template <typename D>
-    static StateH SingletonInstance();
-
-    __virtual void BeginAction(MachineH machine);
     __virtual void CheckingRstpAction(MachineH machine);
     __virtual void SelectingStpAction(MachineH machine);
     __virtual void SensingAction(MachineH machine);
-    __virtual void ChangeState(MachineH machine, StateH newState);
 };
 
-class BeginState : public State {
+class BeginState : public PpmState {
 public:
     static StateH Instance();
     void Execute(MachineH machine) override;
 
 protected:
-    friend class State;
     BeginState() = default;
     __virtual bool GoToCheckingRstp(MachineH machine);
+    std::string Name() override;
 };
 
-class CheckingRstpState : public State {
+class CheckingRstpState : public PpmState {
 public:
     static StateH Instance();
     void Execute(MachineH machine) override;
 
 protected:
-    friend class State;
     CheckingRstpState() = default;
     __virtual bool GoToCheckingRstp(MachineH machine);
     __virtual bool GoToSensing(MachineH machine);
+    std::string Name() override;
 };
 
-class SensingState : public State {
+class SensingState : public PpmState {
 public:
     static StateH Instance();
     void Execute(MachineH machine) override;
 
 protected:
-    friend class State;
     SensingState() = default;
     __virtual bool GoToCheckingRstp(MachineH machine);
     __virtual bool GoToSelectingStp(MachineH machine);
+    std::string Name() override;
 };
 
-class SelectingStpState : public State {
+class SelectingStpState : public PpmState {
 public:
     static StateH Instance();
     void Execute(MachineH machine) override;
 
 protected:
-    friend class State;
     SelectingStpState() = default;
     __virtual bool GoToSensing(MachineH machine);
+    std::string Name() override;
 };
 
-class Machine {
-public:
-    explicit Machine(BridgeH bridge, PortH port);
-    void Run();
-    BridgeH BridgeInstance() const noexcept;
-    PortH PortInstance() const noexcept;
+#define PPM_PREFIX_NAME "PPM @ "
+constexpr auto kBeginStateName = PPM_PREFIX_NAME "BEGIN";
+constexpr auto kCheckingRstpStateName = PPM_PREFIX_NAME "CHECKING_RSTP";
+constexpr auto kSelectingStpStateName = PPM_PREFIX_NAME "SELECTING_STP";
+constexpr auto kSensingStateName = PPM_PREFIX_NAME "SENSING";
 
-protected:
-    friend class State;
-    /**
-     * @brief ChangeState
-     * @note We are protected from null pointer by passing reference
-     * @param state
-     */
-    void ChangeState(StateH newState);
-
-private:
-    BridgeH _bridge;
-    PortH _port;
-    State* _state;
-};
-
-template <typename D>
-StateH State::SingletonInstance() {
-    static D instance { };
-
-    //    if (not std::is_base_of<B, D>::value) {
-    //        static B rescueInstance { };
-    //        return rescueInstance;
-    //    }
-
-    return dynamic_cast<State&>(instance);
+inline std::string BeginState::Name() {
+    return kBeginStateName;
 }
 
-inline void State::BeginAction(MachineH machine) {
-    std::ignore = machine;
-    // Nothing more to do
+inline std::string CheckingRstpState::Name() {
+    return kCheckingRstpStateName;
 }
 
-inline void State::ChangeState(MachineH machine, StateH newState) {
-    machine.ChangeState(newState);
+inline std::string SelectingStpState::Name() {
+    return kSelectingStpStateName;
 }
 
-inline StateH BeginState::Instance() {
-    return State::SingletonInstance<BeginState>();
-}
-
-inline StateH CheckingRstpState::Instance() {
-    return State::SingletonInstance<CheckingRstpState>();
-}
-
-inline StateH SensingState::Instance() {
-    return State::SingletonInstance<SensingState>();
-}
-
-inline StateH SelectingStpState::Instance() {
-    return State::SingletonInstance<SelectingStpState>();
-}
-
-inline Machine::Machine(BridgeH bridge, PortH port)
-    : _bridge{ bridge }, _port{ port }, _state{ &BeginState::Instance() } {
-    // Nothing more to do
-}
-
-inline void Machine::Run() {
-    _state->Execute(*this);
-}
-
-inline BridgeH Machine::BridgeInstance() const noexcept {
-    return _bridge;
-}
-
-inline PortH Machine::PortInstance() const noexcept {
-    return _port;
-}
-
-inline void Machine::ChangeState(StateH newState) {
-    _state = &newState;
+inline std::string SensingState::Name() {
+    return kSensingStateName;
 }
 
 } // namespace PortProtocolMigration

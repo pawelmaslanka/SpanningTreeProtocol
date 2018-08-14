@@ -16,7 +16,7 @@ using ::testing::SetArgReferee;
 
 class SutMachine : public SpanningTree::Machine {
 public:
-    SutMachine(SpanningTree::BridgeH bridge, SpanningTree::PortH port)
+    SutMachine(sptr<SpanningTree::Bridge> bridge, sptr<SpanningTree::Port> port)
         : Machine{ bridge, port, _dummyBeginState } {}
     void ChangeState(SpanningTree::StateH newState) { Machine::ChangeState(newState); }
     SpanningTree::StateH CurrentState() const noexcept { return SpanningTree::Machine::CurrentState(); }

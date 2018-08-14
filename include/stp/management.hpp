@@ -45,7 +45,7 @@ namespace SpanningTree {
 class Management
 {
 public:
-    using Handler = std::shared_ptr<Management>;
+    using Handler = sptr<Management>;
 
     struct Action {
         enum class Id : u8 {

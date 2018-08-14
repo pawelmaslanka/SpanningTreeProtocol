@@ -1,9 +1,9 @@
 #pragma once
 
 #ifdef UNIT_TEST
-//#   define __override
+#   define __noexcept
 #   define __virtual virtual
 #else
-//#   define __override override
+#   define __noexcept noexcept
 #   define __virtual
 #endif

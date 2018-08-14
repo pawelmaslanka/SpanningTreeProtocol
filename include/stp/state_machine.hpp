@@ -6,18 +6,19 @@
 #include "specifiers.hpp"
 
 // C++ Standard Library
+#include <memory>
 #include <string>
 
 namespace SpanningTree {
 
 class Machine;
-class State;
 using MachineH = Machine&;
+class State;
 using StateH = State&;
 
 #define RETURN_STATE_SINGLETON_INSTANCE(DERIVED_STATE_CLASS)    \
-    static DERIVED_STATE_CLASS instance { };                    \
-    return dynamic_cast<StateH>(instance)
+    static DERIVED_STATE_CLASS instance;                        \
+    return dynamic_cast<State&>(instance)
 
 class State {
 public:
@@ -31,10 +32,10 @@ protected:
 
 class Machine {
 public:
-    explicit Machine(BridgeH bridge, PortH port, StateH initState);
+    explicit Machine(sptr<Bridge> bridge, sptr<Port> port, StateH initState);
     void Run();
-    BridgeH BridgeInstance() const noexcept;
-    PortH PortInstance() const noexcept;
+    __virtual Bridge& BridgeInstance() const noexcept;
+    Port& PortInstance() const noexcept;
 
 protected:
     friend class State;
@@ -48,8 +49,8 @@ protected:
 
 private:
     /// @todo static member because all ports working on single Bridge instance
-    BridgeH _bridge;
-    PortH _port;
+    sptr<Bridge> _bridge;
+    sptr<Port> _port;
     State* _state;
 };
 
@@ -69,21 +70,16 @@ inline void State::ChangeState(MachineH machine, StateH newState) {
     machine.ChangeState(newState);
 }
 
-inline Machine::Machine(BridgeH bridge, PortH port, StateH initState)
-    : _bridge{ bridge }, _port{ port }, _state{ &initState } {
-    // Nothing more to do
-}
-
 inline void Machine::Run() {
     _state->Execute(*this);
 }
 
 inline BridgeH Machine::BridgeInstance() const noexcept {
-    return _bridge;
+    return *_bridge;
 }
 
 inline PortH Machine::PortInstance() const noexcept {
-    return _port;
+    return *_port;
 }
 
 inline void Machine::ChangeState(StateH newState) {
@@ -94,4 +90,4 @@ inline StateH Machine::CurrentState() const noexcept {
     return *_state;
 }
 
-}
+} // namespace SpanningTree

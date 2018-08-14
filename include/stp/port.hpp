@@ -38,10 +38,10 @@ either expressed or implied, of the FreeBSD Project.
 #include "states.hpp"
 #include "time.hpp"
 
-namespace SpanningTree {
+// C++ Standard Library
+#include <memory>
 
-class Port;
-using PortH = Port&;
+namespace SpanningTree {
 
 /**
  * @brief The 'Port' class declares per-port variables based on subclause 17.19 of IEEE Std 802.1D-2004.
@@ -437,6 +437,8 @@ private:
     enum TcmState _tcmState;
 
 }; // End of 'Port' class declaration
+
+using PortH = Port&;
 
 inline u32 Port::AgeingTime() const noexcept { return _ageingTime; }
 inline void Port::SetAgeingTime(const u32 value) noexcept { _ageingTime = value; }

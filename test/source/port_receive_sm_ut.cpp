@@ -1,8 +1,8 @@
 // Tested project's headers
 #include <stp/sm/port_protocol_migration.hpp>
 // UT dependencies
-#include <mock/port_receive_sm.hpp>
 #include "sut_machine.hpp"
+#include <mock/port_receive_sm.hpp>
 
 // GTest headers
 #include <gtest/gtest.h>
@@ -11,10 +11,13 @@ using namespace SpanningTree::PortReceive;
 
 class PortReceiveTest : public ::testing::Test {
 protected:
-    PortReceiveTest() : _sutMachine{ _bridge, _port } {}
+    PortReceiveTest()
+        : _bridge{ std::make_shared<SpanningTree::Bridge>() },
+          _port{ std::make_shared<SpanningTree::Port>() },
+          _sutMachine{ _bridge, _port } {}
 
-    SpanningTree::Bridge _bridge;
-    SpanningTree::Port _port;
+    sptr<SpanningTree::Bridge> _bridge;
+    sptr<SpanningTree::Port> _port;
     SutMachine _sutMachine;
     Mock::Prx::BeginState _mockBeginState;
     Mock::Prx::DiscardState _mockDiscardState;

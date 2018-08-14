@@ -35,6 +35,7 @@ either expressed or implied, of the FreeBSD Project.
 #include "port.hpp"
 #include "priority_vector.hpp"
 #include "management.hpp"
+#include "specifiers.hpp"
 #include "time.hpp"
 
 // C++ Standard Library
@@ -66,7 +67,7 @@ public:
     Bridge& operator=(const Bridge&) = default;
     Bridge& operator=(Bridge&&) = default;
 
-    bool Begin() const noexcept;
+    __virtual bool Begin() const __noexcept;
     void SetBegin(const bool value) noexcept;
 
     const BridgeId& BridgeIdentifier() const noexcept;
@@ -127,7 +128,7 @@ private:
 
 using BridgeH = Bridge&;
 
-inline bool Bridge::Begin() const noexcept { return _begin; }
+inline bool Bridge::Begin() const __noexcept { return _begin; }
 inline void Bridge::SetBegin(const bool value) noexcept { _begin = value; }
 
 inline const BridgeId& Bridge::BridgeIdentifier() const noexcept { return _bridgeId; }

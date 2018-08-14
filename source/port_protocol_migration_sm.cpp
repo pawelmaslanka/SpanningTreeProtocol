@@ -7,20 +7,24 @@
 namespace SpanningTree {
 namespace PortProtocolMigration {
 
-void State::CheckingRstpAction(MachineH machine) {
+void PpmState::CheckingRstpAction(MachineH machine) {
     machine.PortInstance().SetMcheck(false);
     machine.PortInstance().SetSendRstp(SmConditions::RstpVersion(machine.BridgeInstance()));
     machine.PortInstance().SmTimersInstance().SetMdelayWhile(Time::RecommendedValue::MigrateTime);
 }
 
-void State::SelectingStpAction(MachineH machine) {
+void PpmState::SelectingStpAction(MachineH machine) {
     machine.PortInstance().SetSendRstp(false);
     machine.PortInstance().SmTimersInstance().SetMdelayWhile(Time::RecommendedValue::MigrateTime);
 }
 
-void State::SensingAction(MachineH machine) {
+void PpmState::SensingAction(MachineH machine) {
     machine.PortInstance().SetRcvdRstp(false);
     machine.PortInstance().SetRcvdStp(false);
+}
+
+StateH BeginState::Instance() {
+    RETURN_STATE_SINGLETON_INSTANCE(BeginState);
 }
 
 void BeginState::Execute(MachineH machine) {
@@ -32,6 +36,10 @@ void BeginState::Execute(MachineH machine) {
 
 bool BeginState::GoToCheckingRstp(MachineH machine) {
     return machine.BridgeInstance().Begin();
+}
+
+StateH CheckingRstpState::Instance() {
+    RETURN_STATE_SINGLETON_INSTANCE(CheckingRstpState);
 }
 
 void CheckingRstpState::Execute(MachineH machine) {
@@ -59,6 +67,10 @@ bool CheckingRstpState::GoToCheckingRstp(MachineH machine) {
 
 bool CheckingRstpState::GoToSensing(MachineH machine) {
     return SmTimers::TimedOut(machine.PortInstance().SmTimersInstance().MdelayWhile());
+}
+
+StateH SensingState::Instance() {
+    RETURN_STATE_SINGLETON_INSTANCE(SensingState);
 }
 
 void SensingState::Execute(MachineH machine) {
@@ -106,6 +118,10 @@ bool SensingState::GoToSelectingStp(MachineH machine) {
     }
 
     return true;
+}
+
+StateH SelectingStpState::Instance() {
+    RETURN_STATE_SINGLETON_INSTANCE(SelectingStpState);
 }
 
 void SelectingStpState::Execute(MachineH machine) {

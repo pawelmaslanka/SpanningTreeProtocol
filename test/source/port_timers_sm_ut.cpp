@@ -1,8 +1,8 @@
 // Tested project's headers
 #include <stp/sm/port_timers.hpp>
 // UT dependencies
-#include <mock/port_timers_sm.hpp>
 #include "sut_machine.hpp"
+#include <mock/port_timers_sm.hpp>
 
 // GTest headers
 #include <gtest/gtest.h>
@@ -11,10 +11,13 @@ using namespace SpanningTree::PortTimers;
 
 class PortTimersTest : public ::testing::Test {
 protected:
-    PortTimersTest() : _sutMachine{ _bridge, _port } {}
+    PortTimersTest()
+        : _bridge{ std::make_shared<SpanningTree::Bridge>() },
+          _port{ std::make_shared<SpanningTree::Port>() },
+          _sutMachine{ _bridge, _port } {}
 
-    SpanningTree::Bridge _bridge;
-    SpanningTree::Port _port;
+    sptr<SpanningTree::Bridge> _bridge;
+    sptr<SpanningTree::Port> _port;
     SutMachine _sutMachine;
     Mock::Pti::BeginState _mockBeginState;
     Mock::Pti::OneSecondState _mockOneSecondState;

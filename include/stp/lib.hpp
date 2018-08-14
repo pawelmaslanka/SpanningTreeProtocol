@@ -36,8 +36,21 @@ either expressed or implied, of the FreeBSD Project.
 
 // C++ Standard Library
 #include <limits>
+#include <memory>
 #include <type_traits>
 #include <vector>
+
+//class Bridge;
+//using BridgeH = std::shared_ptr<Bridge>;
+//class Port;
+//using PortH = std::shared_ptr<Port>;
+//class Machine;
+//using MachineH = Machine&;
+//class State;
+//using StateH = std::shared_ptr<State>;
+
+template <typename T>
+using sptr = std::shared_ptr<T>;
 
 namespace Lib {
 
