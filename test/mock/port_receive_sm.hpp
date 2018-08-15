@@ -9,7 +9,7 @@
 namespace Mock {
 namespace Prx {
 
-using namespace SpanningTree;
+using namespace Stp;
 
 class BeginState : public PortReceive::BeginState {
 public:

@@ -4,14 +4,14 @@
 #include "stp/perf_params.hpp"
 #include "stp/sm_procedures.hpp"
 
-namespace SpanningTree {
+namespace Stp {
 namespace PortReceive {
 
 void PrxState::DiscardAction(MachineH machine) {
     machine.PortInstance().SetRcvdBpdu(false);
-    machine.PortInstance().SetRcvdMsg(false);
     machine.PortInstance().SetRcvdRstp(false);
     machine.PortInstance().SetRcvdStp(false);
+    machine.PortInstance().SetRcvdMsg(false);
     machine.PortInstance().SmTimersInstance().SetEdgeDelayWhile(PerfParams::MigrateTime());
 }
 
@@ -39,20 +39,18 @@ bool BeginState::GoToDiscard(MachineH machine) {
         return true;
     }
 
-    if (machine.PortInstance().PortEnabled()) {
-        return false;
+    if (not machine.PortInstance().PortEnabled()) {
+        if (machine.PortInstance().RcvdBpdu()) {
+            return true;
+        }
+
+        if (machine.PortInstance().SmTimersInstance().EdgeDelayWhile()
+                != PerfParams::MigrateTime()) {
+            return true;
+        }
     }
 
-    if (machine.PortInstance().RcvdBpdu()) {
-        return true;
-    }
-
-    if (machine.PortInstance().SmTimersInstance().EdgeDelayWhile()
-            == PerfParams::MigrateTime()) {
-        return false;
-    }
-
-    return true;
+    return false;
 }
 
 StateH DiscardState::Instance() {

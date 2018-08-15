@@ -35,7 +35,7 @@ either expressed or implied, of the FreeBSD Project.
 #include "lib.hpp"
 #include "mac.hpp"
 
-namespace SpanningTree {
+namespace Stp {
 
 class BridgeId
 {

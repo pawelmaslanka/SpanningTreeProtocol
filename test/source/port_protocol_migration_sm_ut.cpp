@@ -13,17 +13,17 @@ using ::testing::Return;
 using ::testing::ReturnRef;
 using ::testing::_; // Matcher for parameters
 
-using namespace SpanningTree::PortProtocolMigration;
+using namespace Stp::PortProtocolMigration;
 
 class PortProtocolMigrationTest : public ::testing::Test {
 protected:
     PortProtocolMigrationTest()
-        : _bridge{ std::make_shared<SpanningTree::Bridge>() },
-          _port{ std::make_shared<SpanningTree::Port>() },
+        : _bridge{ std::make_shared<Stp::Bridge>() },
+          _port{ std::make_shared<Stp::Port>() },
           _sutMachine{ _bridge, _port } {}
 
-    sptr<SpanningTree::Bridge> _bridge;
-    sptr<SpanningTree::Port> _port;
+    sptr<Stp::Bridge> _bridge;
+    sptr<Stp::Port> _port;
     SutMachine _sutMachine;
     Mock::Ppm::BeginState _mockBeginState;
     Mock::Ppm::CheckingRstpState _mockCheckingRstpState;
@@ -42,7 +42,7 @@ TEST_F(PortProtocolMigrationTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortProtocolMigration::kBeginStateName);
+                 Stp::PortProtocolMigration::kBeginStateName);
 }
 
 TEST_F(PortProtocolMigrationTest,
@@ -59,11 +59,11 @@ TEST_F(PortProtocolMigrationTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortProtocolMigration::kCheckingRstpStateName);
+                 Stp::PortProtocolMigration::kCheckingRstpStateName);
 }
 
 TEST_F(PortProtocolMigrationTest,
-       testCheckingRstpStateExecute_withFailedGoToCheckingRstpAndFailedGoToSensing_shouldNotChangeState) {
+       testCheckingRstpStateExecute_withFailedAllTransitions_shouldNotChangeState) {
     EXPECT_CALL(_mockCheckingRstpState, Execute(_)).Times(Exactly(1))
             .WillOnce(Invoke(&_mockCheckingRstpState,
                              &Mock::Ppm::CheckingRstpState::RealExecute));
@@ -76,7 +76,7 @@ TEST_F(PortProtocolMigrationTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortProtocolMigration::kCheckingRstpStateName);
+                 Stp::PortProtocolMigration::kCheckingRstpStateName);
 }
 
 TEST_F(PortProtocolMigrationTest,
@@ -94,7 +94,7 @@ TEST_F(PortProtocolMigrationTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortProtocolMigration::kSensingStateName);
+                 Stp::PortProtocolMigration::kSensingStateName);
 }
 
 TEST_F(PortProtocolMigrationTest,
@@ -112,7 +112,7 @@ TEST_F(PortProtocolMigrationTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortProtocolMigration::kCheckingRstpStateName);
+                 Stp::PortProtocolMigration::kCheckingRstpStateName);
 }
 
 TEST_F(PortProtocolMigrationTest,
@@ -129,7 +129,7 @@ TEST_F(PortProtocolMigrationTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortProtocolMigration::kSensingStateName);
+                 Stp::PortProtocolMigration::kSensingStateName);
 }
 
 TEST_F(PortProtocolMigrationTest,
@@ -147,7 +147,7 @@ TEST_F(PortProtocolMigrationTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortProtocolMigration::kCheckingRstpStateName);
+                 Stp::PortProtocolMigration::kCheckingRstpStateName);
 }
 
 TEST_F(PortProtocolMigrationTest,
@@ -167,7 +167,7 @@ TEST_F(PortProtocolMigrationTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortProtocolMigration::kSelectingStpStateName);
+                 Stp::PortProtocolMigration::kSelectingStpStateName);
 }
 
 TEST_F(PortProtocolMigrationTest,
@@ -182,7 +182,7 @@ TEST_F(PortProtocolMigrationTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortProtocolMigration::kSelectingStpStateName);
+                 Stp::PortProtocolMigration::kSelectingStpStateName);
 }
 
 TEST_F(PortProtocolMigrationTest,
@@ -200,5 +200,5 @@ TEST_F(PortProtocolMigrationTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortProtocolMigration::kSensingStateName);
+                 Stp::PortProtocolMigration::kSensingStateName);
 }

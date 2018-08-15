@@ -8,11 +8,11 @@
 // GTest headers
 #include <gtest/gtest.h>
 
-using namespace SpanningTree::BridgeDetection;
+using namespace Stp::BridgeDetection;
 
 class BdmSutMachine : public SutMachine {
 public:
-    BdmSutMachine(sptr<Mock::Bridge> bridge, sptr<SpanningTree::Port> port)
+    BdmSutMachine(sptr<Mock::Bridge> bridge, sptr<Stp::Port> port)
         : SutMachine{ bridge, port }, _mockBridge{ bridge }, _port{ port } {}
     Mock::Bridge& BridgeInstance() const noexcept override {
         return *_mockBridge;
@@ -20,14 +20,14 @@ public:
 
 private:
     sptr<Mock::Bridge> _mockBridge;
-    sptr<SpanningTree::Port> _port;
+    sptr<Stp::Port> _port;
 };
 
 class BridgeDetectionTest : public ::testing::Test {
 protected:
     BridgeDetectionTest()
         : _sutMachine{ std::make_shared<Mock::Bridge>(),
-                       std::make_shared<SpanningTree::Port>() } {}
+                       std::make_shared<Stp::Port>() } {}
 
     BdmSutMachine _sutMachine;
     Mock::Bdm::BeginState _mockBeginState;
@@ -46,7 +46,7 @@ TEST_F(BridgeDetectionTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::BridgeDetection::kBeginStateName);
+                 Stp::BridgeDetection::kBeginStateName);
 }
 
 TEST_F(BridgeDetectionTest,
@@ -65,7 +65,7 @@ TEST_F(BridgeDetectionTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::BridgeDetection::kNotEdgeStateName);
+                 Stp::BridgeDetection::kNotEdgeStateName);
 }
 
 TEST_F(BridgeDetectionTest,
@@ -84,7 +84,7 @@ TEST_F(BridgeDetectionTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::BridgeDetection::kEdgeStateName);
+                 Stp::BridgeDetection::kEdgeStateName);
 }
 
 TEST_F(BridgeDetectionTest,
@@ -98,7 +98,7 @@ TEST_F(BridgeDetectionTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::BridgeDetection::kEdgeStateName);
+                 Stp::BridgeDetection::kEdgeStateName);
 }
 
 TEST_F(BridgeDetectionTest,
@@ -115,7 +115,7 @@ TEST_F(BridgeDetectionTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::BridgeDetection::kNotEdgeStateName);
+                 Stp::BridgeDetection::kNotEdgeStateName);
 }
 
 TEST_F(BridgeDetectionTest,
@@ -129,7 +129,7 @@ TEST_F(BridgeDetectionTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::BridgeDetection::kNotEdgeStateName);
+                 Stp::BridgeDetection::kNotEdgeStateName);
 }
 
 TEST_F(BridgeDetectionTest,
@@ -146,5 +146,5 @@ TEST_F(BridgeDetectionTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::BridgeDetection::kEdgeStateName);
+                 Stp::BridgeDetection::kEdgeStateName);
 }

@@ -39,7 +39,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using namespace Lib;
 
-namespace SpanningTree {
+namespace Stp {
 
 Bpdu::Bpdu() noexcept
     : _data{ }, _portRole { PortRole::Disabled }, _rootId{ }

@@ -29,7 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 #include "stp/priority_vector.hpp"
 
-namespace SpanningTree {
+namespace Stp {
 
 PriorityVector::PriorityVector(const BridgeId& rootBridgeId, const PathCost& rootPathCost,
                                const BridgeId& designatedBridgeId, const PortId& designatedPortId) noexcept

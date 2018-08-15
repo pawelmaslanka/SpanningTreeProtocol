@@ -2,8 +2,9 @@
 #include "stp/sm/bridge_detection.hpp"
 // Dependencies
 #include "stp/sm_conditions.hpp"
+#include "stp/sm_procedures.hpp"
 
-namespace SpanningTree {
+namespace Stp {
 namespace BridgeDetection {
 
 void BdmState::EdgeAction(MachineH machine) {
@@ -54,19 +55,18 @@ void EdgeState::Execute(MachineH machine) {
 }
 
 bool EdgeState::GoToNotEdge(MachineH machine) {
-    if (machine.PortInstance().OperEdge()) {
+    if (not machine.PortInstance().OperEdge()) {
         return true;
     }
 
     if (machine.PortInstance().PortEnabled()) {
         return false;
     }
-    else if (machine.PortInstance().adminEdge) {
+    else if (SmProcedures::AdminEdge(machine.PortInstance())) {
         return false;
     }
-    else {
-        return true;
-    }
+
+    return true;
 }
 
 StateH NotEdgeState::Instance() {
@@ -99,9 +99,8 @@ bool NotEdgeState::GoToEdge(MachineH machine) {
     else if (not machine.PortInstance().Proposing()) {
         return false;
     }
-    else {
-        return true;
-    }
+
+    return true;
 }
 
 } // namespace BridgeDetection

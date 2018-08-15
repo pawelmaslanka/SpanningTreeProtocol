@@ -34,7 +34,7 @@ either expressed or implied, of the FreeBSD Project.
 #include "bpdu.hpp"
 #include "lib.hpp"
 
-namespace SpanningTree {
+namespace Stp {
 
 class Mac
 {

@@ -1,7 +1,7 @@
 // This project's headers
 #include "stp/sm/port_timers.hpp"
 
-namespace SpanningTree {
+namespace Stp {
 namespace PortTimers {
 
 void PtiTimers::OneSecondAction(MachineH machine) {
@@ -55,7 +55,7 @@ void TickState::Execute(MachineH machine) {
     }
 }
 
-bool TickState::GoToOneSecond(MachineH machine) {
+inline bool TickState::GoToOneSecond(MachineH machine) {
     std::ignore = machine;
     return true; // UCT
 }

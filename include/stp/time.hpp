@@ -33,7 +33,7 @@ either expressed or implied, of the FreeBSD Project.
 // This project's headers
 #include "lib.hpp"
 
-namespace SpanningTree {
+namespace Stp {
 
 class Time
 {

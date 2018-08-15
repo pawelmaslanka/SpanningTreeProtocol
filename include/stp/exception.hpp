@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace SpanningTree {
+namespace Stp {
     /**
      * @brief 
      * 

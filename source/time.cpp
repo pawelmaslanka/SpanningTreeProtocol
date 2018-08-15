@@ -30,7 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 // This project's headers
 #include "stp/time.hpp"
 
-namespace SpanningTree {
+namespace Stp {
 
 SmTimers::SmTimers() noexcept
     : _edgeDelayWhile{ 0 }, _fdWhile{ 0 }, _helloWhen{ 0 }, _mdelayWhile{ 0 }, _rbWhile{ 0 },

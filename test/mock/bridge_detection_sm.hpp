@@ -9,7 +9,7 @@
 namespace Mock {
 namespace Bdm {
 
-using namespace SpanningTree;
+using namespace Stp;
 
 class BeginState : public BridgeDetection::BeginState {
 public:

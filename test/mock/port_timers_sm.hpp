@@ -9,7 +9,7 @@
 namespace Mock {
 namespace Pti {
 
-using namespace SpanningTree;
+using namespace Stp;
 
 class BeginState : public PortTimers::BeginState {
 public:

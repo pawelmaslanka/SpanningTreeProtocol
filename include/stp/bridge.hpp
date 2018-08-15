@@ -42,7 +42,7 @@ either expressed or implied, of the FreeBSD Project.
 #include <memory>
 #include <vector>
 
-namespace SpanningTree {
+namespace Stp {
 
 class Bridge
 {

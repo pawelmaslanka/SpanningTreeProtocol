@@ -42,7 +42,7 @@ either expressed or implied, of the FreeBSD Project.
 #include <memory>
 #include <unordered_map>
 
-namespace SpanningTree {
+namespace Stp {
 
 class SpanningTreeProtocol
 {

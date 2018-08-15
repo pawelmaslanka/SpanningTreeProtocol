@@ -3,7 +3,7 @@
 #include "bridge.hpp"
 #include "lib.hpp"
 
-namespace SpanningTree {
+namespace Stp {
 
 class SmConditions {
 public:

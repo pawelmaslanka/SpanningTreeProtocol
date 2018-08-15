@@ -41,7 +41,7 @@ either expressed or implied, of the FreeBSD Project.
 // C++ Standard Library
 #include <array>
 
-namespace SpanningTree {
+namespace Stp {
 
 class PriorityVector
 {

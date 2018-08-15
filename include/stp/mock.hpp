@@ -1,6 +1,6 @@
 #pragma once
 
-namespace SpanningTree {
+namespace Stp {
 
 class Port;
 using PortH = Port&;

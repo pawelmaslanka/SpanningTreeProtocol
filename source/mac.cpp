@@ -30,7 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 // This project's headers
 #include "stp/mac.hpp"
 
-namespace SpanningTree {
+namespace Stp {
 
 Mac::Mac(const Bpdu::BridgeSystemIdHandler& bridgeSystemId) noexcept
 {

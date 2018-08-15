@@ -7,17 +7,17 @@
 // GTest headers
 #include <gtest/gtest.h>
 
-using namespace SpanningTree::PortReceive;
+using namespace Stp::PortReceive;
 
 class PortReceiveTest : public ::testing::Test {
 protected:
     PortReceiveTest()
-        : _bridge{ std::make_shared<SpanningTree::Bridge>() },
-          _port{ std::make_shared<SpanningTree::Port>() },
+        : _bridge{ std::make_shared<Stp::Bridge>() },
+          _port{ std::make_shared<Stp::Port>() },
           _sutMachine{ _bridge, _port } {}
 
-    sptr<SpanningTree::Bridge> _bridge;
-    sptr<SpanningTree::Port> _port;
+    sptr<Stp::Bridge> _bridge;
+    sptr<Stp::Port> _port;
     SutMachine _sutMachine;
     Mock::Prx::BeginState _mockBeginState;
     Mock::Prx::DiscardState _mockDiscardState;
@@ -35,7 +35,7 @@ TEST_F(PortReceiveTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortReceive::kBeginStateName);
+                 Stp::PortReceive::kBeginStateName);
 }
 
 TEST_F(PortReceiveTest,
@@ -52,7 +52,7 @@ TEST_F(PortReceiveTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortReceive::kDiscardStateName);
+                 Stp::PortReceive::kDiscardStateName);
 }
 
 TEST_F(PortReceiveTest,
@@ -66,7 +66,7 @@ TEST_F(PortReceiveTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortReceive::kDiscardStateName);
+                 Stp::PortReceive::kDiscardStateName);
 }
 
 TEST_F(PortReceiveTest,
@@ -83,7 +83,7 @@ TEST_F(PortReceiveTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortReceive::kReceiveStateName);
+                 Stp::PortReceive::kReceiveStateName);
 }
 
 TEST_F(PortReceiveTest,
@@ -97,7 +97,7 @@ TEST_F(PortReceiveTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortReceive::kReceiveStateName);
+                 Stp::PortReceive::kReceiveStateName);
 }
 
 TEST_F(PortReceiveTest,
@@ -112,5 +112,5 @@ TEST_F(PortReceiveTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortReceive::kReceiveStateName);
+                 Stp::PortReceive::kReceiveStateName);
 }

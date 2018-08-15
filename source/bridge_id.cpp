@@ -34,7 +34,7 @@ either expressed or implied, of the FreeBSD Project.
 // C++ Standard Library
 #include <algorithm>
 
-namespace SpanningTree {
+namespace Stp {
 
 BridgeId::BridgeId(const Bpdu::BridgeIdHandler& bridgeId) noexcept
     : _addr({{ bridgeId[2], bridgeId[3], bridgeId[4], bridgeId[5], bridgeId[6], bridgeId[7] }})

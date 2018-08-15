@@ -40,7 +40,7 @@ either expressed or implied, of the FreeBSD Project.
 #include <mutex>
 #include <queue>
 
-namespace SpanningTree {
+namespace Stp {
 
 class Management
 {

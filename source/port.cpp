@@ -31,7 +31,7 @@ either expressed or implied, of the FreeBSD Project.
 #include "stp/bridge.hpp"
 #include "stp/port.hpp"
 
-namespace SpanningTree {
+namespace Stp {
 
 Port::Port() noexcept
     : _ageingTime{ Bridge::AgeingTime }, _agree{ false }, _agreed{ false }, _dsgPriority{ },

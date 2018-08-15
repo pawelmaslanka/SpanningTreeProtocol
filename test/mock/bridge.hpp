@@ -8,7 +8,7 @@
 
 namespace Mock {
 
-class Bridge : public SpanningTree::Bridge {
+class Bridge : public Stp::Bridge {
 public:
     MOCK_CONST_METHOD0(Begin, bool());
 };

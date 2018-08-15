@@ -14,17 +14,17 @@ using ::testing::Return;
 using ::testing::ReturnRef;
 using ::testing::SetArgReferee;
 
-class SutMachine : public SpanningTree::Machine {
+class SutMachine : public Stp::Machine {
 public:
-    SutMachine(sptr<SpanningTree::Bridge> bridge, sptr<SpanningTree::Port> port)
+    SutMachine(sptr<Stp::Bridge> bridge, sptr<Stp::Port> port)
         : Machine{ bridge, port, _dummyBeginState } {}
-    void ChangeState(SpanningTree::StateH newState) { Machine::ChangeState(newState); }
-    SpanningTree::StateH CurrentState() const noexcept { return SpanningTree::Machine::CurrentState(); }
+    void ChangeState(Stp::StateH newState) { Machine::ChangeState(newState); }
+    Stp::StateH CurrentState() const noexcept { return Stp::Machine::CurrentState(); }
 
 private:
-    class BeginState : public SpanningTree::State {
+    class BeginState : public Stp::State {
     public:
-        void Execute(SpanningTree::MachineH machine) override { std::ignore = machine; }
+        void Execute(Stp::MachineH machine) override { std::ignore = machine; }
         std::string Name() override { return "Machine SUT Begin State"; }
     } _dummyBeginState;
 };

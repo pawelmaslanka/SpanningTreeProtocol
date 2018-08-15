@@ -111,7 +111,7 @@ enum class ShiftOctet : u64 {
 
 } // End of 'Lib' namespace declaration
 
-namespace SpanningTree {
+namespace Stp {
 
 using namespace Lib;
 

@@ -37,7 +37,7 @@ either expressed or implied, of the FreeBSD Project.
 #include <memory>
 #include <vector>
 
-namespace SpanningTree {
+namespace Stp {
 
 /// @brief 17.7
 enum class PortRole : u8 {

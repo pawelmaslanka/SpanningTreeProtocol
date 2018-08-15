@@ -29,7 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 #include "stp/bridge.hpp"
 
-namespace SpanningTree {
+namespace Stp {
 
  Bridge::Bridge() noexcept
     : _begin{ false }, _bridgeId{ },

@@ -3,7 +3,7 @@
 // This project's headers
 #include "stp/state_machine.hpp"
 
-namespace SpanningTree {
+namespace Stp {
 namespace BridgeDetection {
 
 class BdmState : public State {

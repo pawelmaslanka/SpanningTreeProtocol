@@ -7,7 +7,7 @@
 #include <gmock/gmock.h>
 
 namespace Mock {
-using namespace SpanningTree;
+using namespace Stp;
 
 namespace Ppm {
 

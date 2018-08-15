@@ -38,7 +38,7 @@ either expressed or implied, of the FreeBSD Project.
 #include <array>
 #include <vector>
 
-namespace SpanningTree {
+namespace Stp {
 
 class Bpdu final
 {

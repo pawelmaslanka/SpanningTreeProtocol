@@ -10,7 +10,7 @@
 // C++ Standard Library
 #include <memory>
 
-namespace SpanningTree {
+namespace Stp {
 namespace PortProtocolMigration {
 
 class PpmState : public State {

@@ -3,7 +3,7 @@
 // This project's headers
 #include "exception.hpp"
 
-namespace SpanningTree {
+namespace Stp {
 
 static const char* IncorrectTransitionString = "Incorrect transition to the state";
 

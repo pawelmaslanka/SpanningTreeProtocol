@@ -27,11 +27,12 @@ file(GLOB_RECURSE PROJECT_INCLUDE "${INCLUDE}/stp/*.hpp" "${INCLUDE}/stp/sm/*.hp
 
 set(SOURCE ${CMAKE_SOURCE_DIR}/source)
 
-file(GLOB SPANNING_TREE_SOURCE
+file(GLOB STP_SOURCE
     ${SOURCE}/bridge_detection_sm.cpp
     ${SOURCE}/port_protocol_migration_sm.cpp
     ${SOURCE}/port_receive_sm.cpp
     ${SOURCE}/port_timers_sm.cpp
+    ${SOURCE}/port_transmit_sm.cpp
 #${SOURCE}/port_protocol_migration_sm.cpp
     ${SOURCE}/bpdu.cpp
     ${SOURCE}/bridge.cpp
@@ -47,6 +48,6 @@ file(GLOB SPANNING_TREE_SOURCE
     ${SOURCE}/time.cpp
     )
 
-add_executable(${CMAKE_PROJECT_NAME} ${PROJECT_INCLUDE} ${SPANNING_TREE_SOURCE} ${SOURCE}/main.cpp)
+add_executable(${CMAKE_PROJECT_NAME} ${PROJECT_INCLUDE} ${STP_SOURCE} ${SOURCE}/main.cpp)
 
 add_subdirectory(test)

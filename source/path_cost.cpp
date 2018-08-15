@@ -30,7 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 // This project's headers
 #include "stp/path_cost.hpp"
 
-namespace SpanningTree {
+namespace Stp {
 
 u32 PathCost::SpeedMbToPathCostValue(const u32 speedMb) noexcept
 {

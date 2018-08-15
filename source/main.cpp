@@ -4,12 +4,12 @@
 
 #include <iostream>
 
-using namespace SpanningTree;
+using namespace Stp;
 using namespace std;
 
 int main() {
-    sptr<SpanningTree::Bridge> bridge { make_shared<SpanningTree::Bridge>() };
-    sptr<SpanningTree::Port> port { make_shared<SpanningTree::Port>() };
+    sptr<Stp::Bridge> bridge { make_shared<Stp::Bridge>() };
+    sptr<Stp::Port> port { make_shared<Stp::Port>() };
 
     Machine machine(bridge, port, PortProtocolMigration::BeginState::Instance());
     machine.Run();

@@ -9,7 +9,7 @@
 #include <memory>
 #include <string>
 
-namespace SpanningTree {
+namespace Stp {
 
 class Machine;
 using MachineH = Machine&;

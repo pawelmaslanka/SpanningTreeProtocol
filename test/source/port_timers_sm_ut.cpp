@@ -7,17 +7,17 @@
 // GTest headers
 #include <gtest/gtest.h>
 
-using namespace SpanningTree::PortTimers;
+using namespace Stp::PortTimers;
 
 class PortTimersTest : public ::testing::Test {
 protected:
     PortTimersTest()
-        : _bridge{ std::make_shared<SpanningTree::Bridge>() },
-          _port{ std::make_shared<SpanningTree::Port>() },
+        : _bridge{ std::make_shared<Stp::Bridge>() },
+          _port{ std::make_shared<Stp::Port>() },
           _sutMachine{ _bridge, _port } {}
 
-    sptr<SpanningTree::Bridge> _bridge;
-    sptr<SpanningTree::Port> _port;
+    sptr<Stp::Bridge> _bridge;
+    sptr<Stp::Port> _port;
     SutMachine _sutMachine;
     Mock::Pti::BeginState _mockBeginState;
     Mock::Pti::OneSecondState _mockOneSecondState;
@@ -35,7 +35,7 @@ TEST_F(PortTimersTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortTimers::kBeginStateName);
+                 Stp::PortTimers::kBeginStateName);
 }
 
 TEST_F(PortTimersTest,
@@ -52,7 +52,7 @@ TEST_F(PortTimersTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortTimers::kOneSecondStateName);
+                 Stp::PortTimers::kOneSecondStateName);
 }
 
 TEST_F(PortTimersTest,
@@ -66,7 +66,7 @@ TEST_F(PortTimersTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortTimers::kOneSecondStateName);
+                 Stp::PortTimers::kOneSecondStateName);
 }
 
 TEST_F(PortTimersTest,
@@ -83,7 +83,7 @@ TEST_F(PortTimersTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortTimers::kTickStateName);
+                 Stp::PortTimers::kTickStateName);
 }
 
 TEST_F(PortTimersTest,
@@ -97,7 +97,7 @@ TEST_F(PortTimersTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortTimers::kTickStateName);
+                 Stp::PortTimers::kTickStateName);
 }
 
 TEST_F(PortTimersTest,
@@ -114,5 +114,5 @@ TEST_F(PortTimersTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 SpanningTree::PortTimers::kOneSecondStateName);
+                 Stp::PortTimers::kOneSecondStateName);
 }

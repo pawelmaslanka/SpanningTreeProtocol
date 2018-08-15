@@ -31,7 +31,7 @@ either expressed or implied, of the FreeBSD Project.
 #include "stp/port_id.hpp"
 #include "stp/priority_vector.hpp"
 
-namespace SpanningTree {
+namespace Stp {
 
 PortId::PortId(const Bpdu::PortIdHandler& portId) noexcept
 {

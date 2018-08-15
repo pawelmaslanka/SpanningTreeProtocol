@@ -1,21 +1,21 @@
 // This project's headers
 #include "stp/sm/port_protocol_migration.hpp"
-
+// Dependencies
 #include "stp/perf_params.hpp"
 #include "stp/sm_conditions.hpp"
 
-namespace SpanningTree {
+namespace Stp {
 namespace PortProtocolMigration {
 
 void PpmState::CheckingRstpAction(MachineH machine) {
     machine.PortInstance().SetMcheck(false);
     machine.PortInstance().SetSendRstp(SmConditions::RstpVersion(machine.BridgeInstance()));
-    machine.PortInstance().SmTimersInstance().SetMdelayWhile(Time::RecommendedValue::MigrateTime);
+    machine.PortInstance().SmTimersInstance().SetMdelayWhile(PerfParams::MigrateTime());
 }
 
 void PpmState::SelectingStpAction(MachineH machine) {
     machine.PortInstance().SetSendRstp(false);
-    machine.PortInstance().SmTimersInstance().SetMdelayWhile(Time::RecommendedValue::MigrateTime);
+    machine.PortInstance().SmTimersInstance().SetMdelayWhile(PerfParams::MigrateTime());
 }
 
 void PpmState::SensingAction(MachineH machine) {
@@ -57,8 +57,7 @@ bool CheckingRstpState::GoToCheckingRstp(MachineH machine) {
     if (machine.PortInstance().PortEnabled()) {
         return false;
     }
-
-    if (machine.PortInstance().SmTimersInstance().MdelayWhile() == PerfParams::MigrateTime()) {
+    else if (machine.PortInstance().SmTimersInstance().MdelayWhile() == PerfParams::MigrateTime()) {
         return false;
     }
 
@@ -96,12 +95,10 @@ bool SensingState::GoToCheckingRstp(MachineH machine) {
     if (not SmConditions::RstpVersion(machine.BridgeInstance())) {
         return false;
     }
-
-    if (machine.PortInstance().SendRstp()) {
+    else if (machine.PortInstance().SendRstp()) {
         return false;
     }
-
-    if (not machine.PortInstance().RcvdRstp()) {
+    else if (not machine.PortInstance().RcvdRstp()) {
         return false;
     }
 
@@ -112,8 +109,7 @@ bool SensingState::GoToSelectingStp(MachineH machine) {
     if (not machine.PortInstance().SendRstp()) {
         return false;
     }
-
-    if (not machine.PortInstance().RcvdStp()) {
+    else if (not machine.PortInstance().RcvdStp()) {
         return false;
     }
 

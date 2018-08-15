@@ -41,7 +41,7 @@ either expressed or implied, of the FreeBSD Project.
 // C++ Standard Library
 #include <memory>
 
-namespace SpanningTree {
+namespace Stp {
 
 /**
  * @brief The 'Port' class declares per-port variables based on subclause 17.19 of IEEE Std 802.1D-2004.
@@ -49,7 +49,7 @@ namespace SpanningTree {
 class Port {
 public:
     /// @todo Make it dynamic managementable
-    enum class RecommendedValue : u8 {
+    enum RecommendedValue {
         TransmitHoldCount = 6
     };
 

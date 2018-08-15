@@ -1,6 +1,6 @@
 #include "stp/state_machine.hpp"
 
-namespace SpanningTree {
+namespace Stp {
 
 Machine::Machine(sptr<Bridge> bridge, sptr<Port> port, StateH initState)
     : _bridge{ bridge }, _port{ port }, _state{ &initState } {
