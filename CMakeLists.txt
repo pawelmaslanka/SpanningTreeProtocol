@@ -29,6 +29,7 @@ set(SOURCE ${CMAKE_SOURCE_DIR}/source)
 
 file(GLOB STP_SOURCE
     ${SOURCE}/bridge_detection_sm.cpp
+    ${SOURCE}/port_information_sm.cpp
     ${SOURCE}/port_protocol_migration_sm.cpp
     ${SOURCE}/port_receive_sm.cpp
     ${SOURCE}/port_timers_sm.cpp
@@ -43,6 +44,7 @@ file(GLOB STP_SOURCE
     ${SOURCE}/port.cpp
     ${SOURCE}/port_id.cpp
     ${SOURCE}/priority_vector.cpp
+    ${SOURCE}/sm_conditions.cpp
     ${SOURCE}/sm_procedures.cpp
     ${SOURCE}/state_machine.cpp
     ${SOURCE}/time.cpp

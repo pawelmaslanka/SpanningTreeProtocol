@@ -4,24 +4,24 @@
 #include "lib.hpp"
 
 namespace Stp {
+namespace SmConditions {
 
-class SmConditions {
-public:
-    static bool AdminEdge(Port& port) noexcept;
-    static bool AutoEdge(Port& port) noexcept;
-    static bool RstpVersion(Bridge& bridge) noexcept;
-};
+bool AdminEdge(PortH port) noexcept;
+bool AutoEdge(PortH port) noexcept;
+enum Port::RcvdInfo RcvInfo(PortH port) noexcept;
+bool RstpVersion(BridgeH bridge) noexcept;
 
-inline bool SmConditions::AdminEdge(Port& port) noexcept {
+inline bool AdminEdge(PortH port) noexcept {
     return port.adminEdge;
 }
 
-inline bool SmConditions::AutoEdge(Port& port) noexcept {
+inline bool AutoEdge(PortH port) noexcept {
     return port.autoEdge;
 }
 
-inline bool SmConditions::RstpVersion(Bridge &bridge) noexcept {
+inline bool RstpVersion(BridgeH bridge) noexcept {
     return bridge.ForceProtocolVersion >= 2;
 }
 
-} // namespace SpanningTree
+} // namespace SmConditions
+} // namespace Stp
