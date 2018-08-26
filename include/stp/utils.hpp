@@ -13,7 +13,7 @@ static const char* IncorrectTransitionString = "Incorrect transition to the stat
 
 /**
  * @brief Checks if pointer is null
- * 
+ *
  * @tparam T Pointer type
  * @param ptr Pointer
  * @return true If passed is null
@@ -26,10 +26,10 @@ inline bool IsNull(const T& ptr) noexcept {
 
 /**
  * @brief Get the State Instance object
- * 
+ *
  * @tparam H State handler
  * @tparam S Concrete state
- * @return STATE_HANDLER 
+ * @return STATE_HANDLER
  */
 template<typename H, typename S>
 H& GetStateInstance() {
@@ -50,20 +50,7 @@ H& GetStateInstance() {
 template <typename B, typename D = B>
 inline B& SingletonInstance() {
     static D instance { };
-
-//    if (not std::is_base_of<B, D>::value) {
-//        static B rescueInstance { };
-//        return rescueInstance;
-//    }
-
     return dynamic_cast<B&>(instance);
 }
 
-//template<typename T>
-//T* GetStateInstance() {
-//    static T state { };
-
-//    return &state;
-//}
-
-} // namespace SpanningTree
+} // namespace Stp

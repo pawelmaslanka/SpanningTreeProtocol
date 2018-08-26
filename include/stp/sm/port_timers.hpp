@@ -8,40 +8,40 @@ namespace PortTimers {
 
 class PtiTimers : public State {
 protected:
-    __virtual void OneSecondAction(MachineH machine);
-    __virtual void TickAction(MachineH machine);
+    __virtual void OneSecondAction(Machine& machine);
+    __virtual void TickAction(Machine& machine);
 };
 
 class BeginState : public PtiTimers {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     BeginState() = default;
-    __virtual bool GoToOneSecond(MachineH machine);
+    __virtual bool GoToOneSecond(Machine& machine);
     std::string Name() override;
 };
 
 class OneSecondState : public PtiTimers {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     OneSecondState() = default;
-    __virtual bool GoToTick(MachineH machine);
+    __virtual bool GoToTick(Machine& machine);
     std::string Name() override;
 };
 
 class TickState : public PtiTimers {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     TickState() = default;
-    __virtual bool GoToOneSecond(MachineH machine);
+    __virtual bool GoToOneSecond(Machine& machine);
     std::string Name() override;
 };
 
@@ -63,4 +63,4 @@ inline std::string TickState::Name() {
 }
 
 } // namespace PortTimers
-} // namespace SpanningTree
+} // namespace Stp

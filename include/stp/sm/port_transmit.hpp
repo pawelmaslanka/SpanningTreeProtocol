@@ -8,32 +8,32 @@ namespace PortTransmit {
 
 class PtxState : public State {
 protected:
-    __virtual void TransmitInitAction(MachineH machine);
-    __virtual void TransmitPeriodicAction(MachineH machine);
-    __virtual void TransmitConfigAction(MachineH machine);
-    __virtual void TransmitTcnAction(MachineH machine);
-    __virtual void TransmitRstpAction(MachineH machine);
-    __virtual bool GoToIdle(MachineH machine);
-    __virtual void IdleAction(MachineH machine);
-    __virtual void IdleUctExecute(MachineH machine);
-    __virtual bool TransitionQualified(MachineH machine);
+    __virtual void TransmitInitAction(Machine& machine);
+    __virtual void TransmitPeriodicAction(Machine& machine);
+    __virtual void TransmitConfigAction(Machine& machine);
+    __virtual void TransmitTcnAction(Machine& machine);
+    __virtual void TransmitRstpAction(Machine& machine);
+    __virtual bool GoToIdle(Machine& machine);
+    __virtual void IdleAction(Machine& machine);
+    __virtual void IdleUctExecute(Machine& machine);
+    __virtual bool TransitionQualified(Machine& machine);
 };
 
 class BeginState : public PtxState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     BeginState() = default;
-    __virtual bool GoToTransmitInit(MachineH machine);
+    __virtual bool GoToTransmitInit(Machine& machine);
     std::string Name() override;
 };
 
 class TransmitInitState : public PtxState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     TransmitInitState() = default;
@@ -42,8 +42,8 @@ protected:
 
 class TransmitPeriodicState : public PtxState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     TransmitPeriodicState() = default;
@@ -52,8 +52,8 @@ protected:
 
 class TransmitConfigState : public PtxState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     TransmitConfigState() = default;
@@ -62,8 +62,8 @@ protected:
 
 class TransmitTcnState : public PtxState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     TransmitTcnState() = default;
@@ -72,8 +72,8 @@ protected:
 
 class TransmitRstpState : public PtxState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     TransmitRstpState() = default;
@@ -82,15 +82,15 @@ protected:
 
 class IdleState : public PtxState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     IdleState() = default;
-    __virtual bool GoToTransmitPeriodic(MachineH machine);
-    __virtual bool GoToTransmitConfig(MachineH machine);
-    __virtual bool GoToTransmitTcn(MachineH machine);
-    __virtual bool GoToTransmitRstp(MachineH machine);
+    __virtual bool GoToTransmitPeriodic(Machine& machine);
+    __virtual bool GoToTransmitConfig(Machine& machine);
+    __virtual bool GoToTransmitTcn(Machine& machine);
+    __virtual bool GoToTransmitRstp(Machine& machine);
     std::string Name() override;
 };
 
@@ -132,4 +132,4 @@ inline std::string IdleState::Name() {
 }
 
 } // namespace PortTransmit
-} // namespace SpanningTree
+} // namespace Stp

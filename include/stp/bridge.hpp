@@ -27,8 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 ***************************************************************************************************/
 
-#ifndef BRIDGE_HPP
-#define BRIDGE_HPP
+#pragma once
 
 // This project's headers
 #include "bridge_id.hpp"
@@ -40,25 +39,22 @@ either expressed or implied, of the FreeBSD Project.
 
 // C++ Standard Library
 #include <memory>
-#include <vector>
+#include <map>
 
 namespace Stp {
 
-class Bridge
-{
+class Bridge {
 public:
     // By default, assigned to VLAN #1
-    static constexpr uint16_t ExtensionDefaultValue = 1;
+    static constexpr u16 ExtensionDefaultValue = 1;
 
     /// @todo Make it dynamic managementable
-    static constexpr uint8_t ForceProtocolVersion = 2;
+    static constexpr u8 ForceProtocolVersion = 2;
 
     /// @todo Make it dynamic managementable
     static constexpr u32 AgeingTime = 300;
 
-    std::vector<Port> Ports;
-
-    Bridge() noexcept;
+    Bridge(OutInterfaceH outInterface) noexcept;
     Bridge(const Bridge&) = default;
     Bridge(Bridge&&) = default;
 
@@ -98,6 +94,16 @@ public:
     Mac& GetAddress() noexcept;
     void SetAddress(const Mac& value) noexcept;
 
+    void AddPort(const u16 portNo);
+    void RemovePort(const u16 portNo);
+    PortH GetPort(const u16 portNo);
+    std::map<u16, PortH>& GetAllPorts();
+
+    __virtual Result FlushFdb(const u16 portNo);
+    __virtual Result SetForwarding(const u16 portNo, const bool enable);
+    __virtual Result SetLearning(const u16 portNo, const bool enable);
+    __virtual Result SendOutBpdu(const u16 portNo, ByteStreamH data);
+
 private:
     /// @brief 17.18.1
     bool _begin;
@@ -124,9 +130,13 @@ private:
     Time _rootTimes;
 
     Mac _addr;
+
+    std::map<u16, PortH> _ports;
+
+    OutInterfaceH _outInterface;
 }; // End of Bridge class declaration
 
-using BridgeH = Bridge&;
+using BridgeH = Sptr<Bridge>;
 
 inline bool Bridge::Begin() const __noexcept { return _begin; }
 inline void Bridge::SetBegin(const bool value) noexcept { _begin = value; }
@@ -159,6 +169,20 @@ inline const Mac& Bridge::Address() const noexcept { return _addr; }
 inline Mac& Bridge::GetAddress() noexcept { return _addr; }
 inline void Bridge::SetAddress(const Mac& value) noexcept { _addr = value; }
 
-} // End of Rstp namespace
+inline Result Bridge::FlushFdb(const u16 portNo) {
+    return _outInterface->FlushFdb(portNo);
+}
 
-#endif // BRIDGE_HPP
+inline Result Bridge::SetForwarding(const u16 portNo, const bool enable) {
+    return _outInterface->SetForwarding(portNo, enable);
+}
+
+inline Result Bridge::SetLearning(const u16 portNo, const bool enable) {
+    return _outInterface->SetLearning(portNo, enable);
+}
+
+inline Result Bridge::SendOutBpdu(const u16 portNo, ByteStreamH data) {
+    return _outInterface->SendOutBpdu(portNo, data);
+}
+
+} // End of Stp namespace

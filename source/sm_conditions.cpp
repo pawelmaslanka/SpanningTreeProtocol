@@ -6,8 +6,8 @@
 namespace Stp {
 namespace SmConditions {
 
-enum Port::RcvdInfo RcvInfo(PortH port) noexcept {
-    if ((u8)Bpdu::Type::Invalid != port.RxBpdu().BpduType()) {
+enum Port::RcvdInfo RcvInfo(Port& port) noexcept {
+    if (+Bpdu::Type::Invalid != port.RxBpdu().BpduType()) {
         // Decodes the message priority and timer values from the received BPDU storing them in the
         // msgPriority and msgTimes variables.
         port.GetMsgPriority().SetRootBridgeId(BridgeId(port.RxBpdu().RootIdentifier()));
@@ -42,12 +42,17 @@ enum Port::RcvdInfo RcvInfo(PortH port) noexcept {
         }
 
         if (port.MsgPriority() == port.PortPriority()) {
-            if ((port.MsgTimes().ForwardDelay() != port.PortTimes().ForwardDelay())
-                    || (port.MsgTimes().HelloTime() != port.PortTimes().HelloTime())
-                    || (port.MsgTimes().MaxAge() != port.PortTimes().MaxAge())
-                    || (port.MsgTimes().MessageAge() != port.PortTimes().MessageAge())) {
-                /// @note 17.21.8 a2)
-                result = Port::RcvdInfo::SuperiorDesignatedInfo;
+            if (port.MsgTimes().ForwardDelay() != port.PortTimes().ForwardDelay()) {
+                result = Port::RcvdInfo::SuperiorDesignatedInfo; ///< 17.21.8 a2)
+            }
+            else if (port.MsgTimes().HelloTime() != port.PortTimes().HelloTime()) {
+                result = Port::RcvdInfo::SuperiorDesignatedInfo; ///< 17.21.8 a2)
+            }
+            else if (port.MsgTimes().MaxAge() != port.PortTimes().MaxAge()) {
+                result = Port::RcvdInfo::SuperiorDesignatedInfo; ///< 17.21.8 a2)
+            }
+            else if (port.MsgTimes().MessageAge() != port.PortTimes().MessageAge()) {
+                result = Port::RcvdInfo::SuperiorDesignatedInfo; ///< 17.21.8 a2)
             }
             /// @todo Check if correct is apply this condition
             // According to clause 13.26.6 b2) of 802.1Q-2005
@@ -74,6 +79,21 @@ enum Port::RcvdInfo RcvInfo(PortH port) noexcept {
     }
 
     return result;
+}
+
+bool ReRooted(Bridge& bridge, const Port& port) noexcept {
+    for (const auto& otherPortMapIt : bridge.GetAllPorts()) {
+        if (otherPortMapIt.second->PortId().PortNum() == port.PortId().PortNum()) {
+            continue;
+        }
+        else if (SmTimers::TimedOut(port.GetSmTimersInstance().RrWhile())) {
+            continue;
+        }
+
+        return false;
+    }
+
+    return true;
 }
 
 } // namespace SmConditions

@@ -27,8 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 ***************************************************************************************************/
 
-#ifndef BRIDGE_ID_HPP
-#define BRIDGE_ID_HPP
+#pragma once
 
 // This project's headers
 #include "bpdu.hpp"
@@ -37,8 +36,7 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace Stp {
 
-class BridgeId
-{
+class BridgeId {
 public:
     /**
      * @brief BridgeId
@@ -64,16 +62,16 @@ public:
     Mac& GetAddress() noexcept;
     void SetAddress(const Mac& value) noexcept;
 
-    uint16_t Extension() const noexcept;
-    void SetExtension(const uint16_t value) noexcept;
+    u16 Extension() const noexcept;
+    void SetExtension(const u16 value) noexcept;
 
-    uint16_t Priority() const noexcept;
-    void SetPriority(const uint16_t value) noexcept;
+    u16 Priority() const noexcept;
+    void SetPriority(const u16 value) noexcept;
 
 private:
     Mac _addr;
-    uint16_t _ext;
-    uint16_t _priority;
+    u16 _ext;
+    u16 _priority;
 };
 
 inline BridgeId::BridgeId() noexcept : BridgeId({{ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF }}) { }
@@ -82,12 +80,10 @@ inline const Mac& BridgeId::Address() const noexcept { return _addr; }
 inline Mac& BridgeId::GetAddress() noexcept { return _addr; }
 inline void BridgeId::SetAddress(const Mac& value) noexcept { _addr = value; }
 
-inline uint16_t BridgeId::Extension() const noexcept { return _ext; }
-inline void BridgeId::SetExtension(const uint16_t value) noexcept { _ext = value; }
+inline u16 BridgeId::Extension() const noexcept { return _ext; }
+inline void BridgeId::SetExtension(const u16 value) noexcept { _ext = value; }
 
-inline uint16_t BridgeId::Priority() const noexcept { return _priority; }
-inline void BridgeId::SetPriority(const uint16_t value) noexcept { _priority = value; }
+inline u16 BridgeId::Priority() const noexcept { return _priority; }
+inline void BridgeId::SetPriority(const u16 value) noexcept { _priority = value; }
 
 } // namespace Rstp
-
-#endif // BRIDGE_ID_HPP

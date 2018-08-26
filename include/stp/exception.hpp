@@ -8,15 +8,15 @@
 #include <string>
 
 namespace Stp {
-    /**
-     * @brief 
-     * 
-     */
+/**
+ * @brief
+ *
+ */
 class SmException : std::runtime_error {
-  public:
+public:
     /**
      * @brief Construct a new SMException object
-     * 
+     *
      * @param msg Message to put in exception
      * @param func Name of function that throws this exception
      * @param line Number of line where the exception has been thrown
@@ -29,4 +29,4 @@ inline SmException::SmException(std::string&& msg, std::string&& func, const int
     // Nothing more to do
 }
 
-} // namespace SpanningTree
+} // namespace Stp

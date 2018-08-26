@@ -4,6 +4,7 @@
 #include "sut_machine.hpp"
 #include <mock/bridge.hpp>
 #include <mock/bridge_detection_sm.hpp>
+#include <mock/management.hpp>
 
 // GTest headers
 #include <gtest/gtest.h>
@@ -12,21 +13,22 @@ using namespace Stp::BridgeDetection;
 
 class BdmSutMachine : public SutMachine {
 public:
-    BdmSutMachine(sptr<Mock::Bridge> bridge, sptr<Stp::Port> port)
+    BdmSutMachine(Stp::Sptr<Mock::Bridge> bridge, Stp::PortH port)
         : SutMachine{ bridge, port }, _mockBridge{ bridge }, _port{ port } {}
     Mock::Bridge& BridgeInstance() const noexcept override {
         return *_mockBridge;
     }
 
 private:
-    sptr<Mock::Bridge> _mockBridge;
-    sptr<Stp::Port> _port;
+    Stp::Sptr<Mock::Bridge> _mockBridge;
+    Stp::PortH _port;
 };
 
 class BridgeDetectionTest : public ::testing::Test {
 protected:
     BridgeDetectionTest()
-        : _sutMachine{ std::make_shared<Mock::Bridge>(),
+        : _sutMachine{ std::make_shared<Mock::Bridge>(
+                           std::make_shared<Mock::OutInterface>()),
                        std::make_shared<Stp::Port>() } {}
 
     BdmSutMachine _sutMachine;

@@ -7,19 +7,19 @@
 namespace Stp {
 namespace BridgeDetection {
 
-void BdmState::EdgeAction(MachineH machine) {
+void BdmState::EdgeAction(Machine& machine) {
     machine.PortInstance().SetOperEdge(true);
 }
 
-void BdmState::NotEdgeAction(MachineH machine) {
+void BdmState::NotEdgeAction(Machine& machine) {
     machine.PortInstance().SetOperEdge(false);
 }
 
-StateH BeginState::Instance() {
+State& BeginState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(BeginState);
 }
 
-void BeginState::Execute(MachineH machine) {
+void BeginState::Execute(Machine& machine) {
     if (not machine.BridgeInstance().Begin()) {
         return;
     }
@@ -34,7 +34,7 @@ void BeginState::Execute(MachineH machine) {
     }
 }
 
-bool BeginState::GoToEdge(MachineH machine) {
+bool BeginState::GoToEdge(Machine& machine) {
     if (not SmConditions::AdminEdge(machine.PortInstance())) {
         return false;
     }
@@ -43,18 +43,18 @@ bool BeginState::GoToEdge(MachineH machine) {
     }
 }
 
-StateH EdgeState::Instance() {
+State& EdgeState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(EdgeState);
 }
 
-void EdgeState::Execute(MachineH machine) {
+void EdgeState::Execute(Machine& machine) {
     if (GoToNotEdge(machine)) {
         NotEdgeAction(machine);
         ChangeState(machine, NotEdgeState::Instance());
     }
 }
 
-bool EdgeState::GoToNotEdge(MachineH machine) {
+bool EdgeState::GoToNotEdge(Machine& machine) {
     if (not machine.PortInstance().OperEdge()) {
         return true;
     }
@@ -69,18 +69,18 @@ bool EdgeState::GoToNotEdge(MachineH machine) {
     return true;
 }
 
-StateH NotEdgeState::Instance() {
+State& NotEdgeState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(NotEdgeState);
 }
 
-void NotEdgeState::Execute(MachineH machine) {
+void NotEdgeState::Execute(Machine& machine) {
     if (GoToEdge(machine)) {
         EdgeAction(machine);
         ChangeState(machine, EdgeState::Instance());
     }
 }
 
-bool NotEdgeState::GoToEdge(MachineH machine) {
+bool NotEdgeState::GoToEdge(Machine& machine) {
     if (not machine.PortInstance().PortEnabled()) {
         if (SmConditions::AdminEdge(machine.PortInstance())) {
             return true;
@@ -104,4 +104,4 @@ bool NotEdgeState::GoToEdge(MachineH machine) {
 }
 
 } // namespace BridgeDetection
-} // namespace SpanningTree
+} // namespace Stp

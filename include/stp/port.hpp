@@ -27,8 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 ***************************************************************************************************/
 
-#ifndef PORT_HPP
-#define PORT_HPP
+#pragma once
 
 // This project's headers
 #include "bpdu.hpp"
@@ -245,36 +244,6 @@ public:
     SmTimers& SmTimersInstance() noexcept;
     void SetSmTimers(const SmTimers& value) noexcept;
 
-    enum PtiState PtiState() const noexcept;
-    void SetPtiState(const enum PtiState value) noexcept;
-
-    enum PrxState PrxState() const noexcept;
-    void SetPrxState(const enum PrxState value) noexcept;
-
-    enum PpmState PpmState() const noexcept;
-    void SetPpmState(const enum PpmState value) noexcept;
-
-    enum BdmState BdmState() const noexcept;
-    void SetBdmState(const enum BdmState value) noexcept;
-
-    enum PtxState PtxState() const noexcept;
-    void SetPtxState(const enum PtxState value) noexcept;
-
-    enum PimState PimState() const noexcept;
-    void SetPimState(const enum PimState value) noexcept;
-
-    enum PrsState PrsState() const noexcept;
-    void SetPrsState(const enum PrsState value) noexcept;
-
-    enum PrtState PrtState() const noexcept;
-    void SetPrtState(const enum PrtState value) noexcept;
-
-    enum PstState PstState() const noexcept;
-    void SetPstState(const enum PstState value) noexcept;
-
-    enum TcmState TcmState() const noexcept;
-    void SetTcmState(const enum TcmState value) noexcept;
-
 private:
     /// @brief 17.19.1
     u16 _ageingTime;
@@ -415,33 +384,12 @@ private:
 
     /// @brief Timer used by State Machine
     SmTimers _smTimers;
-
-    enum PtiState _ptiState;
-
-    enum PrxState _prxState;
-
-    enum PpmState _ppmState;
-
-    enum BdmState _bdmState;
-
-    enum PtxState _ptxState;
-
-    enum PimState _pimState;
-
-    enum PrsState _prsState;
-
-    enum PrtState _prtState;
-
-    enum PstState _pstState;
-
-    enum TcmState _tcmState;
-
 }; // End of 'Port' class declaration
 
-using PortH = Port&;
+using PortH = Sptr<Port>;
 
 inline u32 Port::AgeingTime() const noexcept { return _ageingTime; }
-inline void Port::SetAgeingTime(const u32 value) noexcept { _ageingTime = value; }
+inline void Port::SetAgeingTime(const u32 value) noexcept { _ageingTime = static_cast<u16>(value); }
 inline void Port::DecAgeingTime() noexcept { dec(_ageingTime); }
 
 inline bool Port::Agree() const noexcept { return _agree; }
@@ -579,15 +527,14 @@ inline void Port::SetTick(const bool value) noexcept { _tick = value; }
 
 inline u8 Port::TxCount() const noexcept { return _txCount; }
 inline void Port::SetTxCount(const u8 value) noexcept { _txCount = value; }
-inline void Port::DecTxCount() noexcept
-{
+inline void Port::DecTxCount() noexcept {
     if (_txCount) {
         --_txCount;
     }
 }
-inline void Port::IncTxCount() noexcept
-{
-    if (not (_txCount == std::numeric_limits<uint8_t>::max())) {
+
+inline void Port::IncTxCount() noexcept {
+    if (not (_txCount == std::numeric_limits<u8>::max())) {
         ++_txCount;
     }
 }
@@ -603,36 +550,4 @@ inline SmTimers& Port::SmTimersInstance() noexcept { return _smTimers; }
 inline const SmTimers& Port::GetSmTimersInstance() const noexcept { return _smTimers; }
 inline void Port::SetSmTimers(const SmTimers& value) noexcept { _smTimers = value; }
 
-inline enum PtiState Port::PtiState() const noexcept { return _ptiState; }
-inline void Port::SetPtiState(const enum PtiState value) noexcept { _ptiState = value; }
-
-inline enum PrxState Port::PrxState() const noexcept { return _prxState; }
-inline void Port::SetPrxState(const enum PrxState value) noexcept { _prxState = value; }
-
-inline enum PpmState Port::PpmState() const noexcept { return _ppmState; }
-inline void Port::SetPpmState(const enum PpmState value) noexcept { _ppmState = value; }
-
-inline enum BdmState Port::BdmState() const noexcept { return _bdmState; }
-inline void Port::SetBdmState(const enum BdmState value) noexcept { _bdmState = value; }
-
-inline enum PtxState Port::PtxState() const noexcept { return _ptxState; }
-inline void Port::SetPtxState(const enum PtxState value) noexcept { _ptxState = value; }
-
-inline enum PimState Port::PimState() const noexcept { return _pimState; }
-inline void Port::SetPimState(const enum PimState value) noexcept { _pimState = value; }
-
-inline enum PrsState Port::PrsState() const noexcept { return _prsState; }
-inline void Port::SetPrsState(const enum PrsState value) noexcept { _prsState = value; }
-
-inline enum PrtState Port::PrtState() const noexcept { return _prtState; }
-inline void Port::SetPrtState(const enum PrtState value) noexcept { _prtState = value; }
-
-inline enum PstState Port::PstState() const noexcept { return _pstState; }
-inline void Port::SetPstState(const enum PstState value) noexcept { _pstState = value; }
-
-inline enum TcmState Port::TcmState() const noexcept { return _tcmState; }
-inline void Port::SetTcmState(const enum TcmState value) noexcept { _tcmState = value; }
-
-} // End of 'Rstp' namespace declaration
-
-#endif // PORT_HPP
+} // namespace Stp

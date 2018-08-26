@@ -131,16 +131,16 @@ private:
     bool AllSynced() noexcept;
 
     /// @brief 17.20.4
-    uint16_t EdgeDelay(const Port& port) const noexcept;
+    u16 EdgeDelay(const Port& port) const noexcept;
 
     /// @brief 17.20.5
-    uint16_t ForwardDelay(const Port &port) const noexcept;
+    u16 ForwardDelay(const Port &port) const noexcept;
 
     /// @brief 17.20.6
-    uint16_t FwdDelay(const Port& port) const noexcept;
+    u16 FwdDelay(const Port& port) const noexcept;
 
     /// @brief 17.20.7
-    uint16_t HelloTime(const Port& port) const noexcept;
+    u16 HelloTime(const Port& port) const noexcept;
 
     /// @brief 17.20.8
     Time::u16 MaxAge(const Port& port) const noexcept;
@@ -158,7 +158,7 @@ private:
     bool StpVersion() const noexcept;
 
     /// @brief 17.20.13
-    uint8_t TxHoldCount() const noexcept;
+    u8 TxHoldCount() const noexcept;
 
     /// @brief 17.21.1
     bool BetterOrSameInfo(const Port& port, const Port::Info newInfoIs) const noexcept;
@@ -235,7 +235,7 @@ private:
     /// @brief 17.21.25
     void UpdtRolesTree() noexcept;
 
-    //    std::unordered_map<uint16_t, std::unique_ptr<Port>> _ports;
+    //    std::unordered_map<u16, std::unique_ptr<Port>> _ports;
     Bridge _bridge;
     std::vector<Port>& _ports;
     Management& _interface;
@@ -251,12 +251,12 @@ inline bool SpanningTreeProtocol::AutoEdge(const Port& port) const noexcept
     return port.autoEdge;
 }
 
-inline uint16_t SpanningTreeProtocol::EdgeDelay(const Port& port) const noexcept
+inline u16 SpanningTreeProtocol::EdgeDelay(const Port& port) const noexcept
 {
     return port.operPointToPointMAC ? MigrateTime() : MaxAge(port);
 }
 
-inline uint16_t SpanningTreeProtocol::ForwardDelay(const Port& port) const noexcept
+inline u16 SpanningTreeProtocol::ForwardDelay(const Port& port) const noexcept
 {
     return port.SendRstp() ? HelloTime(port) : FwdDelay(port);
 }
@@ -264,15 +264,15 @@ inline uint16_t SpanningTreeProtocol::ForwardDelay(const Port& port) const noexc
 inline u16 SpanningTreeProtocol::MigrateTime() const noexcept
 {
     /// @todo Make it dynamic managementable
-    return (u16)Time::RecommendedValue::MigrateTime;
+    return +Time::RecommendedValue::MigrateTime;
 }
 
-inline uint16_t SpanningTreeProtocol::FwdDelay(const Port& port) const noexcept
+inline u16 SpanningTreeProtocol::FwdDelay(const Port& port) const noexcept
 {
     return port.DesignatedTimes().ForwardDelay();
 }
 
-inline uint16_t SpanningTreeProtocol::HelloTime(const Port& port) const noexcept
+inline u16 SpanningTreeProtocol::HelloTime(const Port& port) const noexcept
 {
     return port.DesignatedTimes().HelloTime();
 }
@@ -299,10 +299,10 @@ inline Time::u16 SpanningTreeProtocol::MaxAge(const Port& port) const noexcept
     return port.DesignatedTimes().MaxAge();
 }
 
-inline uint8_t SpanningTreeProtocol::TxHoldCount() const noexcept
+inline u8 SpanningTreeProtocol::TxHoldCount() const noexcept
 {
     /// @todo Make it dynamic managementable
-    return (uint8_t)Port::RecommendedValue::TransmitHoldCount;
+    return (u8)Port::RecommendedValue::TransmitHoldCount;
 }
 
 } // End of Rstp namespace

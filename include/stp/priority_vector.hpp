@@ -27,8 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 ***************************************************************************************************/
 
-#ifndef PRIORITY_VECTOR_HPP
-#define PRIORITY_VECTOR_HPP
+#pragma once
 
 // This project's headers
 #include "bpdu.hpp"
@@ -43,8 +42,7 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace Stp {
 
-class PriorityVector
-{
+class PriorityVector {
 public:
     /// @brief Table 17-2
     /// @todo Make it dynamic configurable
@@ -118,6 +116,4 @@ inline void PriorityVector::SetDesignatedBridgeId(const BridgeId& value) noexcep
 inline const PortId& PriorityVector::DesignatedPortId() const noexcept { return _portId; }
 inline void PriorityVector::SetDesignatedPortId(const PortId& value) noexcept { _portId = value; }
 
-} // End of 'Rstp' namespace declaration
-
-#endif // PRIORITY_VECTOR_HPP
+} // namespace Stp

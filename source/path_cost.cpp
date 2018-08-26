@@ -32,8 +32,7 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace Stp {
 
-u32 PathCost::SpeedMbToPathCostValue(const u32 speedMb) noexcept
-{
+u32 PathCost::SpeedMbToPathCostValue(const u32 speedMb) noexcept {
     u32 pathCost;
 
     // Specification says that recommended value equal to 200000000 should be assign to link speed
@@ -71,18 +70,16 @@ u32 PathCost::SpeedMbToPathCostValue(const u32 speedMb) noexcept
 }
 
 PathCost::PathCost(const u32 speedMb) noexcept
-    : _value{ SpeedMbToPathCostValue(speedMb) }
-{
+    : _value{ SpeedMbToPathCostValue(speedMb) } {
     // Nothing more to do
 }
 
-u32 PathCost::ConvertToBpduData() const noexcept
-{
+u32 PathCost::ConvertToBpduData() const noexcept {
     BpduData bpdu = {{ 0 }};
-    bpdu.Fields.MostSignificant1st = static_cast<u8>(_value / (u32)ShiftOctet::CpuLeastSignificant4th);
-    bpdu.Fields.MostSignificant2nd = static_cast<u8>(_value / (u32)ShiftOctet::CpuLeastSignificant3rd);
-    bpdu.Fields.MostSignificant3rd = static_cast<u8>(_value / (u32)ShiftOctet::CpuLeastSignificant2nd);
-    bpdu.Fields.MostSignificant4th = static_cast<u8>(_value / (u32)ShiftOctet::CpuLeastSignificant1st);
+    bpdu.Fields.MostSignificant1st = static_cast<u8>(_value / +ShiftOctet::CpuLeastSignificant4th);
+    bpdu.Fields.MostSignificant2nd = static_cast<u8>(_value / +ShiftOctet::CpuLeastSignificant3rd);
+    bpdu.Fields.MostSignificant3rd = static_cast<u8>(_value / +ShiftOctet::CpuLeastSignificant2nd);
+    bpdu.Fields.MostSignificant4th = static_cast<u8>(_value / +ShiftOctet::CpuLeastSignificant1st);
 
     return reinterpret_cast<u32*>(&bpdu.stream[0])[0];
 }

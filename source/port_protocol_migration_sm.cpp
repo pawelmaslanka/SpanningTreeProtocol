@@ -7,42 +7,42 @@
 namespace Stp {
 namespace PortProtocolMigration {
 
-void PpmState::CheckingRstpAction(MachineH machine) {
+void PpmState::CheckingRstpAction(Machine& machine) {
     machine.PortInstance().SetMcheck(false);
     machine.PortInstance().SetSendRstp(SmConditions::RstpVersion(machine.BridgeInstance()));
     machine.PortInstance().SmTimersInstance().SetMdelayWhile(PerfParams::MigrateTime());
 }
 
-void PpmState::SelectingStpAction(MachineH machine) {
+void PpmState::SelectingStpAction(Machine& machine) {
     machine.PortInstance().SetSendRstp(false);
     machine.PortInstance().SmTimersInstance().SetMdelayWhile(PerfParams::MigrateTime());
 }
 
-void PpmState::SensingAction(MachineH machine) {
+void PpmState::SensingAction(Machine& machine) {
     machine.PortInstance().SetRcvdRstp(false);
     machine.PortInstance().SetRcvdStp(false);
 }
 
-StateH BeginState::Instance() {
+State& BeginState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(BeginState);
 }
 
-void BeginState::Execute(MachineH machine) {
+void BeginState::Execute(Machine& machine) {
     if (GoToCheckingRstp(machine)) {
         CheckingRstpAction(machine);
         ChangeState(machine, CheckingRstpState::Instance());
     }
 }
 
-bool BeginState::GoToCheckingRstp(MachineH machine) {
+bool BeginState::GoToCheckingRstp(Machine& machine) {
     return machine.BridgeInstance().Begin();
 }
 
-StateH CheckingRstpState::Instance() {
+State& CheckingRstpState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(CheckingRstpState);
 }
 
-void CheckingRstpState::Execute(MachineH machine) {
+void CheckingRstpState::Execute(Machine& machine) {
     if (GoToSensing(machine)) {
         SensingAction(machine);
         ChangeState(machine, SensingState::Instance());
@@ -53,7 +53,7 @@ void CheckingRstpState::Execute(MachineH machine) {
     }
 }
 
-bool CheckingRstpState::GoToCheckingRstp(MachineH machine) {
+bool CheckingRstpState::GoToCheckingRstp(Machine& machine) {
     if (machine.PortInstance().PortEnabled()) {
         return false;
     }
@@ -64,15 +64,15 @@ bool CheckingRstpState::GoToCheckingRstp(MachineH machine) {
     return true;
 }
 
-bool CheckingRstpState::GoToSensing(MachineH machine) {
+bool CheckingRstpState::GoToSensing(Machine& machine) {
     return SmTimers::TimedOut(machine.PortInstance().SmTimersInstance().MdelayWhile());
 }
 
-StateH SensingState::Instance() {
+State& SensingState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(SensingState);
 }
 
-void SensingState::Execute(MachineH machine) {
+void SensingState::Execute(Machine& machine) {
     if (GoToCheckingRstp(machine)) {
         CheckingRstpAction(machine);
         ChangeState(machine, CheckingRstpState::Instance());
@@ -83,7 +83,7 @@ void SensingState::Execute(MachineH machine) {
     }
 }
 
-bool SensingState::GoToCheckingRstp(MachineH machine) {
+bool SensingState::GoToCheckingRstp(Machine& machine) {
     if (not machine.PortInstance().PortEnabled()) {
         return true;
     }
@@ -105,7 +105,7 @@ bool SensingState::GoToCheckingRstp(MachineH machine) {
     return true;
 }
 
-bool SensingState::GoToSelectingStp(MachineH machine) {
+bool SensingState::GoToSelectingStp(Machine& machine) {
     if (not machine.PortInstance().SendRstp()) {
         return false;
     }
@@ -116,18 +116,18 @@ bool SensingState::GoToSelectingStp(MachineH machine) {
     return true;
 }
 
-StateH SelectingStpState::Instance() {
+State& SelectingStpState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(SelectingStpState);
 }
 
-void SelectingStpState::Execute(MachineH machine) {
+void SelectingStpState::Execute(Machine& machine) {
     if (GoToSensing(machine)) {
         SensingAction(machine);
         ChangeState(machine, SensingState::Instance());
     }
 }
 
-bool SelectingStpState::GoToSensing(MachineH machine) {
+bool SelectingStpState::GoToSensing(Machine& machine) {
     if (SmTimers::TimedOut(machine.PortInstance().SmTimersInstance().MdelayWhile())) {
         return true;
     }
@@ -144,4 +144,4 @@ bool SelectingStpState::GoToSensing(MachineH machine) {
 }
 
 } // namespace PortProtocolMigration
-} // namespace SpanningTree
+} // namespace Stp

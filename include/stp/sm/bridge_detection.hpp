@@ -8,47 +8,47 @@ namespace BridgeDetection {
 
 class BdmState : public State {
 protected:
-    __virtual void EdgeAction(MachineH machine);
-    __virtual void NotEdgeAction(MachineH machine);
+    __virtual void EdgeAction(Machine& machine);
+    __virtual void NotEdgeAction(Machine& machine);
 };
 
 class BeginState : public BdmState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     BeginState() = default;
-    __virtual bool GoToEdge(MachineH machine);
+    __virtual bool GoToEdge(Machine& machine);
     std::string Name() override;
 };
 
 class EdgeState : public BdmState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     EdgeState() = default;
-    __virtual bool GoToNotEdge(MachineH machine);
+    __virtual bool GoToNotEdge(Machine& machine);
     std::string Name() override;
 };
 
 class NotEdgeState : public BdmState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     NotEdgeState() = default;
-    __virtual bool GoToEdge(MachineH machine);
+    __virtual bool GoToEdge(Machine& machine);
     std::string Name() override;
 };
 
-#define PRX_PREFIX_NAME "BDM @ "
-constexpr auto kBeginStateName = PRX_PREFIX_NAME "BEGIN";
-constexpr auto kEdgeStateName = PRX_PREFIX_NAME "EDGE";
-constexpr auto kNotEdgeStateName = PRX_PREFIX_NAME "NOT_EDGE";
+#define BDM_PREFIX_NAME "BDM @ "
+constexpr auto kBeginStateName = BDM_PREFIX_NAME "BEGIN";
+constexpr auto kEdgeStateName = BDM_PREFIX_NAME "EDGE";
+constexpr auto kNotEdgeStateName = BDM_PREFIX_NAME "NOT_EDGE";
 
 inline std::string BeginState::Name() {
     return kBeginStateName;
@@ -63,4 +63,4 @@ inline std::string NotEdgeState::Name() {
 }
 
 } // namespace BridgeDetection
-} // namespace SpanningTree
+} // namespace Stp

@@ -6,7 +6,7 @@
 namespace Stp {
 namespace PortInformation {
 
-void PimState::DisabledAction(MachineH machine) {
+void PimState::DisabledAction(Machine& machine) {
     machine.PortInstance().SetRcvdMsg(false);
     machine.PortInstance().SetProposing(false);
     machine.PortInstance().SetProposed(false);
@@ -18,13 +18,13 @@ void PimState::DisabledAction(MachineH machine) {
     machine.PortInstance().SetSelected(false);
 }
 
-void PimState::AgedAction(MachineH machine) {
+void PimState::AgedAction(Machine& machine) {
     machine.PortInstance().SetInfoIs(Port::Info::Aged);
     machine.PortInstance().SetReselect(true);
     machine.PortInstance().SetSelected(false);
 }
 
-void PimState::UpdateAction(MachineH machine) {
+void PimState::UpdateAction(Machine& machine) {
     machine.PortInstance().SetProposing(false);
     machine.PortInstance().SetProposed(false);
     bool agreed = machine.PortInstance().Agreed();
@@ -41,7 +41,7 @@ void PimState::UpdateAction(MachineH machine) {
     machine.PortInstance().SetNewInfo(true);
 }
 
-void PimState::SuperiorDesignatedAction(MachineH machine) {
+void PimState::SuperiorDesignatedAction(Machine& machine) {
     machine.PortInstance().SetAgreed(false);
     machine.PortInstance().SetProposing(false);
     SmProcedures::RecordProposal(machine.PortInstance());
@@ -59,60 +59,60 @@ void PimState::SuperiorDesignatedAction(MachineH machine) {
     machine.PortInstance().SetRcvdMsg(false);
 }
 
-void PimState::RepeatedDesignatedAction(MachineH machine) {
+void PimState::RepeatedDesignatedAction(Machine& machine) {
     SmProcedures::RecordProposal(machine.PortInstance());
     SmProcedures::SetTcFlags(machine.PortInstance());
     SmProcedures::UpdtRcvdInfoWhile(machine.PortInstance());
     machine.PortInstance().SetRcvdMsg(false);
 }
 
-void PimState::InferiorDesignatedAction(MachineH machine) {
+void PimState::InferiorDesignatedAction(Machine& machine) {
     SmProcedures::RecordDispute(machine.PortInstance());
     machine.PortInstance().SetRcvdMsg(false);
 }
 
-void PimState::NotDesignatedAction(MachineH machine) {
+void PimState::NotDesignatedAction(Machine& machine) {
     SmProcedures::RecordAgreement(machine.BridgeInstance(), machine.PortInstance());
     SmProcedures::SetTcFlags(machine.PortInstance());
     machine.PortInstance().SetRcvdMsg(false);
 }
 
-void PimState::OtherAction(MachineH machine) {
+void PimState::OtherAction(Machine& machine) {
     machine.PortInstance().SetRcvdMsg(false);
 }
 
-void PimState::CurrentAction(MachineH machine) {
+void PimState::CurrentAction(Machine& machine) {
     std::ignore = machine;
 }
 
-void PimState::ReceiveAction(MachineH machine) {
+void PimState::ReceiveAction(Machine& machine) {
     machine.PortInstance().SetRcvdInfo(SmConditions::RcvInfo(machine.PortInstance()));
 }
 
-bool PimState::GoToCurrent(MachineH machine) {
+bool PimState::GoToCurrent(Machine& machine) {
     std::ignore = machine;
     return true; // UCT
 }
 
-void PimState::CurrentUctExecute(MachineH machine) {
+void PimState::CurrentUctExecute(Machine& machine) {
     if (GoToCurrent(machine)) {
         CurrentAction(machine);
         ChangeState(machine, CurrentState::Instance());
     }
 }
 
-StateH BeginState::Instance() {
+State& BeginState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(BeginState);
 }
 
-void BeginState::Execute(MachineH machine) {
+void BeginState::Execute(Machine& machine) {
     if (GoToDisabled(machine)) {
         DisabledAction(machine);
         ChangeState(machine, DisabledState::Instance());
     }
 }
 
-bool BeginState::GoToDisabled(MachineH machine) {
+bool BeginState::GoToDisabled(Machine& machine) {
     if (machine.BridgeInstance().Begin()) {
         return true;
     }
@@ -127,37 +127,37 @@ bool BeginState::GoToDisabled(MachineH machine) {
     return true;
 }
 
-StateH DisabledState::Instance() {
+State& DisabledState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(DisabledState);
 }
 
-void DisabledState::Execute(MachineH machine) {
+void DisabledState::Execute(Machine& machine) {
     if (GoToAged(machine)) {
         AgedAction(machine);
         ChangeState(machine, AgedState::Instance());
     }
 }
 
-bool DisabledState::GoToDisabled(MachineH machine) {
+bool DisabledState::GoToDisabled(Machine& machine) {
     return machine.PortInstance().RcvdMsg();
 }
 
-bool DisabledState::GoToAged(MachineH machine) {
+bool DisabledState::GoToAged(Machine& machine) {
     return machine.PortInstance().PortEnabled();
 }
 
-StateH AgedState::Instance() {
+State& AgedState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(AgedState);
 }
 
-void AgedState::Execute(MachineH machine) {
+void AgedState::Execute(Machine& machine) {
     if (GoToUpdate(machine)) {
         UpdateAction(machine);
         ChangeState(machine, UpdateState::Instance());
     }
 }
 
-bool AgedState::GoToUpdate(MachineH machine) {
+bool AgedState::GoToUpdate(Machine& machine) {
     if (not machine.PortInstance().Selected()) {
         return false;
     }
@@ -168,66 +168,66 @@ bool AgedState::GoToUpdate(MachineH machine) {
     return true;
 }
 
-StateH UpdateState::Instance() {
+State& UpdateState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(UpdateState);
 }
 
-void UpdateState::Execute(MachineH machine) {
+void UpdateState::Execute(Machine& machine) {
     CurrentUctExecute(machine);
 }
 
-StateH SuperiorDesignatedState::Instance() {
+State& SuperiorDesignatedState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(SuperiorDesignatedState);
 }
 
-void SuperiorDesignatedState::Execute(MachineH machine) {
+void SuperiorDesignatedState::Execute(Machine& machine) {
     CurrentUctExecute(machine);
 }
 
-StateH RepeatedDesignatedState::Instance() {
+State& RepeatedDesignatedState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(RepeatedDesignatedState);
 }
 
-void RepeatedDesignatedState::Execute(MachineH machine) {
+void RepeatedDesignatedState::Execute(Machine& machine) {
     CurrentUctExecute(machine);
 }
 
-StateH InferiorDesignatedState::Instance() {
+State& InferiorDesignatedState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(InferiorDesignatedState);
 }
 
-void InferiorDesignatedState::Execute(MachineH machine) {
+void InferiorDesignatedState::Execute(Machine& machine) {
     CurrentUctExecute(machine);
 }
 
-StateH NotDesignatedState::Instance() {
+State& NotDesignatedState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(NotDesignatedState);
 }
 
-void NotDesignatedState::Execute(MachineH machine) {
+void NotDesignatedState::Execute(Machine& machine) {
     CurrentUctExecute(machine);
 }
 
-StateH OtherState::Instance() {
+State& OtherState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(OtherState);
 }
 
-void OtherState::Execute(MachineH machine) {
+void OtherState::Execute(Machine& machine) {
     CurrentUctExecute(machine);
 }
 
-StateH CurrentState::Instance() {
+State& CurrentState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(CurrentState);
 }
 
-void CurrentState::Execute(MachineH machine) {
+void CurrentState::Execute(Machine& machine) {
     if (GoToReceive(machine)) {
         ReceiveAction(machine);
         ChangeState(machine, ReceiveState::Instance());
     }
 }
 
-bool CurrentState::GoToUpdate(MachineH machine) {
+bool CurrentState::GoToUpdate(Machine& machine) {
     if (not machine.PortInstance().Selected()) {
         return false;
     }
@@ -238,7 +238,7 @@ bool CurrentState::GoToUpdate(MachineH machine) {
     return true;
 }
 
-bool CurrentState::GoToAged(MachineH machine) {
+bool CurrentState::GoToAged(Machine& machine) {
     if (Port::Info::Received != machine.PortInstance().InfoIs()) {
         return false;
     }
@@ -255,7 +255,7 @@ bool CurrentState::GoToAged(MachineH machine) {
     return true;
 }
 
-bool CurrentState::GoToReceive(MachineH machine) {
+bool CurrentState::GoToReceive(Machine& machine) {
     if (not machine.PortInstance().RcvdMsg()) {
         return false;
     }
@@ -266,11 +266,11 @@ bool CurrentState::GoToReceive(MachineH machine) {
     return true;
 }
 
-StateH ReceiveState::Instance() {
+State& ReceiveState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(ReceiveState);
 }
 
-void ReceiveState::Execute(MachineH machine) {
+void ReceiveState::Execute(Machine& machine) {
     if (GoToSuperiorDesignated(machine)) {
         SuperiorDesignatedAction(machine);
         ChangeState(machine, SuperiorDesignatedState::Instance());
@@ -293,23 +293,23 @@ void ReceiveState::Execute(MachineH machine) {
     }
 }
 
-bool ReceiveState::GoToSuperiorDesignated(MachineH machine) {
+bool ReceiveState::GoToSuperiorDesignated(Machine& machine) {
     return Port::RcvdInfo::SuperiorDesignatedInfo == machine.PortInstance().RcvdInfo();
 }
 
-bool ReceiveState::GoToRepeatedDesignated(MachineH machine) {
+bool ReceiveState::GoToRepeatedDesignated(Machine& machine) {
     return Port::RcvdInfo::RepeatedDesignatedInfo == machine.PortInstance().RcvdInfo();
 }
 
-bool ReceiveState::GoToInferiorDesignated(MachineH machine) {
+bool ReceiveState::GoToInferiorDesignated(Machine& machine) {
     return Port::RcvdInfo::InferiorDesignatedInfo == machine.PortInstance().RcvdInfo();
 }
 
-bool ReceiveState::GoToNotDesignated(MachineH machine) {
+bool ReceiveState::GoToNotDesignated(Machine& machine) {
     return Port::RcvdInfo::InferiorRootAlternateInfo == machine.PortInstance().RcvdInfo();
 }
 
-bool ReceiveState::GoToOther(MachineH machine) {
+bool ReceiveState::GoToOther(Machine& machine) {
     return Port::RcvdInfo::OtherInfo == machine.PortInstance().RcvdInfo();
 }
 

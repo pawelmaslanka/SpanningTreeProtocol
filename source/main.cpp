@@ -1,55 +1,33 @@
 #include "stp/sm/port_protocol_migration.hpp"
 //#include "mock.hpp"
+#include "stp/management.hpp"
 #include "stp/port.hpp"
+
+#include "stp/management.hpp"
 
 #include <iostream>
 
 using namespace Stp;
 using namespace std;
 
-int main() {
-    sptr<Stp::Bridge> bridge { make_shared<Stp::Bridge>() };
-    sptr<Stp::Port> port { make_shared<Stp::Port>() };
+class OutInterfaceImpl final : public OutInterface {
+public:
+    Result FlushFdb(const u16 portNo) { return Result::Success; }
+    Result SetForwarding(const u16 portNo, const bool enable) { return Result::Success; }
+    Result SetLearning(const u16 portNo, const bool enable) { return Result::Success; }
+    Result SendOutBpdu(const u16 portNo, ByteStreamH data) { return Result::Success; }
+};
 
-    Machine machine(bridge, port, PortProtocolMigration::BeginState::Instance());
-    machine.Run();
-    machine.Run();
-    machine.Run();
+class Logger : public std::ostream {
+public:
+    Logger() : std::ostream(std::cout.rdbuf()) {}
+};
+
+int main() {
+    LoggerH logger = std::make_shared<Logger>();
+    SystemH system = std::make_shared<System>(Mac{}, logger);
+    Stp::Management::RunStp(system, std::make_shared<OutInterfaceImpl>());
+    Stp::Management::AddPort(1, 10000, true);
 
     return 0;
 }
-//#include <iostream>
-//#include <array>
-//#include <vector>
-
-//#include "bpdu.hpp"
-//#include "lib.hpp"
-//#include "management.hpp"
-
-//using namespace std;
-//    using namespace Rstp;
-
-//class RstpInterfaceImpl : public Rstp::Management {
-//public:
-//    RstpInterfaceImpl() : Management(Mac({{ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF }})) { }
-//    virtual Rstp::Result PortForwarding(const u16 portNum, const bool on) override { return Rstp::Result::Success; }
-//    virtual Rstp::Result PortLearning(const u16 portNum, const bool on) override { return Rstp::Result::Success; }
-//    virtual Rstp::Result PortFdbFlush(const u16 portNum) override { return Rstp::Result::Success; }
-//    virtual Rstp::Result PortSendBpdu(const u16 portNum, const ByteStream& bpdu) override { return Rstp::Result::Success; }
-//};
-
-//int main()
-//{
-//    Management::Handler rstpInterface{ new RstpInterfaceImpl };
-
-//    Run(rstpInterface);
-
-//    Management::Action action;
-//    action.id = Management::Action::Id::AddNewPort;
-
-//    if (Failed(rstpInterface->AddNewPort(1, 1000, true))) {
-//        std::cout << "Failed to add new port" << std::endl;
-//    }
-
-//    return 0;
-//}

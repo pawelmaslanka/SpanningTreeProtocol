@@ -9,12 +9,12 @@
 namespace Stp {
 namespace PortTransmit {
 
-void PtxState::TransmitInitAction(MachineH machine) {
+void PtxState::TransmitInitAction(Machine& machine) {
     machine.PortInstance().SetNewInfo(true);
     machine.PortInstance().SetTxCount(0);
 }
 
-void PtxState::TransmitPeriodicAction(MachineH machine) {
+void PtxState::TransmitPeriodicAction(Machine& machine) {
     bool newInfo = machine.PortInstance().NewInfo();
 
     if (not newInfo) {
@@ -32,44 +32,44 @@ void PtxState::TransmitPeriodicAction(MachineH machine) {
     machine.PortInstance().SetNewInfo(newInfo);
 }
 
-void PtxState::TransmitConfigAction(MachineH machine) {
+void PtxState::TransmitConfigAction(Machine& machine) {
     machine.PortInstance().SetNewInfo(false);
-    SmProcedures::TxConfig(machine.PortInstance());
+    SmProcedures::TxConfig(machine.BridgeInstance(), machine.PortInstance());
     machine.PortInstance().IncTxCount();
     machine.PortInstance().SetTcAck(false);
 }
 
-void PtxState::TransmitTcnAction(MachineH machine) {
+void PtxState::TransmitTcnAction(Machine& machine) {
     machine.PortInstance().SetNewInfo(false);
-    SmProcedures::TxTcn(machine.PortInstance());
+    SmProcedures::TxTcn(machine.BridgeInstance(), machine.PortInstance());
     machine.PortInstance().IncTxCount();
 }
 
-void PtxState::TransmitRstpAction(MachineH machine) {
+void PtxState::TransmitRstpAction(Machine& machine) {
     machine.PortInstance().SetNewInfo(false);
-    SmProcedures::TxRstp(machine.PortInstance());
+    SmProcedures::TxRstp(machine.BridgeInstance(), machine.PortInstance());
     machine.PortInstance().IncTxCount();
     machine.PortInstance().SetTcAck(false);
 }
 
-inline bool PtxState::GoToIdle(MachineH machine) {
+inline bool PtxState::GoToIdle(Machine& machine) {
     std::ignore = machine;
     return true; // UCT
 }
 
-void PtxState::IdleAction(MachineH machine) {
+void PtxState::IdleAction(Machine& machine) {
     machine.PortInstance().SmTimersInstance().SetHelloWhen(
                 PerfParams::HelloTime(machine.PortInstance()));
 }
 
-void PtxState::IdleUctExecute(MachineH machine) {
+void PtxState::IdleUctExecute(Machine& machine) {
     if (GoToIdle(machine)) {
         IdleAction(machine);
         ChangeState(machine, IdleState::Instance());
     }
 }
 
-bool PtxState::TransitionQualified(MachineH machine) {
+bool PtxState::TransitionQualified(Machine& machine) {
     if (not machine.PortInstance().Selected()) {
         return false;
     }
@@ -81,66 +81,66 @@ bool PtxState::TransitionQualified(MachineH machine) {
     return true;
 }
 
-StateH BeginState::Instance() {
+State& BeginState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(BeginState);
 }
 
-void BeginState::Execute(MachineH machine) {
+void BeginState::Execute(Machine& machine) {
     if (GoToTransmitInit(machine)) {
         TransmitInitAction(machine);
         ChangeState(machine, TransmitInitState::Instance());
     }
 }
 
-bool BeginState::GoToTransmitInit(MachineH machine) {
+bool BeginState::GoToTransmitInit(Machine& machine) {
     return machine.BridgeInstance().Begin();
 }
 
-StateH TransmitInitState::Instance() {
+State& TransmitInitState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(TransmitInitState);
 }
 
-void TransmitInitState::Execute(MachineH machine) {
+void TransmitInitState::Execute(Machine& machine) {
     IdleUctExecute(machine);
 }
 
-StateH TransmitPeriodicState::Instance() {
+State& TransmitPeriodicState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(TransmitPeriodicState);
 }
 
-void TransmitPeriodicState::Execute(MachineH machine) {
+void TransmitPeriodicState::Execute(Machine& machine) {
     IdleUctExecute(machine);
 }
 
-StateH TransmitConfigState::Instance() {
+State& TransmitConfigState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(TransmitConfigState);
 }
 
-void TransmitConfigState::Execute(MachineH machine) {
+void TransmitConfigState::Execute(Machine& machine) {
     IdleUctExecute(machine);
 }
 
-StateH TransmitTcnState::Instance() {
+State& TransmitTcnState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(TransmitTcnState);
 }
 
-void TransmitTcnState::Execute(MachineH machine) {
+void TransmitTcnState::Execute(Machine& machine) {
     IdleUctExecute(machine);
 }
 
-StateH TransmitRstpState::Instance() {
+State& TransmitRstpState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(TransmitRstpState);
 }
 
-void TransmitRstpState::Execute(MachineH machine) {
+void TransmitRstpState::Execute(Machine& machine) {
     IdleUctExecute(machine);
 }
 
-StateH IdleState::Instance() {
+State& IdleState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(IdleState);
 }
 
-void IdleState::Execute(MachineH machine) {
+void IdleState::Execute(Machine& machine) {
     if (GoToTransmitPeriodic(machine)) {
         TransmitPeriodicAction(machine);
         ChangeState(machine, TransmitPeriodicState::Instance());
@@ -159,7 +159,7 @@ void IdleState::Execute(MachineH machine) {
     }
 }
 
-bool IdleState::GoToTransmitPeriodic(MachineH machine) {
+bool IdleState::GoToTransmitPeriodic(Machine& machine) {
     if (not TransitionQualified(machine)) {
         return false;
     }
@@ -170,7 +170,7 @@ bool IdleState::GoToTransmitPeriodic(MachineH machine) {
     return true;
 }
 
-bool IdleState::GoToTransmitConfig(MachineH machine) {
+bool IdleState::GoToTransmitConfig(Machine& machine) {
     if (not TransitionQualified(machine)) {
         return false;
     }
@@ -193,7 +193,7 @@ bool IdleState::GoToTransmitConfig(MachineH machine) {
     return true;
 }
 
-bool IdleState::GoToTransmitTcn(MachineH machine) {
+bool IdleState::GoToTransmitTcn(Machine& machine) {
     if (not TransitionQualified(machine)) {
         return false;
     }
@@ -216,7 +216,7 @@ bool IdleState::GoToTransmitTcn(MachineH machine) {
     return true;
 }
 
-bool IdleState::GoToTransmitRstp(MachineH machine) {
+bool IdleState::GoToTransmitRstp(Machine& machine) {
     if (not TransitionQualified(machine)) {
         return false;
     }
@@ -237,4 +237,4 @@ bool IdleState::GoToTransmitRstp(MachineH machine) {
 }
 
 } // namespace PortTransmit
-} // namespace SpanningTree
+} // namespace Stp

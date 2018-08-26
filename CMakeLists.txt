@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.0)
 project(SpanningTreeProtocol)
 
 set(CMAKE_BUILD_TYPE Debug)
-#set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 # Set toolchain flags
 include(CheckCXXCompilerFlag)
@@ -34,12 +33,15 @@ file(GLOB STP_SOURCE
     ${SOURCE}/port_receive_sm.cpp
     ${SOURCE}/port_timers_sm.cpp
     ${SOURCE}/port_transmit_sm.cpp
-#${SOURCE}/port_protocol_migration_sm.cpp
+    ${SOURCE}/port_role_selection_sm.cpp
+    ${SOURCE}/port_role_transitions_sm.cpp
+    ${SOURCE}/port_state_transition_sm.cpp
+    ${SOURCE}/topology_change_sm.cpp
     ${SOURCE}/bpdu.cpp
     ${SOURCE}/bridge.cpp
     ${SOURCE}/bridge_id.cpp
     ${SOURCE}/mac.cpp
-#${SOURCE}/management.cpp
+    ${SOURCE}/management.cpp
     ${SOURCE}/path_cost.cpp
     ${SOURCE}/port.cpp
     ${SOURCE}/port_id.cpp
@@ -48,7 +50,7 @@ file(GLOB STP_SOURCE
     ${SOURCE}/sm_procedures.cpp
     ${SOURCE}/state_machine.cpp
     ${SOURCE}/time.cpp
-    )
+)
 
 add_executable(${CMAKE_PROJECT_NAME} ${PROJECT_INCLUDE} ${STP_SOURCE} ${SOURCE}/main.cpp)
 

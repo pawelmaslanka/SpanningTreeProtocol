@@ -12,9 +12,6 @@
 namespace Stp {
 
 class Machine;
-using MachineH = Machine&;
-class State;
-using StateH = State&;
 
 #define RETURN_STATE_SINGLETON_INSTANCE(DERIVED_STATE_CLASS)    \
     static DERIVED_STATE_CLASS instance;                        \
@@ -22,17 +19,17 @@ using StateH = State&;
 
 class State {
 public:
-    virtual void Execute(MachineH machine) = 0;
+    virtual void Execute(Machine& machine) = 0;
     virtual std::string Name() = 0;
 
 protected:
     virtual ~State() = default;
-    __virtual void ChangeState(MachineH machine, StateH newState);
+    __virtual void ChangeState(Machine& machine, State& newState);
 };
 
 class Machine {
 public:
-    explicit Machine(sptr<Bridge> bridge, sptr<Port> port, StateH initState);
+    explicit Machine(BridgeH bridge, PortH port, State& initState);
     void Run();
     __virtual Bridge& BridgeInstance() const noexcept;
     Port& PortInstance() const noexcept;
@@ -44,29 +41,17 @@ protected:
      * @note We are protected from null pointer by passing reference
      * @param state
      */
-    void ChangeState(StateH newState);
-    StateH CurrentState() const noexcept;
+    void ChangeState(State& newState);
+    State& CurrentState() const noexcept;
 
 private:
     /// @todo static member because all ports working on single Bridge instance
-    sptr<Bridge> _bridge;
-    sptr<Port> _port;
+    BridgeH _bridge;
+    PortH _port;
     State* _state;
 };
 
-//template <typename D>
-//inline StateH State::SingletonInstance() {
-//    static D instance { };
-
-//    //    if (not std::is_base_of<B, D>::value) {
-//    //        static B rescueInstance { };
-//    //        return rescueInstance;
-//    //    }
-
-//    return dynamic_cast<StateH>(instance);
-//}
-
-inline void State::ChangeState(MachineH machine, StateH newState) {
+inline void State::ChangeState(Machine& machine, State& newState) {
     machine.ChangeState(newState);
 }
 
@@ -74,20 +59,20 @@ inline void Machine::Run() {
     _state->Execute(*this);
 }
 
-inline BridgeH Machine::BridgeInstance() const noexcept {
+inline Bridge& Machine::BridgeInstance() const noexcept {
     return *_bridge;
 }
 
-inline PortH Machine::PortInstance() const noexcept {
+inline Port& Machine::PortInstance() const noexcept {
     return *_port;
 }
 
-inline void Machine::ChangeState(StateH newState) {
+inline void Machine::ChangeState(State& newState) {
     _state = &newState;
 }
 
-inline StateH Machine::CurrentState() const noexcept {
+inline State& Machine::CurrentState() const noexcept {
     return *_state;
 }
 
-} // namespace SpanningTree
+} // namespace Stp

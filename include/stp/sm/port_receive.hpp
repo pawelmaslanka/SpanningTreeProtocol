@@ -12,40 +12,40 @@ namespace PortReceive {
  */
 class PrxState : public State {
 protected:
-    __virtual void DiscardAction(MachineH machine);
-    __virtual void ReceiveAction(MachineH machine);
+    __virtual void DiscardAction(Machine& machine);
+    __virtual void ReceiveAction(Machine& machine);
 };
 
 class BeginState : public PrxState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     BeginState() = default;
-    __virtual bool GoToDiscard(MachineH machine);
+    __virtual bool GoToDiscard(Machine& machine);
     std::string Name() override;
 };
 
 class DiscardState : public PrxState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     DiscardState() = default;
-    __virtual bool GoToReceive(MachineH machine);
+    __virtual bool GoToReceive(Machine& machine);
     std::string Name() override;
 };
 
 class ReceiveState : public PrxState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     ReceiveState() = default;
-    __virtual bool GoToReceive(MachineH machine);
+    __virtual bool GoToReceive(Machine& machine);
     std::string Name() override;
 };
 
@@ -67,4 +67,4 @@ inline std::string ReceiveState::Name() {
 }
 
 } // namespace PortReceive
-} // namespace SpanningTree
+} // namespace Stp

@@ -16,15 +16,15 @@ using ::testing::SetArgReferee;
 
 class SutMachine : public Stp::Machine {
 public:
-    SutMachine(sptr<Stp::Bridge> bridge, sptr<Stp::Port> port)
+    SutMachine(Stp::BridgeH bridge, Stp::PortH port)
         : Machine{ bridge, port, _dummyBeginState } {}
-    void ChangeState(Stp::StateH newState) { Machine::ChangeState(newState); }
-    Stp::StateH CurrentState() const noexcept { return Stp::Machine::CurrentState(); }
+    void ChangeState(Stp::State& newState) { Machine::ChangeState(newState); }
+    Stp::State& CurrentState() const noexcept { return Stp::Machine::CurrentState(); }
 
 private:
     class BeginState : public Stp::State {
     public:
-        void Execute(Stp::MachineH machine) override { std::ignore = machine; }
+        void Execute(Stp::Machine& machine) override { std::ignore = machine; }
         std::string Name() override { return "Machine SUT Begin State"; }
     } _dummyBeginState;
 };

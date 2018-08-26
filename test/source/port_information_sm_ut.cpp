@@ -2,6 +2,7 @@
 #include <stp/sm/port_information.hpp>
 // UT dependencies
 #include "sut_machine.hpp"
+#include <mock/management.hpp>
 #include <mock/port_information_sm.hpp>
 
 // GTest headers
@@ -12,12 +13,13 @@ using namespace Stp::PortInformation;
 class PortInformationTest : public ::testing::Test {
 protected:
     PortInformationTest()
-        : _bridge{ std::make_shared<Stp::Bridge>() },
+        : _bridge{ std::make_shared<Stp::Bridge>(
+                       std::make_shared<Mock::OutInterface>()) },
           _port{ std::make_shared<Stp::Port>() },
           _sutMachine{ _bridge, _port } {}
 
-    sptr<Stp::Bridge> _bridge;
-    sptr<Stp::Port> _port;
+    Stp::BridgeH _bridge;
+    Stp::PortH _port;
     SutMachine _sutMachine;
     Mock::Pim::BeginState _mockBeginState;
 };

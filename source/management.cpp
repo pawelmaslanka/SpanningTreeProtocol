@@ -1,264 +1,225 @@
-/***************************************************************************************************
-Copyright (c) 2018, Pawel Maslanka <pawmas@hotmail.com>
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies,
-either expressed or implied, of the FreeBSD Project.
-***************************************************************************************************/
-
 // This project's headers
-#include "bridge.hpp"
-#include "port_id.hpp"
-#include "management.hpp"
-#include "state_machine.hpp"
-
-// C Standard Library
-#include <cstring>
+#include "stp/management.hpp"
+// Dependencies
+#include "stp/state_machine.hpp"
+#include "stp/sm/port_timers.hpp"
+#include "stp/sm/port_receive.hpp"
+#include "stp/sm/port_protocol_migration.hpp"
+#include "stp/sm/bridge_detection.hpp"
+#include "stp/sm/port_transmit.hpp"
+#include "stp/sm/port_information.hpp"
+#include "stp/sm/port_role_selection.hpp"
+#include "stp/sm/port_role_transitions.hpp"
+#include "stp/sm/port_state_transition.hpp"
+#include "stp/sm/topology_change.hpp"
 
 // C++ Standard Library
 #include <chrono>
 #include <functional>
 #include <future>
+#include <map>
+#include <queue>
 #include <thread>
+#include <utility>
 
-#include <iostream>
+using namespace Stp;
 
-namespace Rstp {
-
-Management::Management(const Mac &bridgeAddr) noexcept
-    : _bridgeAddr{ bridgeAddr }
-{
-
-}
-
-Result Management::AddNewPort(const u16 portNum, const u32 speed, const bool enable)
-{
-    Action action;
-    action.portNum = portNum;
-    action.portSpeed = speed;
-    action.portEnable = enable;
-    action.id = Action::Id::AddNewPort;
-    std::lock_guard<std::mutex> lck(_requestsMtx);
-    _requests.push(std::move(action));
-
-    return Result::Success;
-}
-
-Result Management::SaveReceivedBpdu(const u16 portNum,
-                                       const std::array<u8, (u8)Bpdu::Size::Max>& bpdu)
-{
-    Action action;
-    std::memcpy(action.receivedBpdu, bpdu.data(), sizeof action.receivedBpdu);
-    action.portNum = portNum;
-    action.id = Action::Id::ReceivedBpdu;
-    std::lock_guard<std::mutex> lck(_requestsMtx);
-    _requests.push(std::move(action));
-
-    return Result::Success;
-}
-
-Result Management::GetCommand(Management::Action& action)
-{
-    if (_requests.empty()) {
-        return Result::Fail;
+class StateMachine {
+public:
+    StateMachine(BridgeH bridge, PortH port)
+        : _machines {
+              Machine{ bridge, port, PortTimers::BeginState::Instance() },
+              Machine{ bridge, port, PortReceive::BeginState::Instance() },
+              Machine{ bridge, port, PortProtocolMigration::BeginState::Instance() },
+              Machine{ bridge, port, BridgeDetection::BeginState::Instance() },
+              Machine{ bridge, port, PortTransmit::BeginState::Instance() },
+              Machine{ bridge, port, PortInformation::BeginState::Instance() },
+              Machine{ bridge, port, PortRoleSelection::BeginState::Instance() },
+              Machine{ bridge, port, PortRoleTransitions::BeginState::Instance() },
+              Machine{ bridge, port, PortStateTransition::BeginState::Instance() },
+              Machine{ bridge, port, TopologyChange::BeginState::Instance() }
+          } {
+        // Nothing more to do
     }
 
-    std::lock_guard<std::mutex> lck(_requestsMtx);
-    action = _requests.front();
-    _requests.pop();
+    void TickEvent() {
+        static u8 idx;
+        for (idx = 0; idx < _kMaxMachines; ++idx) {
+            _machines[idx].Run();
+        }
+    }
 
-    return Result::Success;
+private:
+    static constexpr u8 _kMaxMachines = 10;
+    Machine _machines[_kMaxMachines];
+};
+
+class StpManager {
+public:
+    static StpManager& Instance();
+    Result StpBegin(SystemH system, OutInterfaceH outInterface);
+    void SubmitRequest(Uptr<Command> req);
+
+protected:
+    StpManager() = default;
+
+private:
+    void AddPortHandle(AddPortReq& req);
+    void RemovePortHandle(RemovePortReq& req);
+    void RunStateMachine();
+    void ProcessRequest();
+    BridgeH _bridge;
+    std::queue<Uptr<Command>> _userRequests;
+    std::mutex _mtxUserRequests;
+    std::map<u16, StateMachine> _runningStateMachines;
+};
+
+StpManager& StpManager::Instance() {
+    static StpManager instance{};
+    return instance;
 }
 
-Result Management::UpdateBridgeMacAddr(const Mac& addr)
-{
-    Action action;
-    action.bridgeAddr = addr;
-    action.id = Action::Id::UpdateBridgeMacAddr;
-    _requests.push(std::move(action));
-    _bridgeAddr = addr;
+Result StpManager::StpBegin(SystemH system, OutInterfaceH outInterface) {
+    _bridge = std::make_shared<Bridge>(outInterface);
+    _bridge->SetAddress(system->GetBridgeAddr());
+    _bridge->GetBridgeIdentifier().SetAddress(system->GetBridgeAddr());
+    _bridge->GetBridgePriority().GetRootPathCost().SetPathCost(0);
+    _bridge->GetBridgePriority().SetDesignatedBridgeId(_bridge->BridgeIdentifier());
+    _bridge->SetRootPriority(_bridge->BridgePriority());
+    _bridge->SetBegin(true);
 
-    return Result::Success;
-}
+    using namespace std::chrono_literals;
+    using MiliSec = std::chrono::milliseconds;
+    std::chrono::milliseconds sleepTime {};
+    constexpr MiliSec kSleepTime250ms { 250 };
+    constexpr u16 kMaxSleepCounterToRunStateMachine = { 4 }; // 4 * 250ms = 1s interval for run SM
+    u16 sleepCounter250ms = {};
+    std::chrono::milliseconds startProcessReq {};
+    std::chrono::duration<s64, std::milli> elapsedTimeForProcessReq {};
+    auto now = []() {
+        auto actualTime = std::chrono::high_resolution_clock::now();
+        return std::chrono::time_point_cast<std::chrono::milliseconds>(actualTime).time_since_epoch();
+    };
 
-Result Management::UpdatePortSpeed(const u16 portNum, const u32 speed)
-{
-    Action action;
-    action.portNum = portNum;
-    action.portSpeed = speed;
-    action.id = Action::Id::UpdatePortSpeed;
-    _requests.push(std::move(action));
-
-    return Result::Success;
-}
-
-Result Management::UpdatePortEnable(const u16 portNum, const bool enable)
-{
-    Action action;
-    action.portNum = portNum;
-    action.portEnable = enable;
-    action.id = Action::Id::UpdatePortEnable;
-    _requests.push(std::move(action));
-
-    return Result::Success;
-}
-
-Management::Action& Management::Action::operator=(const Action& copyFrom) noexcept
-{
-    std::memcpy(receivedBpdu, copyFrom.receivedBpdu, sizeof receivedBpdu);
-    id = copyFrom.id;
-    bridgeAddr = copyFrom.bridgeAddr;
-    portSpeed = copyFrom.portSpeed;
-    portNum = copyFrom.portNum;
-    portEnable = copyFrom.portEnable;
-
-    return *this;
-}
-
-Management::Action::Action() noexcept
-    : id{ Action::Id::None }, receivedBpdu{ 0x00 }, bridgeAddr{ {} }, portSpeed{ 0 }, portNum{ 0 },
-      portEnable{ false }
-{
-    // Nothing more to do
-}
-
-Management::Action::Action(const Management::Action& copyFrom) noexcept
-    : bridgeAddr{ copyFrom.bridgeAddr }
-{
-    *this = copyFrom;
-}
-
-Result RstpBegin(Management::Handler system)
-{
-    Bridge bridge;
-    bridge.SetAddress(system->BridgeAddr());
-    bridge.GetBridgeIdentifier().SetAddress(system->BridgeAddr());
-    bridge.GetBridgePriority().GetRootPathCost().SetPathCost(0);
-    bridge.GetBridgePriority().SetDesignatedBridgeId(bridge.BridgeIdentifier());
-    bridge.SetRootPriority(bridge.BridgePriority());
-    bridge.SetBegin(true);
-
-    StateMachine stateMachine(bridge, *system);
-
-    Management::Action action;
-    std::vector<Port>::iterator requestedPort;
-
-    static constexpr u8 quarterPerSec = 4;
-
-    for (u8 quarterSecCount = 0; true; ++quarterSecCount) {
-        while (not Failed(system->GetCommand(action))) {
-            requestedPort = bridge.Ports.end();
-
-            for (std::vector<Port>::iterator port = bridge.Ports.begin();
-                 port != bridge.Ports.end(); ++port) {
-                if (port->PortId().PortNum() == action.portNum) {
-                    requestedPort = port;
-                    break;
-                }
-            }
-
-            if (bridge.Ports.end() == requestedPort
-                    && Management::Action::Id::AddNewPort != action.id) {
-                std::cerr << __PRETTY_FUNCTION__ << " Invalid request\n";
-                break;
-            }
-
-            switch(action.id) {
-            case Management::Action::Id::AddNewPort: {
-                Port port;
-                port.SetPortEnabled(action.portEnable);
-
-                port.GetPortPathCost().SetPathCost(PathCost::SpeedMbToPathCostValue(action.portSpeed));
-                port.GetPortId().SetPortNum(action.portNum);
-                port.GetPortId().SetPriority((u8)PriorityVector::RecommendedPortPriority::Value);
-
-                bridge.Ports.push_back(port);
-                break;
-            }
-            case Management::Action::Id::UpdateBridgeMacAddr: {
-                bridge.SetAddress(action.bridgeAddr);
-                bridge.GetBridgeIdentifier().SetAddress(action.bridgeAddr);
-                bridge.GetBridgePriority().SetDesignatedBridgeId(bridge.BridgeIdentifier());
-                bridge.SetRootPriority(bridge.BridgePriority());
-                break;
-            }
-            case Management::Action::Id::UpdatePortSpeed: {
-                requestedPort->GetPortPathCost().SetPathCost(PathCost::SpeedMbToPathCostValue(action.portSpeed));
-                break;
-            }
-            case Management::Action::Id::UpdatePortEnable: {
-                requestedPort->SetPortEnabled(action.portEnable);
-                break;
-            }
-            case Management::Action::Id::ReceivedBpdu: {
-                Bpdu bpdu;
-                ByteStream bpduStream(&action.receivedBpdu[0],
-                        &action.receivedBpdu[0] + sizeof (action.receivedBpdu));
-
-                if (Failed(bpdu.Decode(bpduStream))) {
-                    break;
-                }
-
-                if (Bpdu::Type::Config == bpdu.BpduType()) {
-                    if ((PortId(bpdu.PortIdentifier()).PortNum() == action.portNum)
-                            && (BridgeId(bpdu.BridgeIdentifier()).Address() == bridge.Address())) {
-                        // BPDU has been received by port which originally transmitted it...
-                        // so it's invalid BPDU
-                        break;
-                    }
-                }
-
-                requestedPort->SetRxBpdu(bpdu);
-                requestedPort->SetRcvdBpdu(true);
-
-                break;
-            }
-            default:
-                std::cerr << __PRETTY_FUNCTION__ << " Invalid ID of request\n";
-                break;
-            }
+    while (true) {
+        ++sleepCounter250ms;
+        if (kMaxSleepCounterToRunStateMachine == sleepCounter250ms) {
+            RunStateMachine();
+            sleepCounter250ms = 0;
         }
 
-        if (quarterPerSec == quarterSecCount) {
-            stateMachine.TickEvent();
-            quarterSecCount = 0;
+        startProcessReq = now();
+        ProcessRequest();
+        elapsedTimeForProcessReq = now() - startProcessReq;
+        sleepTime = kSleepTime250ms - elapsedTimeForProcessReq;
+        if (sleepTime.count() > 0) {
+            std::this_thread::sleep_for(sleepTime);
+        }
+    }
+
+    return Result::Success;
+}
+
+void StpManager::SubmitRequest(Uptr<Command> req) {
+    std::lock_guard<std::mutex> requestsGuard{ _mtxUserRequests };
+    _userRequests.push(std::move(req));
+}
+
+inline void StpManager::RunStateMachine() {
+    for (auto& sm : _runningStateMachines) {
+        sm.second.TickEvent();
+    }
+}
+
+void StpManager::ProcessRequest() {
+    Uptr<Command> req{}; // Represents single client request to perform
+    std::unique_lock<std::mutex> requestsGuard{ _mtxUserRequests };
+    requestsGuard.unlock();
+    while (true) {
+        if (_userRequests.empty()) {
+            requestsGuard.unlock();
+            return;
         }
 
-        // sleep thread for quarter of second (250 ms)
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
-    }
+        req.reset(_userRequests.front().release());
+        _userRequests.pop();
+        requestsGuard.unlock();
+        switch (req->Id()) {
+        case RequestId::AddPort:
+            StpManager::AddPortHandle(dynamic_cast<AddPortReq&>(*req));
+            break;
+        case RequestId::RemovePort:
+            StpManager::RemovePortHandle(dynamic_cast<RemovePortReq&>(*req));
+            break;
+        case RequestId::ProcessBpdu:
+            //            StpManager::ProcessBpduHandle(dynamic_cast<ProcessBpduReq&>(*req));
+            break;
+        default:
+            throw std::runtime_error{ "Unexpected user request command" };
+            break;
+        }
 
-    return Result::Fail;
+        req.reset();
+    }
 }
 
-void Run(Management::Handler system)
-{
-    static std::unique_ptr<std::future<Result>> taskHandler;
-
-    if (not taskHandler) {
-        taskHandler.reset(new std::future<Result>{ std::async(std::launch::async, RstpBegin, system) });
+void StpManager::AddPortHandle(AddPortReq& req) {
+    if (_bridge->GetPort(req.GetPortNo())) {
+        return;
     }
+
+    _bridge->AddPort(req.GetPortNo());
+    PortH newPort = _bridge->GetPort(req.GetPortNo());
+    newPort->SetPortEnabled(req.GetPortEnabled());
+    newPort->GetPortPathCost().SetPathCost(PathCost::SpeedMbToPathCostValue(req.GetPortSpeed()));
+    newPort->GetPortId().SetPortNum(req.GetPortNo());
+    newPort->GetPortId().SetPriority(+PriorityVector::RecommendedPortPriority::Value);
+    _runningStateMachines.insert(std::make_pair(req.GetPortNo(),
+                                                StateMachine{ _bridge, newPort }));
 }
 
-} // namespace Rstp
+void StpManager::RemovePortHandle(RemovePortReq& req) {
+    _runningStateMachines.erase(req.GetPortNo());
+    _bridge->RemovePort(req.GetPortNo());
+}
+
+namespace Stp {
+
+Result Management::AddPort(const u16 portNo, const u32 speed, const bool enabled) {
+    StpManager::Instance().SubmitRequest(
+                std::make_unique<AddPortReq>(AddPortReq{portNo, speed, enabled}));
+    return Result::Success;
+}
+
+Result Management::RemovePort(const u16 portNo) {
+    StpManager::Instance().SubmitRequest(std::make_unique<RemovePortReq>(RemovePortReq{ portNo }));
+    return Result::Success;
+}
+
+Result Management::RunStp(SystemH system, OutInterfaceH outInterface) {
+    static std::unique_ptr<std::future<Result>> runnableStp;
+
+    if (not runnableStp) {
+        runnableStp.reset(new std::future<Result>{
+                              std::async(std::launch::async, &StpManager::StpBegin,
+                              &StpManager::Instance(), system, outInterface)
+                          });
+    }
+    else {
+        return  Result::Fail;
+    }
+
+    return Result::Success;
+}
+
+AddPortReq::AddPortReq(const u16 portNo, const u32 speed, const bool enabled)
+    : Command{ RequestId::AddPort }, _speed{ speed }, _portNo{ portNo }, _enabled{ enabled } {
+
+}
+
+RemovePortReq::RemovePortReq(const u16 portNo)
+    : Command{ RequestId::RemovePort }, _portNo{ portNo } {
+
+}
+
+} // namespace Stp

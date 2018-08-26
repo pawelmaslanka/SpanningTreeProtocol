@@ -27,8 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 ***************************************************************************************************/
 
-#ifndef BPDU_HPP
-#define BPDU_HPP
+#pragma once
 
 // This project's headers
 #include "lib.hpp"
@@ -40,8 +39,7 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace Stp {
 
-class Bpdu final
-{
+class Bpdu final {
 public:
     enum class ProtocolIdentifier : u8 {
         Config = 0x0000,
@@ -130,9 +128,9 @@ public:
         Version1Length = 35              // 36
     };
 
-    using BridgeIdHandler = std::array<uint8_t, (uint8_t)FieldSize::BridgeIdentifier>;
-    using BridgeSystemIdHandler = std::array<uint8_t, (uint8_t)FieldSize::BridgeSystemId>;
-    using PortIdHandler = std::array<uint8_t, (uint8_t)FieldSize::PortIdentifier>;
+    using BridgeIdHandler = std::array<u8, +FieldSize::BridgeIdentifier>;
+    using BridgeSystemIdHandler = std::array<u8, +FieldSize::BridgeSystemId>;
+    using PortIdHandler = std::array<u8, +FieldSize::PortIdentifier>;
 
     Bpdu() noexcept;
     Bpdu(const Bpdu& copyFrom) noexcept;
@@ -144,48 +142,48 @@ public:
 
     /// @brief 9.3 BPDU formats and parameters
     union DataUnit {
-        uint8_t encodedStream[(uint8_t)Size::Max];
+        u8 encodedStream[+Size::Max];
         struct {                            // Octet
-            uint16_t ProtocolIdentifier;         // 1-2
-            uint8_t ProtocolVersionIdentifier;   // 3
-            uint8_t BpduType;                    // 4
-            uint8_t Flags;                       // 5
+            u16 ProtocolIdentifier;         // 1-2
+            u8 ProtocolVersionIdentifier;   // 3
+            u8 BpduType;                    // 4
+            u8 Flags;                       // 5
             u64 RootIdentifier;             // 6-13
             u32 RootPathCost;               // 14-17
             u64 BridgeIdentifier;           // 18-25
-            uint16_t PortIdentifier;             // 26-27
-            uint16_t MessageAge;                 // 28-29
-            uint16_t MaxAge;                     // 30-31
-            uint16_t HelloTime;                  // 32-33
-            uint16_t ForwardDelay;               // 34-35
-            uint8_t Version1Length;              // 36
+            u16 PortIdentifier;             // 26-27
+            u16 MessageAge;                 // 28-29
+            u16 MaxAge;                     // 30-31
+            u16 HelloTime;                  // 32-33
+            u16 ForwardDelay;               // 34-35
+            u8 Version1Length;              // 36
         } Fields;
     };
 
-    uint16_t ProtocolIdentifier() const noexcept;
-    void SetProtocolIdentifier(const uint16_t value) noexcept;
-    uint8_t ProtocolVersionIdentifier() const noexcept;
-    void SetProtocolVersionIdentifier(const uint8_t value) noexcept;
-    uint8_t BpduType() const noexcept;
-    void SetBpduType(const uint8_t value) noexcept;
-    uint8_t TcAckFlag() const noexcept;
+    u16 ProtocolIdentifier() const noexcept;
+    void SetProtocolIdentifier(const u16 value) noexcept;
+    u8 ProtocolVersionIdentifier() const noexcept;
+    void SetProtocolVersionIdentifier(const u8 value) noexcept;
+    u8 BpduType() const noexcept;
+    void SetBpduType(const u8 value) noexcept;
+    u8 TcAckFlag() const noexcept;
     void SetTcAckFlag() noexcept;
     void ClearTcAckFlag() noexcept;
-    uint8_t AgreementFlag() const noexcept;
+    u8 AgreementFlag() const noexcept;
     void SetAgreementFlag() noexcept;
     void ClearAgreementFlag() noexcept;
-    uint8_t ForwardingFlag() const noexcept;
+    u8 ForwardingFlag() const noexcept;
     void SetForwardingFlag() noexcept;
     void ClearForwardingFlag() noexcept;
-    uint8_t LearnigFlag() const noexcept;
+    u8 LearnigFlag() const noexcept;
     void SetLearnigFlag() noexcept;
     void ClearLearnigFlag() noexcept;
     PortRole PortRoleFlag() const noexcept;
     void SetPortRoleFlag(const PortRole value) noexcept;
-    uint8_t ProposalFlag() const noexcept;
+    u8 ProposalFlag() const noexcept;
     void SetProposalFlag() noexcept;
     void ClearProposalFlag() noexcept;
-    uint8_t TcFlag() const noexcept;
+    u8 TcFlag() const noexcept;
     void SetTcFlag() noexcept;
     void ClearTcFlag() noexcept;
     const BridgeIdHandler& RootIdentifier() const noexcept;
@@ -196,43 +194,43 @@ public:
     void SetBridgeIdentifier(const BridgeIdHandler& value) noexcept;
     const PortIdHandler& PortIdentifier() const noexcept;
     void SetPortIdentifier(const PortIdHandler& value) noexcept;
-    uint16_t MessageAge() const noexcept;
-    void SetMessageAge(const uint16_t value) noexcept;
-    uint16_t MaxAge() const noexcept;
-    void SetMaxAge(const uint16_t value) noexcept;
-    uint16_t HelloTime() const noexcept;
-    void SetHelloTime(const uint16_t value) noexcept;
-    uint16_t ForwardDelay() const noexcept;
-    void SetForwardDelay(const uint16_t value) noexcept;
-    uint8_t Version1Length() const noexcept;
-    void SetVersion1Length(const uint8_t value) noexcept;
+    u16 MessageAge() const noexcept;
+    void SetMessageAge(const u16 value) noexcept;
+    u16 MaxAge() const noexcept;
+    void SetMaxAge(const u16 value) noexcept;
+    u16 HelloTime() const noexcept;
+    void SetHelloTime(const u16 value) noexcept;
+    u16 ForwardDelay() const noexcept;
+    void SetForwardDelay(const u16 value) noexcept;
+    u8 Version1Length() const noexcept;
+    void SetVersion1Length(const u8 value) noexcept;
 
 private:
-    using BpduProtocolIdFieldHandler = std::array<uint8_t, (uint8_t)FieldSize::ProtocolIdentifier>;
-    using BpduPathCostFieldHandler = std::array<uint8_t, (uint8_t)FieldSize::RootPathCost>;
-    using BpduTimeFieldHandler = std::array<uint8_t, (uint8_t)FieldSize::TimeGroup>;
+    using BpduProtocolIdFieldHandler = std::array<u8, +FieldSize::ProtocolIdentifier>;
+    using BpduPathCostFieldHandler = std::array<u8, +FieldSize::RootPathCost>;
+    using BpduTimeFieldHandler = std::array<u8, +FieldSize::TimeGroup>;
 
     enum class FlagMask : u8 {
         PortRole = 0x03
     };
 
-    static constexpr bool IsValidProtocolId(const uint16_t protocolId) noexcept;
+    static constexpr bool IsValidProtocolId(const u16 protocolId) noexcept;
 
     static constexpr inline bool IsValidSize(const ByteStream::size_type streamSize) noexcept;
 
-    static uint16_t ConvertEndianessBpduDataToProtocolId(const BpduProtocolIdFieldHandler& bpduData) noexcept;
-    static void ConvertEndianessProtocolIdToBpduData(const uint16_t protocolId,
+    static u16 ConvertEndianessBpduDataToProtocolId(const BpduProtocolIdFieldHandler& bpduData) noexcept;
+    static void ConvertEndianessProtocolIdToBpduData(const u16 protocolId,
                                                      BpduProtocolIdFieldHandler& bpduData) noexcept;
     static u32 ConvertEndianessBpduDataToPathCost(
             const BpduPathCostFieldHandler& bpduData) noexcept;
     static void ConvertEndianessPathCostToBpduData(const u32 pathCost,
                                                    BpduPathCostFieldHandler& bpduData) noexcept;
-    static uint16_t ConvertEndianessBpduDataToTime(const BpduTimeFieldHandler& bpduData) noexcept;
-    static void ConvertEndianessTimeToBpduData(const uint16_t time,
+    static u16 ConvertEndianessBpduDataToTime(const BpduTimeFieldHandler& bpduData) noexcept;
+    static void ConvertEndianessTimeToBpduData(const u16 time,
                                                BpduTimeFieldHandler& bpduData) noexcept;
 
-    bool IsValidBpduType(const uint8_t type) noexcept;
-    uint8_t GetSizeFromBpduType(const Type type) noexcept;
+    bool IsValidBpduType(const u8 type) noexcept;
+    u8 GetSizeFromBpduType(const Type type) noexcept;
 
     DataUnit _data;
     Size _size;
@@ -242,87 +240,97 @@ private:
     PortIdHandler _portId;
 };
 
-constexpr inline bool Bpdu::IsValidProtocolId(const uint16_t protocolId) noexcept
-{
+constexpr inline bool Bpdu::IsValidProtocolId(const u16 protocolId) noexcept {
     return 0x0000 == protocolId;
 }
 
-constexpr inline bool Bpdu::IsValidSize(const ByteStream::size_type streamSize) noexcept
-{
-    return (uint8_t)Size::Min <= streamSize && streamSize <= (uint8_t)Size::Max;
+constexpr inline bool Bpdu::IsValidSize(const ByteStream::size_type streamSize) noexcept {
+    return +Size::Min <= streamSize && streamSize <= +Size::Max;
 }
 
-inline uint16_t Bpdu::ProtocolIdentifier() const noexcept { return _data.Fields.ProtocolIdentifier; }
-inline void Bpdu::SetProtocolIdentifier(const uint16_t value) noexcept { _data.Fields.ProtocolIdentifier = value; }
+inline u16 Bpdu::ProtocolIdentifier() const noexcept { return _data.Fields.ProtocolIdentifier; }
+inline void Bpdu::SetProtocolIdentifier(const u16 value) noexcept { _data.Fields.ProtocolIdentifier = value; }
 
-inline uint8_t Bpdu::ProtocolVersionIdentifier() const noexcept { return _data.Fields.ProtocolVersionIdentifier; }
-inline void Bpdu::SetProtocolVersionIdentifier(const uint8_t value) noexcept { _data.Fields.ProtocolVersionIdentifier = value; }
+inline u8 Bpdu::ProtocolVersionIdentifier() const noexcept { return _data.Fields.ProtocolVersionIdentifier; }
+inline void Bpdu::SetProtocolVersionIdentifier(const u8 value) noexcept { _data.Fields.ProtocolVersionIdentifier = value; }
 
-inline uint8_t Bpdu::BpduType() const noexcept { return _data.Fields.BpduType; }
-inline void Bpdu::SetBpduType(const uint8_t value) noexcept { _data.Fields.BpduType = value; }
+inline u8 Bpdu::BpduType() const noexcept { return _data.Fields.BpduType; }
+inline void Bpdu::SetBpduType(const u8 value) noexcept { _data.Fields.BpduType = value; }
 
-inline uint8_t Bpdu::TcAckFlag() const noexcept {
-    return (_data.Fields.Flags >> static_cast<uint8_t>(OffsetFlag::TcAck)) & 0x01;
+inline u8 Bpdu::TcAckFlag() const noexcept {
+    return (_data.Fields.Flags >> static_cast<u8>(OffsetFlag::TcAck)) & 0x01;
 }
+
 inline void Bpdu::SetTcAckFlag() noexcept {
-    _data.Fields.Flags |= (1 << static_cast<uint8_t>(OffsetFlag::TcAck));
+    _data.Fields.Flags |= (1 << static_cast<u8>(OffsetFlag::TcAck));
 }
+
 inline void Bpdu::ClearTcAckFlag() noexcept {
-    _data.Fields.Flags &= ~(1 << static_cast<uint8_t>(OffsetFlag::TcAck));
+    _data.Fields.Flags &= ~(1 << static_cast<u8>(OffsetFlag::TcAck));
 }
 
-inline uint8_t Bpdu::AgreementFlag() const noexcept {
-    return (_data.Fields.Flags >> static_cast<uint8_t>(OffsetFlag::Agreement)) & 0x01;
+inline u8 Bpdu::AgreementFlag() const noexcept {
+    return (_data.Fields.Flags >> static_cast<u8>(OffsetFlag::Agreement)) & 0x01;
 }
+
 inline void Bpdu::SetAgreementFlag() noexcept {
-    _data.Fields.Flags |= (1 << static_cast<uint8_t>(OffsetFlag::Agreement));
+    _data.Fields.Flags |= (1 << static_cast<u8>(OffsetFlag::Agreement));
 }
+
 inline void Bpdu::ClearAgreementFlag() noexcept {
-    _data.Fields.Flags &= ~(1 << static_cast<uint8_t>(OffsetFlag::Agreement));
+    _data.Fields.Flags &= ~(1 << static_cast<u8>(OffsetFlag::Agreement));
 }
 
-inline uint8_t Bpdu::ForwardingFlag() const noexcept {
-    return (_data.Fields.Flags >> static_cast<uint8_t>(OffsetFlag::Forwarding)) & 0x01;
+inline u8 Bpdu::ForwardingFlag() const noexcept {
+    return (_data.Fields.Flags >> static_cast<u8>(OffsetFlag::Forwarding)) & 0x01;
 }
+
 inline void Bpdu::SetForwardingFlag() noexcept {
-    _data.Fields.Flags |= (1 << static_cast<uint8_t>(OffsetFlag::Forwarding));
-}
-inline void Bpdu::ClearForwardingFlag() noexcept {
-    _data.Fields.Flags &= ~(1 << static_cast<uint8_t>(OffsetFlag::Forwarding));
+    _data.Fields.Flags |= (1 << static_cast<u8>(OffsetFlag::Forwarding));
 }
 
-inline uint8_t Bpdu::LearnigFlag() const noexcept {
-    return (_data.Fields.Flags >> static_cast<uint8_t>(OffsetFlag::Learnig)) & 0x01;
+inline void Bpdu::ClearForwardingFlag() noexcept {
+    _data.Fields.Flags &= ~(1 << static_cast<u8>(OffsetFlag::Forwarding));
 }
+
+inline u8 Bpdu::LearnigFlag() const noexcept {
+    return (_data.Fields.Flags >> static_cast<u8>(OffsetFlag::Learnig)) & 0x01;
+}
+
 inline void Bpdu::SetLearnigFlag() noexcept {
-    _data.Fields.Flags |= (1 << static_cast<uint8_t>(OffsetFlag::Learnig));
+    _data.Fields.Flags |= (1 << static_cast<u8>(OffsetFlag::Learnig));
 }
+
 inline void Bpdu::ClearLearnigFlag() noexcept {
-    _data.Fields.Flags &= ~(1 << static_cast<uint8_t>(OffsetFlag::Learnig));
+    _data.Fields.Flags &= ~(1 << static_cast<u8>(OffsetFlag::Learnig));
 }
 
 inline PortRole Bpdu::PortRoleFlag() const noexcept {
     return _portRole;
 }
 
-inline uint8_t Bpdu::ProposalFlag() const noexcept {
-    return (_data.Fields.Flags >> static_cast<uint8_t>(OffsetFlag::Proposal)) & 0x01;
-}
-inline void Bpdu::SetProposalFlag() noexcept {
-    _data.Fields.Flags |= (1 << static_cast<uint8_t>(OffsetFlag::Proposal));
-}
-inline void Bpdu::ClearProposalFlag() noexcept {
-    _data.Fields.Flags &= ~(1 << static_cast<uint8_t>(OffsetFlag::Proposal));
+inline u8 Bpdu::ProposalFlag() const noexcept {
+    return (_data.Fields.Flags >> static_cast<u8>(OffsetFlag::Proposal)) & 0x01;
 }
 
-inline uint8_t Bpdu::TcFlag() const noexcept {
-    return (_data.Fields.Flags >> static_cast<uint8_t>(OffsetFlag::Tc)) & 0x01;
+inline void Bpdu::SetProposalFlag() noexcept {
+    _data.Fields.Flags |= (1 << static_cast<u8>(OffsetFlag::Proposal));
 }
+
+inline void Bpdu::ClearProposalFlag() noexcept {
+    _data.Fields.Flags &= ~(1 << static_cast<u8>(OffsetFlag::Proposal));
+}
+
+inline u8 Bpdu::TcFlag() const noexcept {
+    return (_data.Fields.Flags >> static_cast<u8>(OffsetFlag::Tc)) & 0x01;
+}
+
 inline void Bpdu::SetTcFlag() noexcept {
-    _data.Fields.Flags |= (1 << static_cast<uint8_t>(OffsetFlag::Tc));
+    _data.Fields.Flags |= (1 << static_cast<u8>(OffsetFlag::Tc));
 }
+
 inline void Bpdu::ClearTcFlag() noexcept {
-    _data.Fields.Flags &= ~(1 << static_cast<uint8_t>(OffsetFlag::Tc));
+    _data.Fields.Flags &= ~(1 << static_cast<u8>(OffsetFlag::Tc));
 }
 
 inline const Bpdu::BridgeIdHandler& Bpdu::RootIdentifier() const noexcept { return _rootId; }
@@ -334,37 +342,31 @@ inline const Bpdu::BridgeIdHandler& Bpdu::BridgeIdentifier() const noexcept { re
 
 inline const Bpdu::PortIdHandler& Bpdu::PortIdentifier() const noexcept { return _portId; }
 
-inline uint16_t Bpdu::MessageAge() const noexcept { return _data.Fields.MessageAge; }
-inline void Bpdu::SetMessageAge(const uint16_t value) noexcept { _data.Fields.MessageAge = value; }
+inline u16 Bpdu::MessageAge() const noexcept { return _data.Fields.MessageAge; }
+inline void Bpdu::SetMessageAge(const u16 value) noexcept { _data.Fields.MessageAge = value; }
 
-inline uint16_t Bpdu::MaxAge() const noexcept { return _data.Fields.MaxAge; }
-inline void Bpdu::SetMaxAge(const uint16_t value) noexcept { _data.Fields.MaxAge = value; }
+inline u16 Bpdu::MaxAge() const noexcept { return _data.Fields.MaxAge; }
+inline void Bpdu::SetMaxAge(const u16 value) noexcept { _data.Fields.MaxAge = value; }
 
-inline uint16_t Bpdu::HelloTime() const noexcept { return _data.Fields.HelloTime; }
-inline void Bpdu::SetHelloTime(const uint16_t value) noexcept { _data.Fields.HelloTime = value; }
+inline u16 Bpdu::HelloTime() const noexcept { return _data.Fields.HelloTime; }
+inline void Bpdu::SetHelloTime(const u16 value) noexcept { _data.Fields.HelloTime = value; }
 
-inline uint16_t Bpdu::ForwardDelay() const noexcept { return _data.Fields.ForwardDelay; }
-inline void Bpdu::SetForwardDelay(const uint16_t value) noexcept { _data.Fields.ForwardDelay = value; }
+inline u16 Bpdu::ForwardDelay() const noexcept { return _data.Fields.ForwardDelay; }
+inline void Bpdu::SetForwardDelay(const u16 value) noexcept { _data.Fields.ForwardDelay = value; }
 
-inline uint8_t Bpdu::Version1Length() const noexcept { return _data.Fields.Version1Length; }
-inline void Bpdu::SetVersion1Length(const uint8_t value) noexcept { _data.Fields.Version1Length = value; }
+inline u8 Bpdu::Version1Length() const noexcept { return _data.Fields.Version1Length; }
+inline void Bpdu::SetVersion1Length(const u8 value) noexcept { _data.Fields.Version1Length = value; }
 
-inline bool operator==(const Bpdu::Type left, const uint8_t right) noexcept
-{
-    return static_cast<uint8_t>(left) == right;
+inline bool operator==(const Bpdu::Type left, const u8 right) noexcept {
+    return static_cast<u8>(left) == right;
 }
 
-inline bool operator==(const Bpdu::EncodedPortRole left, const uint8_t right) noexcept
-{
-    return static_cast<uint8_t>(left) == right;
+inline bool operator==(const Bpdu::EncodedPortRole left, const u8 right) noexcept {
+    return static_cast<u8>(left) == right;
 }
 
-inline uint8_t operator>>(const uint8_t left, const Bpdu::OffsetFlag right) noexcept
-{
-    return left >> static_cast<uint8_t>(right);
+inline u8 operator>>(const u8 left, const Bpdu::OffsetFlag right) noexcept {
+    return left >> static_cast<u8>(right);
 }
 
-} // End of 'Rstp' namespace declaration
-
-
-#endif // BPDU_HPP
+} // namespace Stp

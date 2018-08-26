@@ -1,100 +1,135 @@
-/***************************************************************************************************
-Copyright (c) 2018, Pawel Maslanka <pawmas@hotmail.com>
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies,
-either expressed or implied, of the FreeBSD Project.
-***************************************************************************************************/
-
-#ifndef MANAGEMENT_HPP
-#define MANAGEMENT_HPP
+#pragma once
 
 // This project's headers
-#include "bpdu.hpp"
 #include "lib.hpp"
 #include "mac.hpp"
 
-// C++ Standard Library
-#include <array>
-#include <mutex>
-#include <queue>
-
 namespace Stp {
 
-class Management
-{
-public:
-    using Handler = sptr<Management>;
-
-    struct Action {
-        enum class Id : u8 {
-            AddNewPort,
-            UpdateBridgeMacAddr,
-            UpdatePortEnable,
-            UpdatePortSpeed,
-            ReceivedBpdu,
-            None
-        };
-
-        Id id;
-        uint8_t receivedBpdu[(uint8_t)Bpdu::Size::Max];
-        Mac bridgeAddr;
-        u32 portSpeed;
-        uint16_t portNum;
-        bool portEnable;
-
-        Action() noexcept;
-        Action(const Action& copyFrom) noexcept;
-        Action& operator=(const Action& copyFrom) noexcept;
-    };
-
-    explicit Management(const Mac& bridgeAddr) noexcept;
-
-    virtual Result PortForwarding(const uint16_t portNum, const bool on) = 0;
-    virtual Result PortLearning(const uint16_t portNum, const bool on) = 0;
-    virtual Result PortFdbFlush(const uint16_t portNum) = 0;
-    virtual Result PortSendBpdu(const uint16_t portNum, const ByteStream& bpdu) = 0;
-    Result AddNewPort(const uint16_t portNum, const u32 speed, const bool enable);
-    Result SaveReceivedBpdu(const uint16_t portNum, const std::array<uint8_t, (uint8_t)Bpdu::Size::Max>& bpdu);
-    Result GetCommand(Action& action);
-
-    Result UpdateBridgeMacAddr(const Mac& addr);
-    Result UpdatePortSpeed(const uint16_t portNum, const u32 speed);
-    Result UpdatePortEnable(const uint16_t portNum, const bool enable);
-
-    const Mac& BridgeAddr() const noexcept;
-
-private:
-    std::queue<Action> _requests;
-    std::mutex _requestsMtx;
-    Mac _bridgeAddr;
+enum class RequestId : u8 {
+    AddPort,
+    RemovePort,
+    ProcessBpdu
 };
 
-inline const Mac& Management::BridgeAddr() const noexcept { return _bridgeAddr; }
+class OutInterface {
+public:
+    virtual Result FlushFdb(const u16 portNo) = 0;
+    virtual Result SetForwarding(const u16 portNo, const bool enable) = 0;
+    virtual Result SetLearning(const u16 portNo, const bool enable) = 0;
+    virtual Result SendOutBpdu(const u16 portNo, ByteStreamH data) = 0;
 
-void Run(Management::Handler system);
+protected:
+    virtual ~OutInterface() = default;
+};
 
-} // namespace Rstp
+using OutInterfaceH = Sptr<OutInterface>;
+using LoggerH = Sptr<std::ostream>;
 
-#endif // MANAGEMENT_HPP
+class System {
+public:
+    System(Mac bridgeAddr, LoggerH logger);
+    Mac& GetBridgeAddr() noexcept;
+    LoggerH& GetLog() noexcept;
+private:
+    Mac _bridgeAddr;
+    LoggerH _logger;
+};
+
+using SystemH = Sptr<System>;
+
+inline System::System(Mac bridgeAddr, LoggerH logger)
+    : _bridgeAddr{ bridgeAddr }, _logger{ logger } {
+}
+
+inline Mac& System::GetBridgeAddr() noexcept {
+    return _bridgeAddr;
+}
+
+inline LoggerH& System::GetLog() noexcept {
+    return _logger;
+}
+
+class Management {
+public:
+    static Result AddPort(const u16 portNo, const u32 speed, const bool enabled);
+    static Result RemovePort(const u16 portNo);
+    static Result ProcessBpdu(ByteStreamH bpdu);
+    static Result RunStp(SystemH system, OutInterfaceH outInterface);
+};
+
+class Command {
+public:
+    virtual ~Command() = default;
+    RequestId Id() const noexcept;
+
+protected:
+    Command(const RequestId reqId);
+
+private:
+    RequestId _reqId;
+};
+
+inline Command::Command(const RequestId reqId)
+    : _reqId{ reqId } {
+
+}
+
+inline RequestId Command::Id() const noexcept {
+    return _reqId;
+}
+
+class AddPortReq : public Command {
+public:
+    AddPortReq(const u16 portNo, const u32 speed, const bool enabled);
+    u16 GetPortNo() const noexcept;
+    u32 GetPortSpeed() const noexcept;
+    bool GetPortEnabled() const noexcept;
+
+private:
+    u32 _speed;
+    u16 _portNo;
+    bool _enabled;
+};
+
+class RemovePortReq : public Command {
+public:
+    RemovePortReq(const u16 portNo);
+    u16 GetPortNo() const noexcept;
+
+private:
+    u16 _portNo;
+};
+
+inline u16 RemovePortReq::GetPortNo() const noexcept {
+    return _portNo;
+}
+
+class ProcessBpduReq : public Command {
+public:
+    ProcessBpduReq(ByteStreamH bpdu);
+//    __virtual Result Execute() override;
+};
+
+class RunStp : public Command {
+public:
+    RunStp(SystemH system, OutInterfaceH outInterface);
+//    __virtual Result Execute() override;
+private:
+    SystemH _system;
+    OutInterfaceH _outInterface;
+};
+
+inline u16 AddPortReq::GetPortNo() const noexcept {
+    return _portNo;
+}
+
+inline u32 AddPortReq::GetPortSpeed() const noexcept {
+    return _speed;
+}
+
+inline bool AddPortReq::GetPortEnabled() const noexcept {
+    return _enabled;
+}
+
+} // namespace Stp

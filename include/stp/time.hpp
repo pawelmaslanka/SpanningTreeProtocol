@@ -27,29 +27,26 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 ***************************************************************************************************/
 
-#ifndef TIMES_HPP
-#define TIMES_HPP
+#pragma once
 
 // This project's headers
 #include "lib.hpp"
 
 namespace Stp {
 
-class Time
-{
+class Time {
 public:
-//    using u16 = uint16_t;
-
-    enum RecommendedValue {
+    enum class RecommendedValue : u16 {
         MigrateTime = 3,
         BridgeHelloTime = 2,
         BridgeMaxAge = 20,
         BridgeForwardDelay = 15
     };
 
-    Time(const u16 msgAge = 0, const u16 maxAge = (u16)RecommendedValue::BridgeMaxAge,
-         const u16 fwdDelay = (u16)RecommendedValue::BridgeForwardDelay,
-         const u16 helloTime = (u16)RecommendedValue::BridgeHelloTime) noexcept;
+    Time(const u16 msgAge = 0,
+         const u16 maxAge = static_cast<u16>(+RecommendedValue::BridgeMaxAge),
+         const u16 fwdDelay = static_cast<u16>(+RecommendedValue::BridgeForwardDelay),
+         const u16 helloTime = static_cast<u16>(+RecommendedValue::BridgeHelloTime)) noexcept;
     Time(const Time&) noexcept = default;
     Time(Time&&) = default;
 
@@ -146,13 +143,11 @@ private:
 
 inline Time::Time(const u16 msgAge, const u16 maxAge,
                   const u16 fwdDelay, const u16 helloTime) noexcept
-    : _msgAge{ msgAge }, _maxAge{ maxAge }, _fwdDelay{ fwdDelay }, _helloTime{ helloTime }
-{
+    : _msgAge{ msgAge }, _maxAge{ maxAge }, _fwdDelay{ fwdDelay }, _helloTime{ helloTime } {
     // Nothing more to do
 }
 
-inline bool Time::operator==(const Time& comparedTo) const noexcept
-{
+inline bool Time::operator==(const Time& comparedTo) const noexcept {
     return _msgAge == comparedTo._msgAge
             && _maxAge == comparedTo._maxAge
             && _fwdDelay == comparedTo._fwdDelay
@@ -197,6 +192,4 @@ inline void SmTimers::SetTcWhile(const u16 value) noexcept { _tcWhile = value; }
 
 inline bool SmTimers::TimedOut(const u16 value) noexcept { return 0 == value; }
 
-} // namespace Rstp
-
-#endif // TIMES_HPP
+} // namespace Stp

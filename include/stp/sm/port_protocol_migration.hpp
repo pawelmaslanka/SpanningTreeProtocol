@@ -15,54 +15,54 @@ namespace PortProtocolMigration {
 
 class PpmState : public State {
 protected:
-    __virtual void CheckingRstpAction(MachineH machine);
-    __virtual void SelectingStpAction(MachineH machine);
-    __virtual void SensingAction(MachineH machine);
+    __virtual void CheckingRstpAction(Machine& machine);
+    __virtual void SelectingStpAction(Machine& machine);
+    __virtual void SensingAction(Machine& machine);
 };
 
 class BeginState : public PpmState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     BeginState() = default;
-    __virtual bool GoToCheckingRstp(MachineH machine);
+    __virtual bool GoToCheckingRstp(Machine& machine);
     std::string Name() override;
 };
 
 class CheckingRstpState : public PpmState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     CheckingRstpState() = default;
-    __virtual bool GoToCheckingRstp(MachineH machine);
-    __virtual bool GoToSensing(MachineH machine);
+    __virtual bool GoToCheckingRstp(Machine& machine);
+    __virtual bool GoToSensing(Machine& machine);
     std::string Name() override;
 };
 
 class SensingState : public PpmState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     SensingState() = default;
-    __virtual bool GoToCheckingRstp(MachineH machine);
-    __virtual bool GoToSelectingStp(MachineH machine);
+    __virtual bool GoToCheckingRstp(Machine& machine);
+    __virtual bool GoToSelectingStp(Machine& machine);
     std::string Name() override;
 };
 
 class SelectingStpState : public PpmState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     SelectingStpState() = default;
-    __virtual bool GoToSensing(MachineH machine);
+    __virtual bool GoToSensing(Machine& machine);
     std::string Name() override;
 };
 
@@ -89,4 +89,4 @@ inline std::string SensingState::Name() {
 }
 
 } // namespace PortProtocolMigration
-} // namespace SpanningTree
+} // namespace Stp

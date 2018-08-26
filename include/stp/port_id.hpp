@@ -27,8 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 ***************************************************************************************************/
 
-#ifndef PORT_ID_HPP
-#define PORT_ID_HPP
+#pragma once
 
 // This project's headers
 #include "bpdu.hpp"
@@ -36,15 +35,13 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace Stp {
 
-class PortId
-{
+class PortId {
 public:
     /**
      * @brief PortId
      * @param encodedData By default, set to value which is considered as the worst assignable value
      * from RSTP point of view.
      */
-//    PortId(const u16 encodedData = std::numeric_limits<u16>::max()) noexcept;
     PortId() noexcept;
     explicit PortId(const Bpdu::PortIdHandler& portId) noexcept;
     PortId(const PortId&) noexcept = default;
@@ -60,37 +57,33 @@ public:
 
     Bpdu::PortIdHandler ConvertToBpduData() const noexcept;
 
-    uint16_t PortNum() const noexcept;
-    void SetPortNum(const uint16_t value) noexcept;
+    u16 PortNum() const noexcept;
+    void SetPortNum(const u16 value) noexcept;
 
-    uint8_t Priority() const noexcept;
-    void SetPriority(const uint8_t value) noexcept;
+    u8 Priority() const noexcept;
+    void SetPriority(const u8 value) noexcept;
 
 private:
-    uint16_t _portNum;
-    uint8_t _priority;
+    u16 _portNum;
+    u8 _priority;
 };
 
 inline PortId::PortId() noexcept : PortId({{ 0xFF, 0xFF }}) { }
 
-inline bool PortId::operator==(const PortId& comparedTo) const noexcept
-{
+inline bool PortId::operator==(const PortId& comparedTo) const noexcept {
     return (_priority == comparedTo._priority)
             || (_portNum == comparedTo._portNum);
 }
 
-inline bool PortId::operator<(const PortId& comparedTo) const noexcept
-{
+inline bool PortId::operator<(const PortId& comparedTo) const noexcept {
     return (_priority > comparedTo._priority)
             || (_priority == comparedTo._priority && _portNum > comparedTo._portNum);
 }
 
-inline uint16_t PortId::PortNum() const noexcept { return _portNum; }
-inline void PortId::SetPortNum(const uint16_t value) noexcept { _portNum = value; }
+inline u16 PortId::PortNum() const noexcept { return _portNum; }
+inline void PortId::SetPortNum(const u16 value) noexcept { _portNum = value; }
 
-inline uint8_t PortId::Priority() const noexcept { return _priority; }
-inline void PortId::SetPriority(const uint8_t value) noexcept { _priority = value; }
+inline u8 PortId::Priority() const noexcept { return _priority; }
+inline void PortId::SetPriority(const u8 value) noexcept { _priority = value; }
 
-} // namespace Rstp
-
-#endif // PORT_ID_HPP
+} // namespace Stp

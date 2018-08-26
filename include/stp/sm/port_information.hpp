@@ -8,58 +8,58 @@ namespace PortInformation {
 
 class PimState : public State {
 protected:
-    __virtual void DisabledAction(MachineH machine);
-    __virtual void AgedAction(MachineH machine);
-    __virtual void UpdateAction(MachineH machine);
-    __virtual void SuperiorDesignatedAction(MachineH machine);
-    __virtual void RepeatedDesignatedAction(MachineH machine);
-    __virtual void InferiorDesignatedAction(MachineH machine);
-    __virtual void NotDesignatedAction(MachineH machine);
-    __virtual void OtherAction(MachineH machine);
-    __virtual void CurrentAction(MachineH machine);
-    __virtual void ReceiveAction(MachineH machine);
-    __virtual bool GoToCurrent(MachineH machine);
-    __virtual void CurrentUctExecute(MachineH machine);
+    __virtual void DisabledAction(Machine& machine);
+    __virtual void AgedAction(Machine& machine);
+    __virtual void UpdateAction(Machine& machine);
+    __virtual void SuperiorDesignatedAction(Machine& machine);
+    __virtual void RepeatedDesignatedAction(Machine& machine);
+    __virtual void InferiorDesignatedAction(Machine& machine);
+    __virtual void NotDesignatedAction(Machine& machine);
+    __virtual void OtherAction(Machine& machine);
+    __virtual void CurrentAction(Machine& machine);
+    __virtual void ReceiveAction(Machine& machine);
+    __virtual bool GoToCurrent(Machine& machine);
+    __virtual void CurrentUctExecute(Machine& machine);
 };
 
 class BeginState : public PimState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     BeginState() = default;
-    __virtual bool GoToDisabled(MachineH machine);
+    __virtual bool GoToDisabled(Machine& machine);
     std::string Name() override;
 };
 
 class DisabledState : public PimState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     DisabledState() = default;
-    __virtual bool GoToDisabled(MachineH machine);
-    __virtual bool GoToAged(MachineH machine);
+    __virtual bool GoToDisabled(Machine& machine);
+    __virtual bool GoToAged(Machine& machine);
     std::string Name() override;
 };
 
 class AgedState : public PimState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     AgedState() = default;
-    __virtual bool GoToUpdate(MachineH machine);
+    __virtual bool GoToUpdate(Machine& machine);
     std::string Name() override;
 };
 
 class UpdateState : public PimState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     UpdateState() = default;
@@ -68,8 +68,8 @@ protected:
 
 class SuperiorDesignatedState : public PimState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     SuperiorDesignatedState() = default;
@@ -78,8 +78,8 @@ protected:
 
 class RepeatedDesignatedState : public PimState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     RepeatedDesignatedState() = default;
@@ -88,8 +88,8 @@ protected:
 
 class InferiorDesignatedState : public PimState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     InferiorDesignatedState() = default;
@@ -98,8 +98,8 @@ protected:
 
 class NotDesignatedState : public PimState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     NotDesignatedState() = default;
@@ -108,8 +108,8 @@ protected:
 
 class OtherState : public PimState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     OtherState() = default;
@@ -118,29 +118,29 @@ protected:
 
 class CurrentState : public PimState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     CurrentState() = default;
-    __virtual bool GoToUpdate(MachineH machine);
-    __virtual bool GoToAged(MachineH machine);
-    __virtual bool GoToReceive(MachineH machine);
+    __virtual bool GoToUpdate(Machine& machine);
+    __virtual bool GoToAged(Machine& machine);
+    __virtual bool GoToReceive(Machine& machine);
     std::string Name() override;
 };
 
 class ReceiveState : public PimState {
 public:
-    static StateH Instance();
-    void Execute(MachineH machine) override;
+    static State& Instance();
+    void Execute(Machine& machine) override;
 
 protected:
     ReceiveState() = default;
-    __virtual bool GoToSuperiorDesignated(MachineH machine);
-    __virtual bool GoToRepeatedDesignated(MachineH machine);
-    __virtual bool GoToInferiorDesignated(MachineH machine);
-    __virtual bool GoToNotDesignated(MachineH machine);
-    __virtual bool GoToOther(MachineH machine);
+    __virtual bool GoToSuperiorDesignated(Machine& machine);
+    __virtual bool GoToRepeatedDesignated(Machine& machine);
+    __virtual bool GoToInferiorDesignated(Machine& machine);
+    __virtual bool GoToNotDesignated(Machine& machine);
+    __virtual bool GoToOther(Machine& machine);
     std::string Name() override;
 };
 

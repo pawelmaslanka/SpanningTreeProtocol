@@ -13,27 +13,27 @@ using namespace Stp;
 
 class BeginState : public PortInformation::BeginState {
 public:
-    MOCK_METHOD0(Instance, StateH());
-    MOCK_METHOD1(Execute, void(MachineH));
-    MOCK_METHOD1(DisabledAction, void(MachineH machine));
-    MOCK_METHOD1(AgedAction, void(MachineH machine));
-    MOCK_METHOD1(UpdateAction, void(MachineH machine));
-    MOCK_METHOD1(SuperiorDesignatedAction, void(MachineH machine));
-    MOCK_METHOD1(RepeatedDesignatedAction, void(MachineH machine));
-    MOCK_METHOD1(InferiorDesignatedAction, void(MachineH machine));
-    MOCK_METHOD1(NotDesignatedAction, void(MachineH machine));
-    MOCK_METHOD1(OtherAction, void(MachineH machine));
-    MOCK_METHOD1(CurrentAction, void(MachineH machine));
-    MOCK_METHOD1(ReceiveAction, void(MachineH machine));
-    MOCK_METHOD1(GoToDisabled, bool(MachineH machine));
-    MOCK_METHOD1(GoToCurrent, bool(MachineH machine));
-    MOCK_METHOD2(ChangeState, void(MachineH, StateH));
+    MOCK_METHOD0(Instance, State&());
+    MOCK_METHOD1(Execute, void(Machine&));
+    MOCK_METHOD1(DisabledAction, void(Machine& machine));
+    MOCK_METHOD1(AgedAction, void(Machine& machine));
+    MOCK_METHOD1(UpdateAction, void(Machine& machine));
+    MOCK_METHOD1(SuperiorDesignatedAction, void(Machine& machine));
+    MOCK_METHOD1(RepeatedDesignatedAction, void(Machine& machine));
+    MOCK_METHOD1(InferiorDesignatedAction, void(Machine& machine));
+    MOCK_METHOD1(NotDesignatedAction, void(Machine& machine));
+    MOCK_METHOD1(OtherAction, void(Machine& machine));
+    MOCK_METHOD1(CurrentAction, void(Machine& machine));
+    MOCK_METHOD1(ReceiveAction, void(Machine& machine));
+    MOCK_METHOD1(GoToDisabled, bool(Machine& machine));
+    MOCK_METHOD1(GoToCurrent, bool(Machine& machine));
+    MOCK_METHOD2(ChangeState, void(Machine&, State&));
 
-    void RealExecute(MachineH machine) {
+    void RealExecute(Machine& machine) {
         PortInformation::BeginState::Execute(machine);
     }
 
-    void RealChangeState(MachineH machine, StateH newState) {
+    void RealChangeState(Machine& machine, State& newState) {
         PortInformation::BeginState::ChangeState(machine, newState);
     }
 };

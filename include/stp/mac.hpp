@@ -27,8 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 ***************************************************************************************************/
 
-#ifndef MAC_HPP
-#define MAC_HPP
+#pragma once
 
 // This project's headers
 #include "bpdu.hpp"
@@ -36,8 +35,7 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace Stp {
 
-class Mac
-{
+class Mac {
 public:
     enum class Size : u8 {
         Address = 6
@@ -74,18 +72,18 @@ public:
     Bpdu::BridgeSystemIdHandler ConvertToBpduData() const noexcept;
     u64 ConvertToInteger() const noexcept;
 
-    uint8_t Octet1st() const noexcept;
-    void SetOctet1st(const uint8_t value) noexcept;
-    uint8_t Octet2nd() const noexcept;
-    void SetOctet2nd(const uint8_t value) noexcept;
-    uint8_t Octet3rd() const noexcept;
-    void SetOctet3rd(const uint8_t value) noexcept;
-    uint8_t Octet4th() const noexcept;
-    void SetOctet4th(const uint8_t value) noexcept;
-    uint8_t Octet5th() const noexcept;
-    void SetOctet5th(const uint8_t value) noexcept;
-    uint8_t Octet6th() const noexcept;
-    void SetOctet6th(const uint8_t value) noexcept;
+    u8 Octet1st() const noexcept;
+    void SetOctet1st(const u8 value) noexcept;
+    u8 Octet2nd() const noexcept;
+    void SetOctet2nd(const u8 value) noexcept;
+    u8 Octet3rd() const noexcept;
+    void SetOctet3rd(const u8 value) noexcept;
+    u8 Octet4th() const noexcept;
+    void SetOctet4th(const u8 value) noexcept;
+    u8 Octet5th() const noexcept;
+    void SetOctet5th(const u8 value) noexcept;
+    u8 Octet6th() const noexcept;
+    void SetOctet6th(const u8 value) noexcept;
 
 private:
     u64 _addr;
@@ -93,55 +91,45 @@ private:
 
 inline Mac::Mac() noexcept : Mac({{ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF }}) { }
 
-inline bool Mac::operator==(const Mac& comparedTo) const noexcept
-{
+inline bool Mac::operator==(const Mac& comparedTo) const noexcept {
     return _addr == comparedTo._addr;
 }
 
-inline bool Mac::operator<(const Mac& comparedTo) const noexcept
-{
+inline bool Mac::operator<(const Mac& comparedTo) const noexcept {
     // Lesser value of Mac Address means more preferred value
     return _addr > comparedTo._addr;
 }
 
 inline u64 Mac::ConvertToInteger() const noexcept { return _addr; }
 
-inline uint8_t Mac::Octet1st() const noexcept
-{
+inline u8 Mac::Octet1st() const noexcept {
     // reinterpret_cast<> is not allowed in constant expression
-    return static_cast<uint8_t>(_addr / (u64)ShiftOctet::CpuLeastSignificant6th);
+    return static_cast<u8>(_addr / +ShiftOctet::CpuLeastSignificant6th);
 }
 
-inline uint8_t Mac::Octet2nd() const noexcept
-{
+inline u8 Mac::Octet2nd() const noexcept {
     // reinterpret_cast<> is not allowed in constant expression
-    return static_cast<uint8_t>(_addr / (u64)ShiftOctet::CpuLeastSignificant5th);
+    return static_cast<u8>(_addr / +ShiftOctet::CpuLeastSignificant5th);
 }
 
-inline uint8_t Mac::Octet3rd() const noexcept
-{
+inline u8 Mac::Octet3rd() const noexcept {
     // reinterpret_cast<> is not allowed in constant expression
-    return static_cast<uint8_t>(_addr / (u64)ShiftOctet::CpuLeastSignificant4th);
+    return static_cast<u8>(_addr / +ShiftOctet::CpuLeastSignificant4th);
 }
 
-inline uint8_t Mac::Octet4th() const noexcept
-{
+inline u8 Mac::Octet4th() const noexcept {
     // reinterpret_cast<> is not allowed in constant expression
-    return static_cast<uint8_t>(_addr / (u64)ShiftOctet::CpuLeastSignificant3rd);
+    return static_cast<u8>(_addr / +ShiftOctet::CpuLeastSignificant3rd);
 }
 
-inline uint8_t Mac::Octet5th() const noexcept
-{
+inline u8 Mac::Octet5th() const noexcept {
     // reinterpret_cast<> is not allowed in constant expression
-    return static_cast<uint8_t>(_addr / (u64)ShiftOctet::CpuLeastSignificant2nd);
+    return static_cast<u8>(_addr / +ShiftOctet::CpuLeastSignificant2nd);
 }
 
-inline uint8_t Mac::Octet6th() const noexcept
-{
+inline u8 Mac::Octet6th() const noexcept {
     // reinterpret_cast<> is not allowed in constant expression
-    return static_cast<uint8_t>(_addr / (u64)ShiftOctet::CpuLeastSignificant1st);
+    return static_cast<u8>(_addr / +ShiftOctet::CpuLeastSignificant1st);
 }
 
 } // namespace Rstp
-
-#endif // MAC_HPP

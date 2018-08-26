@@ -2,7 +2,7 @@
 
 namespace Stp {
 
-Machine::Machine(sptr<Bridge> bridge, sptr<Port> port, StateH initState)
+Machine::Machine(BridgeH bridge, PortH port, State& initState)
     : _bridge{ bridge }, _port{ port }, _state{ &initState } {
     if (nullptr == _bridge) {
         std::runtime_error("Handler for bridge instance is null pointer");
@@ -17,4 +17,4 @@ Machine::Machine(sptr<Bridge> bridge, sptr<Port> port, StateH initState)
     }
 }
 
-} // namespace SpanningTree
+} // namespace Stp

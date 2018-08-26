@@ -44,15 +44,11 @@ Port::Port() noexcept
       _rcvdTcAck{ false }, _rcvdTcn{ false }, _reRoot{ false }, _reselect{ false },
       _role{ PortRole::Disabled }, _selected{ false }, _selectedRole{ PortRole::Disabled },
       _sendRstp{ false }, _sync{ false }, _synced{ false }, _tcAck{ false }, _tcProp{ false },
-      _tick{ false }, _txCount{ (u8)RecommendedValue::TransmitHoldCount }, _updtInfo{ false },
-      _rxBpdu{ }, _smTimers{  }, _ptiState{ PtiState::Begin }, _prxState{ PrxState::Begin },
-      _ppmState{ PpmState::Begin }, _bdmState{ BdmState::Begin }, _ptxState{ PtxState::Begin },
-      _pimState{ PimState::Begin }, _prsState{ PrsState::Begin }, _prtState{ PrtState::Begin },
-      _pstState{ PstState::Begin }, _tcmState{ TcmState::Begin }
-{
-    _smTimers.SetEdgeDelayWhile((u16)Time::RecommendedValue::MigrateTime);
-    _smTimers.SetFdWhile((u16)Time::RecommendedValue::BridgeForwardDelay);
-    _smTimers.SetHelloWhen((u16)Time::RecommendedValue::BridgeHelloTime);
+      _tick{ false }, _txCount{ +RecommendedValue::TransmitHoldCount }, _updtInfo{ false },
+      _rxBpdu{ }, _smTimers{  } {
+    _smTimers.SetEdgeDelayWhile(+Time::RecommendedValue::MigrateTime);
+    _smTimers.SetFdWhile(+Time::RecommendedValue::BridgeForwardDelay);
+    _smTimers.SetHelloWhen(+Time::RecommendedValue::BridgeHelloTime);
 }
 
 } // namespace Rstp

@@ -7,7 +7,7 @@
 namespace Stp {
 namespace PortReceive {
 
-void PrxState::DiscardAction(MachineH machine) {
+void PrxState::DiscardAction(Machine& machine) {
     machine.PortInstance().SetRcvdBpdu(false);
     machine.PortInstance().SetRcvdRstp(false);
     machine.PortInstance().SetRcvdStp(false);
@@ -15,7 +15,7 @@ void PrxState::DiscardAction(MachineH machine) {
     machine.PortInstance().SmTimersInstance().SetEdgeDelayWhile(PerfParams::MigrateTime());
 }
 
-void PrxState::ReceiveAction(MachineH machine) {
+void PrxState::ReceiveAction(Machine& machine) {
     SmProcedures::UpdtBpduVersion(machine.PortInstance());
     machine.PortInstance().SetOperEdge(false);
     machine.PortInstance().SetRcvdBpdu(false);
@@ -23,18 +23,18 @@ void PrxState::ReceiveAction(MachineH machine) {
     machine.PortInstance().SmTimersInstance().SetEdgeDelayWhile(PerfParams::MigrateTime());
 }
 
-StateH BeginState::Instance() {
+State& BeginState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(BeginState);
 }
 
-void BeginState::Execute(MachineH machine) {
+void BeginState::Execute(Machine& machine) {
     if (GoToDiscard(machine)) {
         DiscardAction(machine);
         ChangeState(machine, DiscardState::Instance());
     }
 }
 
-bool BeginState::GoToDiscard(MachineH machine) {
+bool BeginState::GoToDiscard(Machine& machine) {
     if (machine.BridgeInstance().Begin()) {
         return true;
     }
@@ -53,18 +53,18 @@ bool BeginState::GoToDiscard(MachineH machine) {
     return false;
 }
 
-StateH DiscardState::Instance() {
+State& DiscardState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(DiscardState);
 }
 
-void DiscardState::Execute(MachineH machine) {
+void DiscardState::Execute(Machine& machine) {
     if (GoToReceive(machine)) {
         ReceiveAction(machine);
         ChangeState(machine, ReceiveState::Instance());
     }
 }
 
-bool DiscardState::GoToReceive(MachineH machine) {
+bool DiscardState::GoToReceive(Machine& machine) {
     if (not machine.PortInstance().RcvdBpdu()) {
         return false;
     }
@@ -76,18 +76,18 @@ bool DiscardState::GoToReceive(MachineH machine) {
     return true;
 }
 
-StateH ReceiveState::Instance() {
+State& ReceiveState::Instance() {
     RETURN_STATE_SINGLETON_INSTANCE(ReceiveState);
 }
 
-void ReceiveState::Execute(MachineH machine) {
+void ReceiveState::Execute(Machine& machine) {
     if (GoToReceive(machine)) {
         ReceiveAction(machine);
         // Leave it as current state
     }
 }
 
-bool ReceiveState::GoToReceive(MachineH machine) {
+bool ReceiveState::GoToReceive(Machine& machine) {
     if (not machine.PortInstance().RcvdBpdu()) {
         return false;
     }

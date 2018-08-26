@@ -27,8 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 ***************************************************************************************************/
 
-#ifndef LIB_HPP
-#define LIB_HPP
+#pragma once
+
+// This project's headers
+#include "specifiers.hpp"
 
 // C Standard Library
 #include <climits>
@@ -40,23 +42,21 @@ either expressed or implied, of the FreeBSD Project.
 #include <type_traits>
 #include <vector>
 
-//class Bridge;
-//using BridgeH = std::shared_ptr<Bridge>;
-//class Port;
-//using PortH = std::shared_ptr<Port>;
-//class Machine;
-//using MachineH = Machine&;
-//class State;
-//using StateH = std::shared_ptr<State>;
-
-template <typename T>
-using sptr = std::shared_ptr<T>;
-
+namespace Stp {
 namespace Lib {
 
+template <typename T>
+using Uptr = std::unique_ptr<T>;
+template <typename T>
+using Sptr = std::shared_ptr<T>;
+
+using s8 = int8_t;
 using u8 = uint8_t;
+using s16 = int16_t;
 using u16 = uint16_t;
+using s32 = int32_t;
 using u32 = uint32_t;
+using s64 = int64_t;
 using u64 = uint64_t;
 
 constexpr u8 ByteBitWidth = CHAR_BIT;
@@ -68,12 +68,12 @@ enum class BitWidth : u8 {
     u64 = 4 * u16
 };
 
-inline u8 operator*(const u8 left, const BitWidth right) noexcept
-{
+inline u8 operator*(const u8 left, const BitWidth right) noexcept {
     return left * static_cast<u8>(right);
 }
 
 using ByteStream = std::vector<u8>;
+using ByteStreamH = ByteStream&;
 
 enum class Boolean : u8 {
     False = 0,
@@ -85,14 +85,12 @@ enum class Result : u8 {
     Success = static_cast<u8>(std::numeric_limits<u8>::max())
 }; // End of 'Result' enumeration declaration
 
-constexpr inline bool Failed(Result result)
-{
+constexpr inline bool Failed(Result result) {
     return static_cast<u8>(Result::Fail) == static_cast<u8>(result);
 }
 
 template<typename T>
-inline void dec(T& timer) noexcept
-{
+inline void dec(T& timer) noexcept {
     if (timer) {
         --timer;
     }
@@ -109,12 +107,16 @@ enum class ShiftOctet : u64 {
     CpuLeastSignificant8th = static_cast<u64>(0x100000000000000)
 };
 
-} // End of 'Lib' namespace declaration
-
-namespace Stp {
-
-using namespace Lib;
-
+/// @brief Performs conversion from enum classes to their underlying type
+/// @param e Enum class's value
+/// @return Value casted onto enum's underlying type
+template <typename T>
+constexpr auto operator+(T e) noexcept
+    -> std::enable_if_t<std::is_enum<T>::value, std::underlying_type_t<T>> {
+        return static_cast<std::underlying_type_t<T>>(e);
 }
 
-#endif // LIB_HPP
+} // namespace Lib
+
+using namespace Stp::Lib;
+} // namespace Stp

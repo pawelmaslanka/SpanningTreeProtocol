@@ -2,6 +2,7 @@
 #include <stp/sm/port_protocol_migration.hpp>
 // UT dependencies
 #include "sut_machine.hpp"
+#include <mock/management.hpp>
 #include <mock/port_protocol_migration_sm.hpp>
 
 // GTest headers
@@ -18,12 +19,13 @@ using namespace Stp::PortProtocolMigration;
 class PortProtocolMigrationTest : public ::testing::Test {
 protected:
     PortProtocolMigrationTest()
-        : _bridge{ std::make_shared<Stp::Bridge>() },
+        : _bridge{ std::make_shared<Stp::Bridge>(
+                       std::make_shared<Mock::OutInterface>()) },
           _port{ std::make_shared<Stp::Port>() },
           _sutMachine{ _bridge, _port } {}
 
-    sptr<Stp::Bridge> _bridge;
-    sptr<Stp::Port> _port;
+    Stp::BridgeH _bridge;
+    Stp::PortH _port;
     SutMachine _sutMachine;
     Mock::Ppm::BeginState _mockBeginState;
     Mock::Ppm::CheckingRstpState _mockCheckingRstpState;

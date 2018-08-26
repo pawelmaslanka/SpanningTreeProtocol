@@ -27,16 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 ***************************************************************************************************/
 
-#ifndef PATH_COST_HPP
-#define PATH_COST_HPP
+#pragma once
 
 // This project's headers
 #include "lib.hpp"
 
 namespace Stp {
 
-class PathCost
-{
+class PathCost {
 public:
     static u32 SpeedMbToPathCostValue(const u32 speedMb) noexcept;
 
@@ -62,9 +60,10 @@ public:
     u32 ConvertToBpduData() const noexcept;
 
     void SetPathCost(const u32 pathCost) noexcept;
+
 private:
     union BpduData {
-        uint8_t stream[sizeof (u32)];
+        u8 stream[sizeof (u32)];
         struct {
             u32 MostSignificant1st: 8;
             u32 MostSignificant2nd: 8;
@@ -76,18 +75,15 @@ private:
     u32 _value;
 };
 
-inline void PathCost::operator+=(const PathCost& pathCost) noexcept
-{
+inline void PathCost::operator+=(const PathCost& pathCost) noexcept {
     _value += pathCost._value;
 }
 
-inline bool PathCost::operator==(const PathCost& comparedTo) const noexcept
-{
+inline bool PathCost::operator==(const PathCost& comparedTo) const noexcept {
     return _value == comparedTo._value;
 }
 
-inline bool PathCost::operator<(const PathCost& comparedTo) const noexcept
-{
+inline bool PathCost::operator<(const PathCost& comparedTo) const noexcept {
     return _value > comparedTo._value;
 }
 
@@ -96,5 +92,3 @@ inline u32 PathCost::Value() const noexcept { return _value; }
 inline void PathCost::SetPathCost(const u32 pathCost) noexcept { _value = pathCost; }
 
 } // namespace Rstp
-
-#endif // PATH_COST_HPP
