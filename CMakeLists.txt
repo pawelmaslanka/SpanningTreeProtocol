@@ -40,6 +40,7 @@ file(GLOB STP_SOURCE
     ${SOURCE}/bpdu.cpp
     ${SOURCE}/bridge.cpp
     ${SOURCE}/bridge_id.cpp
+    ${SOURCE}/logger.cpp
     ${SOURCE}/mac.cpp
     ${SOURCE}/management.cpp
     ${SOURCE}/path_cost.cpp

@@ -2,6 +2,7 @@
 
 // This project's headers
 #include "lib.hpp"
+#include "logger.hpp"
 #include "mac.hpp"
 
 namespace Stp {
@@ -9,46 +10,35 @@ namespace Stp {
 enum class RequestId : u8 {
     AddPort,
     RemovePort,
-    ProcessBpdu
+    ProcessBpdu,
+    CHangeLogMsgSeverityLevel
 };
 
 class OutInterface {
 public:
-    virtual Result FlushFdb(const u16 portNo) = 0;
-    virtual Result SetForwarding(const u16 portNo, const bool enable) = 0;
-    virtual Result SetLearning(const u16 portNo, const bool enable) = 0;
-    virtual Result SendOutBpdu(const u16 portNo, ByteStreamH data) = 0;
+    virtual Result FlushFdb(const u16 portNo) __noexcept = 0;
+    virtual Result SetForwarding(const u16 portNo, const bool enable) __noexcept = 0;
+    virtual Result SetLearning(const u16 portNo, const bool enable) __noexcept = 0;
+    virtual Result SendOutBpdu(const u16 portNo, ByteStreamH data) __noexcept = 0;
 
 protected:
     virtual ~OutInterface() = default;
 };
 
 using OutInterfaceH = Sptr<OutInterface>;
-using LoggerH = Sptr<std::ostream>;
+using LoggerH = Sptr<Logger>;
 
 class System {
 public:
     System(Mac bridgeAddr, LoggerH logger);
     Mac& GetBridgeAddr() noexcept;
-    LoggerH& GetLog() noexcept;
+    LoggerH& LogInstance() noexcept;
 private:
     Mac _bridgeAddr;
     LoggerH _logger;
 };
 
 using SystemH = Sptr<System>;
-
-inline System::System(Mac bridgeAddr, LoggerH logger)
-    : _bridgeAddr{ bridgeAddr }, _logger{ logger } {
-}
-
-inline Mac& System::GetBridgeAddr() noexcept {
-    return _bridgeAddr;
-}
-
-inline LoggerH& System::GetLog() noexcept {
-    return _logger;
-}
 
 class Management {
 public:
@@ -69,15 +59,6 @@ protected:
 private:
     RequestId _reqId;
 };
-
-inline Command::Command(const RequestId reqId)
-    : _reqId{ reqId } {
-
-}
-
-inline RequestId Command::Id() const noexcept {
-    return _reqId;
-}
 
 class AddPortReq : public Command {
 public:
@@ -101,24 +82,44 @@ private:
     u16 _portNo;
 };
 
-inline u16 RemovePortReq::GetPortNo() const noexcept {
-    return _portNo;
-}
-
 class ProcessBpduReq : public Command {
 public:
     ProcessBpduReq(ByteStreamH bpdu);
-//    __virtual Result Execute() override;
 };
 
 class RunStp : public Command {
 public:
     RunStp(SystemH system, OutInterfaceH outInterface);
-//    __virtual Result Execute() override;
 private:
     SystemH _system;
     OutInterfaceH _outInterface;
 };
+
+class ChangeLogMsgSeverityReq : public Command {
+public:
+    ChangeLogMsgSeverityReq(Logger::MsgSeverity msgSeverity);
+};
+
+inline System::System(Mac bridgeAddr, LoggerH logger)
+    : _bridgeAddr{ bridgeAddr }, _logger{ logger } {
+}
+
+inline Mac& System::GetBridgeAddr() noexcept {
+    return _bridgeAddr;
+}
+
+inline LoggerH& System::LogInstance() noexcept {
+    return _logger;
+}
+
+inline Command::Command(const RequestId reqId)
+    : _reqId{ reqId } {
+    // Nothing more to do
+}
+
+inline RequestId Command::Id() const noexcept {
+    return _reqId;
+}
 
 inline u16 AddPortReq::GetPortNo() const noexcept {
     return _portNo;
@@ -130,6 +131,10 @@ inline u32 AddPortReq::GetPortSpeed() const noexcept {
 
 inline bool AddPortReq::GetPortEnabled() const noexcept {
     return _enabled;
+}
+
+inline u16 RemovePortReq::GetPortNo() const noexcept {
+    return _portNo;
 }
 
 } // namespace Stp

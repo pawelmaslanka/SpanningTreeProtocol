@@ -1,5 +1,4 @@
 #include "stp/sm/port_protocol_migration.hpp"
-//#include "mock.hpp"
 #include "stp/management.hpp"
 #include "stp/port.hpp"
 
@@ -12,19 +11,20 @@ using namespace std;
 
 class OutInterfaceImpl final : public OutInterface {
 public:
-    Result FlushFdb(const u16 portNo) { return Result::Success; }
-    Result SetForwarding(const u16 portNo, const bool enable) { return Result::Success; }
-    Result SetLearning(const u16 portNo, const bool enable) { return Result::Success; }
-    Result SendOutBpdu(const u16 portNo, ByteStreamH data) { return Result::Success; }
+    Result FlushFdb(const u16 portNo) noexcept { return Result::Success; }
+    Result SetForwarding(const u16 portNo, const bool enable) noexcept { return Result::Success; }
+    Result SetLearning(const u16 portNo, const bool enable) noexcept { return Result::Success; }
+    Result SendOutBpdu(const u16 portNo, ByteStreamH data) noexcept { return Result::Success; }
 };
 
-class Logger : public std::ostream {
+class SystemLogger : public Logger {
 public:
-    Logger() : std::ostream(std::cout.rdbuf()) {}
+    SystemLogger(Logger::MsgSeverity msgLogSeverity) : Logger{ msgLogSeverity } {}
+    void operator<<(std::string&& msg) noexcept override { std::ignore = msg; }
 };
 
 int main() {
-    LoggerH logger = std::make_shared<Logger>();
+    LoggerH logger = std::make_shared<SystemLogger>(Logger::MsgSeverity::None);
     SystemH system = std::make_shared<System>(Mac{}, logger);
     Stp::Management::RunStp(system, std::make_shared<OutInterfaceImpl>());
     Stp::Management::AddPort(1, 10000, true);
