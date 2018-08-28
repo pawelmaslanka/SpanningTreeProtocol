@@ -28,62 +28,79 @@ private:
 
 using LoggerH = Sptr<Logger>;
 
-class StateEntryLogger : public Logger {
+class StateEntryLogger {
 public:
     StateEntryLogger(LoggerH logger);
-    virtual ~StateEntryLogger() = default;
-    void operator<<(std::string&& msg) noexcept override;
+    virtual void Log(const char* machineName, const char* stateName) = 0;
 
-private:
+protected:
+    virtual ~StateEntryLogger() = default;
     LoggerH _logger;
 };
 
-class NullStateEntryLogger : public Logger {
+class NullStateEntryLogger : public StateEntryLogger {
 public:
     NullStateEntryLogger(LoggerH logger);
-    virtual ~NullStateEntryLogger() = default;
-    void operator<<(std::string&& msg) noexcept override;
+    void Log(const char* machineName, const char* stateName) override;
 };
 
-class ChangeStateLogger : public Logger {
+class SystemStateEntryLogger : public StateEntryLogger {
+public:
+    SystemStateEntryLogger(LoggerH logger);
+    void Log(const char* machineName, const char* stateName) override;
+};
+
+class ChangeStateLogger {
 public:
     ChangeStateLogger(LoggerH logger);
-    virtual ~ChangeStateLogger() = default;
-    void operator<<(std::string&& msg) noexcept override;
+    virtual void Log(const char* machineName, const char* oldStateName, const char* newStateName) = 0;
 
-private:
+protected:
+    virtual ~ChangeStateLogger() = default;
     LoggerH _logger;
 };
 
-class NullChangeStateLogger : public Logger {
+class NullChangeStateLogger : public ChangeStateLogger {
 public:
     NullChangeStateLogger(LoggerH logger);
-    virtual ~NullChangeStateLogger() = default;
-    void operator<<(std::string&& msg) noexcept override;
+    virtual void Log(const char* machineName, const char* oldStateName,
+                     const char* newStateName) override;
+};
+
+class SystemChangeStateLogger : public ChangeStateLogger {
+public:
+    SystemChangeStateLogger(LoggerH logger);
+    void Log(const char* machineName, const char* oldStateName, const char* newStateName) override;
 };
 
 inline StateEntryLogger::StateEntryLogger(LoggerH logger)
-    : _logger{ logger } {
+    : _logger { logger } {
 }
 
-inline void StateEntryLogger::operator<<(std::string&& msg) noexcept {
-    *_logger << std::move(msg);
+inline NullStateEntryLogger::NullStateEntryLogger(LoggerH logger)
+    : StateEntryLogger { logger } {
+}
+
+inline void NullStateEntryLogger::Log(const char*, const char*) {
+}
+
+inline SystemStateEntryLogger::SystemStateEntryLogger(LoggerH logger)
+    : StateEntryLogger{ logger } {
 }
 
 inline ChangeStateLogger::ChangeStateLogger(LoggerH logger)
     : _logger{ logger } {
 }
 
-inline void ChangeStateLogger::operator<<(std::string&& msg) noexcept {
-    *_logger << std::move(msg);
+inline NullChangeStateLogger::NullChangeStateLogger(LoggerH logger)
+    : ChangeStateLogger{ logger } {
 }
 
-inline void NullStateEntryLogger::operator<<(std::string&& msg) noexcept {
-    std::ignore = msg;
+inline void NullChangeStateLogger::Log(const char*, const char*, const char*) {
 }
 
-inline void NullChangeStateLogger::operator<<(std::string&& msg) noexcept {
-    std::ignore = msg;
+inline SystemChangeStateLogger::SystemChangeStateLogger(LoggerH logger)
+    : ChangeStateLogger{ logger } {
 }
 
 } // namespace Stp
