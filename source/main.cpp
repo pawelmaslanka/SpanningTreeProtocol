@@ -9,7 +9,7 @@
 using namespace Stp;
 using namespace std;
 
-class OutInterfaceImpl final : public OutInterface {
+class SystemOutInterface final : public OutInterface {
 public:
     Result FlushFdb(const u16 portNo) noexcept { return Result::Success; }
     Result SetForwarding(const u16 portNo, const bool enable) noexcept { return Result::Success; }
@@ -25,8 +25,8 @@ public:
 
 int main() {
     LoggerH logger = std::make_shared<SystemLogger>(Logger::MsgSeverity::None);
-    SystemH system = std::make_shared<System>(Mac{}, logger);
-    Stp::Management::RunStp(system, std::make_shared<OutInterfaceImpl>());
+    SystemH system = std::make_shared<System>(std::make_shared<SystemOutInterface>(), logger);
+    Stp::Management::RunStp(Mac{}, system);
     Stp::Management::AddPort(1, 10000, true);
 
     return 0;

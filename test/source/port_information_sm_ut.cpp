@@ -2,6 +2,7 @@
 #include <stp/sm/port_information.hpp>
 // UT dependencies
 #include "sut_machine.hpp"
+#include <mock/logger.hpp>
 #include <mock/management.hpp>
 #include <mock/port_information_sm.hpp>
 
@@ -13,10 +14,15 @@ using namespace Stp::PortInformation;
 class PortInformationTest : public ::testing::Test {
 protected:
     PortInformationTest()
-        : _bridge{ std::make_shared<Stp::Bridge>(
-                       std::make_shared<Mock::OutInterface>()) },
+        : _bridge{
+              std::make_shared<Stp::Bridge>(
+                  std::make_shared<Stp::System>(
+                      std::make_shared<Mock::OutInterface>(),
+                      std::make_shared<Mock::Logger>())) },
           _port{ std::make_shared<Stp::Port>() },
-          _sutMachine{ _bridge, _port } {}
+          _sutMachine{ _bridge, _port } {
+
+    }
 
     Stp::BridgeH _bridge;
     Stp::PortH _port;

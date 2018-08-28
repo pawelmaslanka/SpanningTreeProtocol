@@ -35,6 +35,7 @@ either expressed or implied, of the FreeBSD Project.
 #include "priority_vector.hpp"
 #include "management.hpp"
 #include "specifiers.hpp"
+#include "system.hpp"
 #include "time.hpp"
 
 // C++ Standard Library
@@ -54,7 +55,7 @@ public:
     /// @todo Make it dynamic managementable
     static constexpr u32 AgeingTime = 300;
 
-    Bridge(OutInterfaceH outInterface) noexcept;
+    Bridge(SystemH system) noexcept;
     Bridge(const Bridge&) = default;
     Bridge(Bridge&&) = default;
 
@@ -133,7 +134,7 @@ private:
 
     std::map<u16, PortH> _ports;
 
-    OutInterfaceH _outInterface;
+    SystemH _system;
 }; // End of Bridge class declaration
 
 using BridgeH = Sptr<Bridge>;
@@ -170,19 +171,19 @@ inline Mac& Bridge::GetAddress() noexcept { return _addr; }
 inline void Bridge::SetAddress(const Mac& value) noexcept { _addr = value; }
 
 inline Result Bridge::FlushFdb(const u16 portNo) {
-    return _outInterface->FlushFdb(portNo);
+    return _system->OutInterface->FlushFdb(portNo);
 }
 
 inline Result Bridge::SetForwarding(const u16 portNo, const bool enable) {
-    return _outInterface->SetForwarding(portNo, enable);
+    return _system->OutInterface->SetForwarding(portNo, enable);
 }
 
 inline Result Bridge::SetLearning(const u16 portNo, const bool enable) {
-    return _outInterface->SetLearning(portNo, enable);
+    return _system->OutInterface->SetLearning(portNo, enable);
 }
 
 inline Result Bridge::SendOutBpdu(const u16 portNo, ByteStreamH data) {
-    return _outInterface->SendOutBpdu(portNo, data);
+    return _system->OutInterface->SendOutBpdu(portNo, data);
 }
 
 } // End of Stp namespace

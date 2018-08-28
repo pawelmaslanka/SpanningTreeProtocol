@@ -34,13 +34,13 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace Stp {
 
-Bridge::Bridge(OutInterfaceH outInterface) noexcept
+Bridge::Bridge(SystemH system) noexcept
     : _begin{ false }, _bridgeId{ },
       _bridgePriority{ },
       _bridgeTimes{ }, _rootPortId{ },
       _rootPriority{ },
       _rootTimes{ }, _addr{ },
-      _outInterface{ outInterface } {
+      _system{ system } {
     _bridgeId.SetPriority(+PriorityVector::RecommendedBridgePriority::Value);
     _bridgeId.SetExtension(Bridge::ExtensionDefaultValue);
 

@@ -2,6 +2,7 @@
 #include <stp/sm/port_timers.hpp>
 // UT dependencies
 #include "sut_machine.hpp"
+#include <mock/logger.hpp>
 #include <mock/management.hpp>
 #include <mock/port_timers_sm.hpp>
 
@@ -13,8 +14,11 @@ using namespace Stp::PortTimers;
 class PortTimersTest : public ::testing::Test {
 protected:
     PortTimersTest()
-        : _bridge{ std::make_shared<Stp::Bridge>(
-                       std::make_shared<Mock::OutInterface>()) },
+        : _bridge{
+              std::make_shared<Stp::Bridge>(
+                  std::make_shared<Stp::System>(
+                      std::make_shared<Mock::OutInterface>(),
+                      std::make_shared<Mock::Logger>())) },
           _port{ std::make_shared<Stp::Port>() },
           _sutMachine{ _bridge, _port } {}
 

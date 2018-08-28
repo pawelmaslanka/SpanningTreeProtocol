@@ -4,6 +4,7 @@
 #include "sut_machine.hpp"
 #include <mock/bridge.hpp>
 #include <mock/bridge_detection_sm.hpp>
+#include <mock/logger.hpp>
 #include <mock/management.hpp>
 
 // GTest headers
@@ -27,9 +28,12 @@ private:
 class BridgeDetectionTest : public ::testing::Test {
 protected:
     BridgeDetectionTest()
-        : _sutMachine{ std::make_shared<Mock::Bridge>(
-                           std::make_shared<Mock::OutInterface>()),
-                       std::make_shared<Stp::Port>() } {}
+        : _sutMachine{
+              std::make_shared<Mock::Bridge>(
+                  std::make_shared<Stp::System>(
+                      std::make_shared<Mock::OutInterface>(),
+                      std::make_shared<Mock::Logger>())),
+              std::make_shared<Stp::Port>() } {}
 
     BdmSutMachine _sutMachine;
     Mock::Bdm::BeginState _mockBeginState;

@@ -11,7 +11,7 @@ namespace Mock {
 
 class Bridge : public Stp::Bridge {
 public:
-    Bridge(Stp::OutInterfaceH outInterface) : Stp::Bridge{ outInterface } {}
+    Bridge(Stp::SystemH system) : Stp::Bridge{ system } {}
     virtual ~Bridge() = default;
     MOCK_CONST_METHOD0(Begin, bool());
 };

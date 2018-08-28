@@ -57,7 +57,7 @@ private:
 class StpManager {
 public:
     static StpManager& Instance();
-    Result StpBegin(SystemH system, OutInterfaceH outInterface);
+    Result StpBegin(Mac bridgeAddr, SystemH system);
     void SubmitRequest(Uptr<Command> req);
 
 protected:
@@ -79,10 +79,10 @@ StpManager& StpManager::Instance() {
     return instance;
 }
 
-Result StpManager::StpBegin(SystemH system, OutInterfaceH outInterface) {
-    _bridge = std::make_shared<Bridge>(outInterface);
-    _bridge->SetAddress(system->GetBridgeAddr());
-    _bridge->GetBridgeIdentifier().SetAddress(system->GetBridgeAddr());
+Result StpManager::StpBegin(Mac bridgeAddr, SystemH system) {
+    _bridge = std::make_shared<Bridge>(system);
+    _bridge->SetAddress(bridgeAddr);
+    _bridge->GetBridgeIdentifier().SetAddress(bridgeAddr);
     _bridge->GetBridgePriority().GetRootPathCost().SetPathCost(0);
     _bridge->GetBridgePriority().SetDesignatedBridgeId(_bridge->BridgeIdentifier());
     _bridge->SetRootPriority(_bridge->BridgePriority());
@@ -196,13 +196,13 @@ Result Management::RemovePort(const u16 portNo) {
     return Result::Success;
 }
 
-Result Management::RunStp(SystemH system, OutInterfaceH outInterface) {
+Result Management::RunStp(Mac bridgeAddr, SystemH system) {
     static std::unique_ptr<std::future<Result>> runnableStp;
 
     if (not runnableStp) {
         runnableStp.reset(new std::future<Result>{
                               std::async(std::launch::async, &StpManager::StpBegin,
-                              &StpManager::Instance(), system, outInterface)
+                              &StpManager::Instance(), bridgeAddr, system)
                           });
     }
     else {
