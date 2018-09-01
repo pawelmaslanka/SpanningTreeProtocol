@@ -7,100 +7,136 @@
 #include <string>
 
 namespace Stp {
+namespace LoggingSystem {
 
-// Make a decorator from logger
 class Logger {
 public:
-    enum class MsgSeverity : u8 {
-        None = 0x00,
-        StateEntry = 1 << 0,
-        ChangeState = 1 << 1
+    enum class LogSeverity : u8 {
+        None,
+        EntryState,
+        ChangeState
     };
-    Logger(const MsgSeverity severityLevel = MsgSeverity::None);
+    Logger(const LogSeverity severityLevel = LogSeverity::None);
     virtual void operator<<(std::string&& msg) noexcept = 0;
 
 protected:
     ~Logger() = default;
 
 private:
-    MsgSeverity _msgSeverityLevel;
+    LogSeverity _logSeverity;
 };
 
 using LoggerH = Sptr<Logger>;
 
-class StateEntryLogger {
-public:
-    StateEntryLogger(LoggerH logger);
+class SystemLoggingManager;
+
+class EntryState {
+protected:
+    friend class SystemLoggingManager;
+    EntryState(Logger& logger);
     virtual void Log(const char* machineName, const char* stateName) = 0;
+    virtual ~EntryState() = default;
+    Logger& _logger;
+};
 
+class NullEntryState : public EntryState {
 protected:
-    virtual ~StateEntryLogger() = default;
-    LoggerH _logger;
-};
-
-class NullStateEntryLogger : public StateEntryLogger {
-public:
-    NullStateEntryLogger(LoggerH logger);
+    friend class SystemLoggingManager;
+    NullEntryState(Logger& logger);
     void Log(const char* machineName, const char* stateName) override;
 };
 
-class SystemStateEntryLogger : public StateEntryLogger {
-public:
-    SystemStateEntryLogger(LoggerH logger);
+class SystemEntryState : public EntryState {
+protected:
+    friend class SystemLoggingManager;
+    SystemEntryState(Logger& logger);
     void Log(const char* machineName, const char* stateName) override;
 };
 
-class ChangeStateLogger {
-public:
-    ChangeStateLogger(LoggerH logger);
+class ChangeState {
+protected:
+    friend class SystemLoggingManager;
+    ChangeState(Logger& logger);
     virtual void Log(const char* machineName, const char* oldStateName, const char* newStateName) = 0;
-
-protected:
-    virtual ~ChangeStateLogger() = default;
-    LoggerH _logger;
+    virtual ~ChangeState() = default;
+    Logger& _logger;
 };
 
-class NullChangeStateLogger : public ChangeStateLogger {
-public:
-    NullChangeStateLogger(LoggerH logger);
+class NullChangeState : public ChangeState {
+protected:
+    friend class SystemLoggingManager;
+    NullChangeState(Logger& logger);
     virtual void Log(const char* machineName, const char* oldStateName,
                      const char* newStateName) override;
 };
 
-class SystemChangeStateLogger : public ChangeStateLogger {
-public:
-    SystemChangeStateLogger(LoggerH logger);
+class SystemChangeState : public ChangeState {
+protected:
+    friend class SystemLoggingManager;
+    SystemChangeState(Logger& logger);
     void Log(const char* machineName, const char* oldStateName, const char* newStateName) override;
 };
 
-inline StateEntryLogger::StateEntryLogger(LoggerH logger)
+class SystemLoggingManager {
+public:
+    SystemLoggingManager(LoggerH logger);
+
+    __virtual void LogEntryState(const char* machineName, const char* stateName);
+    __virtual void LogChangeState(const char* machineName, const char* oldStateName,
+                                        const char* newStateName);
+    __virtual void SetLogSeverity(const Logger::LogSeverity logSeverity);
+
+private:
+    LoggerH _logger;
+    EntryState* _entryStateLogger;
+    ChangeState* _changeStateLogger;
+
+    NullEntryState _nullEntryStateLogger;
+    SystemEntryState _systemEntryStateLogger;
+    NullChangeState _nullChangeStateLogger;
+    SystemChangeState _systemChangeStateLogger;
+};
+
+inline void SystemLoggingManager::LogEntryState(const char* machineName,
+                                                      const char* stateName) {
+    _entryStateLogger->Log(machineName, stateName);
+}
+
+inline void SystemLoggingManager::LogChangeState(const char* machineName,
+                                                       const char* oldStateName,
+                                                       const char* newStateName) {
+    _changeStateLogger->Log(machineName, oldStateName, newStateName);
+}
+
+inline EntryState::EntryState(Logger& logger)
     : _logger { logger } {
 }
 
-inline NullStateEntryLogger::NullStateEntryLogger(LoggerH logger)
-    : StateEntryLogger { logger } {
+inline NullEntryState::NullEntryState(Logger& logger)
+    : EntryState { logger } {
 }
 
-inline void NullStateEntryLogger::Log(const char*, const char*) {
+inline void NullEntryState::Log(const char*, const char*) {
 }
 
-inline SystemStateEntryLogger::SystemStateEntryLogger(LoggerH logger)
-    : StateEntryLogger{ logger } {
+inline SystemEntryState::SystemEntryState(Logger& logger)
+    : EntryState{ logger } {
 }
 
-inline ChangeStateLogger::ChangeStateLogger(LoggerH logger)
+inline ChangeState::ChangeState(Logger& logger)
     : _logger{ logger } {
 }
 
-inline NullChangeStateLogger::NullChangeStateLogger(LoggerH logger)
-    : ChangeStateLogger{ logger } {
+inline NullChangeState::NullChangeState(Logger& logger)
+    : ChangeState{ logger } {
 }
 
-inline void NullChangeStateLogger::Log(const char*, const char*, const char*) {
+inline void NullChangeState::Log(const char*, const char*, const char*) {
 }
 
-inline SystemChangeStateLogger::SystemChangeStateLogger(LoggerH logger)
-    : ChangeStateLogger{ logger } {
+inline SystemChangeState::SystemChangeState(Logger& logger)
+    : ChangeState{ logger } {
 }
 
+} // namespace LoggingSystem
 } // namespace Stp

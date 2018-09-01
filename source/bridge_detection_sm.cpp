@@ -8,10 +8,14 @@ namespace Stp {
 namespace BridgeDetection {
 
 void BdmState::EdgeAction(Machine& machine) {
+    /// @todo Get real name of machine
+    machine.BridgeInstance().SystemLogEntryState(Name().c_str(), Name().c_str());
     machine.PortInstance().SetOperEdge(true);
 }
 
 void BdmState::NotEdgeAction(Machine& machine) {
+    /// @todo Get real name of machine
+    machine.BridgeInstance().SystemLogEntryState(Name().c_str(), Name().c_str());
     machine.PortInstance().SetOperEdge(false);
 }
 

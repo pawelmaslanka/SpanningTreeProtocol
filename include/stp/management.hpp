@@ -60,32 +60,18 @@ private:
 class ProcessBpduReq : public Command {
 public:
     ProcessBpduReq(ByteStreamH bpdu);
-};
+    ByteStream& GetBpduData();
+    u16 GetRxPortNo() const noexcept;
 
-class RunStp : public Command {
-public:
-    RunStp(Mac bridgeAddr, SystemH system);
 private:
-    Mac _bridgeAddr;
-    SystemH _system;
+    ByteStreamH _bpdu;
+    u16 _rxPortNo; ///< Port number from which received BPDU
 };
 
 class ChangeLogMsgSeverityReq : public Command {
 public:
-    ChangeLogMsgSeverityReq(Logger::MsgSeverity msgSeverity);
+    ChangeLogMsgSeverityReq(LoggingSystem::Logger::LogSeverity msgSeverity);
 };
-
-//inline System::System(Mac bridgeAddr, LoggerH logger)
-//    : _bridgeAddr{ bridgeAddr }, _logger{ logger } {
-//}
-
-//inline Mac& System::GetBridgeAddr() noexcept {
-//    return _bridgeAddr;
-//}
-
-//inline LoggerH& System::LogInstance() noexcept {
-//    return _logger;
-//}
 
 inline Command::Command(const RequestId reqId)
     : _reqId{ reqId } {
@@ -94,6 +80,10 @@ inline Command::Command(const RequestId reqId)
 
 inline RequestId Command::Id() const noexcept {
     return _reqId;
+}
+
+inline AddPortReq::AddPortReq(const u16 portNo, const u32 speed, const bool enabled)
+    : Command{ RequestId::AddPort }, _speed{ speed }, _portNo{ portNo }, _enabled{ enabled } {
 }
 
 inline u16 AddPortReq::GetPortNo() const noexcept {
@@ -108,8 +98,24 @@ inline bool AddPortReq::GetPortEnabled() const noexcept {
     return _enabled;
 }
 
+inline RemovePortReq::RemovePortReq(const u16 portNo)
+    : Command{ RequestId::RemovePort }, _portNo{ portNo } {
+}
+
 inline u16 RemovePortReq::GetPortNo() const noexcept {
     return _portNo;
+}
+
+inline ProcessBpduReq::ProcessBpduReq(ByteStreamH bpdu)
+    : Command{ RequestId::ProcessBpdu }, _bpdu{ bpdu } {
+}
+
+inline ByteStream& ProcessBpduReq::GetBpduData() {
+    return *_bpdu;
+}
+
+inline u16 ProcessBpduReq::GetRxPortNo() const noexcept {
+    return _rxPortNo;
 }
 
 } // namespace Stp

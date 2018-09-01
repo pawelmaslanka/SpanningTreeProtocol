@@ -40,7 +40,8 @@ Bridge::Bridge(SystemH system) noexcept
       _bridgeTimes{ }, _rootPortId{ },
       _rootPriority{ },
       _rootTimes{ }, _addr{ },
-      _system{ system } {
+      _system{ system },
+      _systemLoggingManager { system->Logger } {
     _bridgeId.SetPriority(+PriorityVector::RecommendedBridgePriority::Value);
     _bridgeId.SetExtension(Bridge::ExtensionDefaultValue);
 

@@ -18,22 +18,15 @@ protected:
 using OutInterfaceH = Sptr<OutInterface>;
 
 struct System {
-    System(OutInterfaceH outInterface, LoggerH logger)
-        : OutInterface{ outInterface }, Logger{ logger } {}
+    System(OutInterfaceH outInterface, LoggingSystem::LoggerH logger);
     OutInterfaceH OutInterface;
-    LoggerH Logger;
+    LoggingSystem::LoggerH Logger;
 };
 
-//class System {
-//public:
-//    System(Mac bridgeAddr, LoggerH logger);
-//    Mac& GetBridgeAddr() noexcept;
-//    LoggerH& LogInstance() noexcept;
-//private:
-//    Mac _bridgeAddr;
-//    LoggerH _logger;
-//};
-
 using SystemH = Sptr<System>;
+
+inline System::System(OutInterfaceH outInterface, LoggingSystem::LoggerH logger)
+    : OutInterface{ outInterface }, Logger{ logger } {
+}
 
 } // namespace Stp

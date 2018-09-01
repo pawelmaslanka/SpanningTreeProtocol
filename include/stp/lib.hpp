@@ -73,7 +73,7 @@ inline u8 operator*(const u8 left, const BitWidth right) noexcept {
 }
 
 using ByteStream = std::vector<u8>;
-using ByteStreamH = ByteStream&;
+using ByteStreamH = Sptr<ByteStream>;
 
 enum class Boolean : u8 {
     False = 0,

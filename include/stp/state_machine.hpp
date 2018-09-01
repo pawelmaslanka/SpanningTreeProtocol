@@ -52,6 +52,8 @@ private:
 };
 
 inline void State::ChangeState(Machine& machine, State& newState) {
+    /// @todo Get real machine name
+    machine.BridgeInstance().SystemLogChangeState(Name().c_str(), Name().c_str(), newState.Name().c_str());
     machine.ChangeState(newState);
 }
 

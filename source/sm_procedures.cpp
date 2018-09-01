@@ -234,7 +234,7 @@ void TxConfig(Bridge& bridge, Port& port) {
         return;
     }
 
-    ByteStream bpduStream;
+    ByteStreamH bpduStream { std::make_shared<ByteStream>() };
     Bpdu bpdu;
     u16 time;
 
@@ -272,7 +272,7 @@ void TxConfig(Bridge& bridge, Port& port) {
     time += static_cast<u8>(port.DesignatedTimes().ForwardDelay() / +ShiftOctet::CpuLeastSignificant2nd) * 0x100;
     bpdu.SetForwardDelay(time);
 
-    if (Failed(bpdu.Encode(bpduStream))) {
+    if (Failed(bpdu.Encode(*bpduStream))) {
         std::cerr << __PRETTY_FUNCTION__ << "Failed to encode BPDU unit data\n";
     }
     else {
@@ -286,7 +286,7 @@ void TxRstp(Bridge& bridge, Port& port) {
         return;
     }
 
-    ByteStream bpduStream;
+    ByteStreamH bpduStream { std::make_shared<ByteStream>() };
     Bpdu bpdu;
 
     bpdu.SetProtocolIdentifier(static_cast<u16>(Bpdu::ProtocolIdentifier::Rst));
@@ -326,7 +326,7 @@ void TxRstp(Bridge& bridge, Port& port) {
 
     bpdu.SetVersion1Length(+Bpdu::Version1Length::Rst);
 
-    if (Failed(bpdu.Encode(bpduStream))) {
+    if (Failed(bpdu.Encode(*bpduStream))) {
         std::cerr << __PRETTY_FUNCTION__ << "Failed to encode BPDU unit data\n";
     }
     else {
@@ -335,14 +335,14 @@ void TxRstp(Bridge& bridge, Port& port) {
 }
 
 void TxTcn(Bridge& bridge, Port& port) {
-    ByteStream bpduStream;
+    ByteStreamH bpduStream { std::make_shared<ByteStream>() };
     Bpdu bpdu;
 
     bpdu.SetProtocolIdentifier(static_cast<u16>(Bpdu::ProtocolIdentifier::Tcn));
     bpdu.SetProtocolVersionIdentifier(static_cast<u8>(Bpdu::ProtocolVersionIdentifier::Tcn));
     bpdu.SetBpduType(static_cast<u8>(Bpdu::Type::Tcn));
 
-    if (Failed(bpdu.Encode(bpduStream))) {
+    if (Failed(bpdu.Encode(*bpduStream))) {
         std::cerr << __PRETTY_FUNCTION__ << "Failed to encode BPDU unit data\n";
     }
     else {

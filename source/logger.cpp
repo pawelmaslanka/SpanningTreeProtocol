@@ -1,15 +1,16 @@
 // This project's headers
 #include "stp/logger.hpp"
 
-using namespace Stp;
+namespace Stp {
+namespace LoggingSystem {
 
-Logger::Logger(Logger::MsgSeverity msgLogSeverity)
-    : _msgSeverityLevel { msgLogSeverity } {
+Logger::Logger(Logger::LogSeverity logSeverity)
+    : _logSeverity { logSeverity } {
     // Nothing more to do
 }
 
-void SystemChangeStateLogger::Log(const char* machineName, const char* oldStateName,
-                                  const char* newStateName) {
+void SystemChangeState::Log(const char* machineName, const char* oldStateName,
+                            const char* newStateName) {
     // Simple assert for any null pointer
     if (not (machineName && oldStateName && newStateName)) {
         return;
@@ -17,10 +18,10 @@ void SystemChangeStateLogger::Log(const char* machineName, const char* oldStateN
 
     std::string msg{};
     msg.append(oldStateName).append(" -> ").append(newStateName).append(" @ ").append(machineName);
-    *_logger << std::move(msg);
+    _logger << std::move(msg);
 }
 
-void SystemStateEntryLogger::Log(const char* machineName, const char* stateName) {
+void SystemEntryState::Log(const char* machineName, const char* stateName) {
     // Simple assert for any null pointer
     if (not (machineName && stateName)) {
         return;
@@ -28,5 +29,28 @@ void SystemStateEntryLogger::Log(const char* machineName, const char* stateName)
 
     std::string msg{};
     msg.append(stateName).append(" @ ").append(machineName);
-    *_logger << std::move(msg);
+    _logger << std::move(msg);
 }
+
+SystemLoggingManager::SystemLoggingManager(LoggerH logger)
+    : _logger{ logger }, _nullEntryStateLogger{ *logger }, _systemEntryStateLogger { *logger },
+      _nullChangeStateLogger{ *logger }, _systemChangeStateLogger { *logger } {
+    _entryStateLogger = &_nullEntryStateLogger;
+    _changeStateLogger = &_nullChangeStateLogger;
+}
+
+void SystemLoggingManager::SetLogSeverity(const Logger::LogSeverity logSeverity) {
+    if (logSeverity == Logger::LogSeverity::None) {
+        _entryStateLogger = &_nullEntryStateLogger;
+        _changeStateLogger = &_nullChangeStateLogger;
+    }
+    else if (logSeverity == Logger::LogSeverity::EntryState) {
+        _entryStateLogger = &_systemEntryStateLogger;
+    }
+    else if (logSeverity == Logger::LogSeverity::ChangeState) {
+        _changeStateLogger = &_systemChangeStateLogger;
+    }
+}
+
+} // namespace LoggingSystem
+} // namespace Stp

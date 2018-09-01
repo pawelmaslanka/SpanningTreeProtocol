@@ -17,17 +17,18 @@ public:
     Result SendOutBpdu(const u16 portNo, ByteStreamH data) noexcept { return Result::Success; }
 };
 
-class SystemLogger : public Logger {
+class SystemLogger : public LoggingSystem::Logger {
 public:
-    SystemLogger(Logger::MsgSeverity msgLogSeverity) : Logger{ msgLogSeverity } {}
+    SystemLogger(LoggingSystem::Logger::LogSeverity msgLogSeverity)
+        : LoggingSystem::Logger{ msgLogSeverity } {}
     void operator<<(std::string&& msg) noexcept override { std::ignore = msg; }
 };
 
 int main() {
-    LoggerH logger = std::make_shared<SystemLogger>(Logger::MsgSeverity::None);
+    LoggingSystem::LoggerH logger = std::make_shared<SystemLogger>(LoggingSystem::Logger::LogSeverity::None);
     SystemH system = std::make_shared<System>(std::make_shared<SystemOutInterface>(), logger);
     Stp::Management::RunStp(Mac{}, system);
-    Stp::Management::AddPort(1, 10000, true);
+    Stp::Management::AddPort(1, 10000 /* MB */, true);
 
     return 0;
 }

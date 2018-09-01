@@ -31,6 +31,7 @@ either expressed or implied, of the FreeBSD Project.
 
 // This project's headers
 #include "bridge_id.hpp"
+#include "logger.hpp"
 #include "port.hpp"
 #include "priority_vector.hpp"
 #include "management.hpp"
@@ -104,6 +105,9 @@ public:
     __virtual Result SetForwarding(const u16 portNo, const bool enable);
     __virtual Result SetLearning(const u16 portNo, const bool enable);
     __virtual Result SendOutBpdu(const u16 portNo, ByteStreamH data);
+    __virtual void SystemLogEntryState(const char* machineName, const char* stateName);
+    __virtual void SystemLogChangeState(const char* machineName, const char* oldStateName,
+                                        const char* newStateName);
 
 private:
     /// @brief 17.18.1
@@ -135,6 +139,8 @@ private:
     std::map<u16, PortH> _ports;
 
     SystemH _system;
+
+    LoggingSystem::SystemLoggingManager _systemLoggingManager;
 }; // End of Bridge class declaration
 
 using BridgeH = Sptr<Bridge>;
@@ -185,5 +191,15 @@ inline Result Bridge::SetLearning(const u16 portNo, const bool enable) {
 inline Result Bridge::SendOutBpdu(const u16 portNo, ByteStreamH data) {
     return _system->OutInterface->SendOutBpdu(portNo, data);
 }
+
+inline void Bridge::SystemLogEntryState(const char* machineName, const char* stateName) {
+    _systemLoggingManager.LogEntryState(machineName, stateName);
+}
+
+inline void Bridge::SystemLogChangeState(const char* machineName, const char* oldStateName,
+                                  const char* newStateName) {
+    _systemLoggingManager.LogChangeState(machineName, oldStateName, newStateName);
+}
+
 
 } // End of Stp namespace

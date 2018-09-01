@@ -66,6 +66,7 @@ protected:
 private:
     void AddPortHandle(AddPortReq& req);
     void RemovePortHandle(RemovePortReq& req);
+    void ProcessBpduHandle(ProcessBpduReq& req);
     void RunStateMachine();
     void ProcessRequest();
     BridgeH _bridge;
@@ -183,6 +184,32 @@ void StpManager::RemovePortHandle(RemovePortReq& req) {
     _bridge->RemovePort(req.GetPortNo());
 }
 
+void StpManager::ProcessBpduHandle(ProcessBpduReq& req) {
+    PortH port = _bridge->GetPort(req.GetRxPortNo());
+    if (not port) {
+        // Received BPDU data from not register port in STP process
+        return;
+    }
+
+    Bpdu bpdu{};
+    if (Failed(bpdu.Decode(req.GetBpduData()))) {
+        return;
+    }
+
+    if (Bpdu::Type::Config == bpdu.BpduType()) {
+        if ((PortId{ bpdu.PortIdentifier() }.PortNum() == req.GetRxPortNo())
+                                        &&
+            (BridgeId{ bpdu.BridgeIdentifier() }.Address() == _bridge->Address())) {
+            // BPDU has been received by port which originally transmitted it...
+            // so it's invalid BPDU
+            return;
+        }
+    }
+
+    port->SetRxBpdu(bpdu);
+    port->SetRcvdBpdu(true);
+}
+
 namespace Stp {
 
 Result Management::AddPort(const u16 portNo, const u32 speed, const bool enabled) {
@@ -193,6 +220,11 @@ Result Management::AddPort(const u16 portNo, const u32 speed, const bool enabled
 
 Result Management::RemovePort(const u16 portNo) {
     StpManager::Instance().SubmitRequest(std::make_unique<RemovePortReq>(RemovePortReq{ portNo }));
+    return Result::Success;
+}
+
+Result Management::ProcessBpdu(ByteStreamH bpdu) {
+    StpManager::Instance().SubmitRequest(std::make_unique<ProcessBpduReq>(ProcessBpduReq{ bpdu }));
     return Result::Success;
 }
 
@@ -210,16 +242,6 @@ Result Management::RunStp(Mac bridgeAddr, SystemH system) {
     }
 
     return Result::Success;
-}
-
-AddPortReq::AddPortReq(const u16 portNo, const u32 speed, const bool enabled)
-    : Command{ RequestId::AddPort }, _speed{ speed }, _portNo{ portNo }, _enabled{ enabled } {
-
-}
-
-RemovePortReq::RemovePortReq(const u16 portNo)
-    : Command{ RequestId::RemovePort }, _portNo{ portNo } {
-
 }
 
 } // namespace Stp

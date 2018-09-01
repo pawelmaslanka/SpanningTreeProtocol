@@ -8,7 +8,7 @@
 
 namespace Mock {
 
-class Logger : public Stp::Logger {
+class Logger : public Stp::LoggingSystem::Logger {
 public:
     MOCK_METHOD1(StreamOutOperator, void(std::string&&));
     void operator<<(std::string&& msg) noexcept override { std::move(msg); }
