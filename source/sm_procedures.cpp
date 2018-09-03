@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 // This project's headers
 #include "stp/sm_procedures.hpp"
 // Dependencies

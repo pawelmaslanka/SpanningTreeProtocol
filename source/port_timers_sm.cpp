@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 // This project's headers
 #include "stp/sm/port_timers.hpp"
 
@@ -19,6 +25,8 @@ State& BeginState::Instance() {
 }
 
 void BeginState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToOneSecond(machine)) {
         OneSecondAction(machine);
         ChangeState(machine, OneSecondState::Instance());
@@ -34,6 +42,8 @@ State& OneSecondState::Instance() {
 }
 
 void OneSecondState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToTick(machine)) {
         TickAction(machine);
         ChangeState(machine, TickState::Instance());
@@ -49,6 +59,8 @@ State& TickState::Instance() {
 }
 
 void TickState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToOneSecond(machine)) {
         OneSecondAction(machine);
         ChangeState(machine, OneSecondState::Instance());

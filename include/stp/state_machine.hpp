@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 #pragma once
 
 // This project's headers
@@ -31,6 +37,7 @@ class Machine {
 public:
     explicit Machine(BridgeH bridge, PortH port, State& initState);
     void Run();
+    virtual std::string Name() { return std::string{}; }
     __virtual Bridge& BridgeInstance() const noexcept;
     Port& PortInstance() const noexcept;
 
@@ -50,12 +57,6 @@ private:
     PortH _port;
     State* _state;
 };
-
-inline void State::ChangeState(Machine& machine, State& newState) {
-    /// @todo Get real machine name
-    machine.BridgeInstance().SystemLogChangeState(Name().c_str(), Name().c_str(), newState.Name().c_str());
-    machine.ChangeState(newState);
-}
 
 inline void Machine::Run() {
     _state->Execute(*this);

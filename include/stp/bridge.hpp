@@ -1,31 +1,8 @@
-/***************************************************************************************************
-Copyright (c) 2018, Pawel Maslanka <pawmas@hotmail.com>
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies,
-either expressed or implied, of the FreeBSD Project.
-***************************************************************************************************/
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
 
 #pragma once
 
@@ -105,9 +82,10 @@ public:
     __virtual Result SetForwarding(const u16 portNo, const bool enable);
     __virtual Result SetLearning(const u16 portNo, const bool enable);
     __virtual Result SendOutBpdu(const u16 portNo, ByteStreamH data);
-    __virtual void SystemLogEntryState(const char* machineName, const char* stateName);
-    __virtual void SystemLogChangeState(const char* machineName, const char* oldStateName,
-                                        const char* newStateName);
+    __virtual void SystemLogEntryState(const std::string& machineName, const std::string& stateName);
+    __virtual void SystemLogChangeState(const std::string& machineName,
+                                        const std::string& oldStateName,
+                                        const std::string& newStateName);
 
 private:
     /// @brief 17.18.1
@@ -192,12 +170,13 @@ inline Result Bridge::SendOutBpdu(const u16 portNo, ByteStreamH data) {
     return _system->OutInterface->SendOutBpdu(portNo, data);
 }
 
-inline void Bridge::SystemLogEntryState(const char* machineName, const char* stateName) {
+inline void Bridge::SystemLogEntryState(const std::string& machineName,
+                                        const std::string& stateName) {
     _systemLoggingManager.LogEntryState(machineName, stateName);
 }
 
-inline void Bridge::SystemLogChangeState(const char* machineName, const char* oldStateName,
-                                  const char* newStateName) {
+inline void Bridge::SystemLogChangeState(const std::string& machineName, const std::string& oldStateName,
+                                         const std::string& newStateName) {
     _systemLoggingManager.LogChangeState(machineName, oldStateName, newStateName);
 }
 

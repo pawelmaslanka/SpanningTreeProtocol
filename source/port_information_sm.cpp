@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 #include "stp/sm/port_information.hpp"
 // Dependencies
 #include "stp/sm_conditions.hpp"
@@ -106,6 +112,8 @@ State& BeginState::Instance() {
 }
 
 void BeginState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToDisabled(machine)) {
         DisabledAction(machine);
         ChangeState(machine, DisabledState::Instance());
@@ -132,6 +140,8 @@ State& DisabledState::Instance() {
 }
 
 void DisabledState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToAged(machine)) {
         AgedAction(machine);
         ChangeState(machine, AgedState::Instance());
@@ -151,6 +161,8 @@ State& AgedState::Instance() {
 }
 
 void AgedState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToUpdate(machine)) {
         UpdateAction(machine);
         ChangeState(machine, UpdateState::Instance());
@@ -173,6 +185,7 @@ State& UpdateState::Instance() {
 }
 
 void UpdateState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     CurrentUctExecute(machine);
 }
 
@@ -181,6 +194,7 @@ State& SuperiorDesignatedState::Instance() {
 }
 
 void SuperiorDesignatedState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     CurrentUctExecute(machine);
 }
 
@@ -189,6 +203,7 @@ State& RepeatedDesignatedState::Instance() {
 }
 
 void RepeatedDesignatedState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     CurrentUctExecute(machine);
 }
 
@@ -197,6 +212,7 @@ State& InferiorDesignatedState::Instance() {
 }
 
 void InferiorDesignatedState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     CurrentUctExecute(machine);
 }
 
@@ -205,6 +221,7 @@ State& NotDesignatedState::Instance() {
 }
 
 void NotDesignatedState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     CurrentUctExecute(machine);
 }
 
@@ -213,6 +230,7 @@ State& OtherState::Instance() {
 }
 
 void OtherState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     CurrentUctExecute(machine);
 }
 
@@ -221,6 +239,8 @@ State& CurrentState::Instance() {
 }
 
 void CurrentState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToReceive(machine)) {
         ReceiveAction(machine);
         ChangeState(machine, ReceiveState::Instance());
@@ -271,6 +291,8 @@ State& ReceiveState::Instance() {
 }
 
 void ReceiveState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToSuperiorDesignated(machine)) {
         SuperiorDesignatedAction(machine);
         ChangeState(machine, SuperiorDesignatedState::Instance());

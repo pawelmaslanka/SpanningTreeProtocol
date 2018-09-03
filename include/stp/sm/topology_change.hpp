@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 #pragma once
 
 // This project's headers
@@ -120,51 +126,54 @@ protected:
     std::string Name() override;
 };
 
-#define TCM_PREFIX_NAME "TCM @ "
-constexpr auto kBeginStateName = TCM_PREFIX_NAME "BEGIN";
-constexpr auto kInactiveStateName = TCM_PREFIX_NAME "INACTIVE";
-constexpr auto kLearningStateName = TCM_PREFIX_NAME "LEARNING";
-constexpr auto kDetectedStateName = TCM_PREFIX_NAME "DETECTED";
-constexpr auto kNotifiedTcnStateName = TCM_PREFIX_NAME "NOTIFIED_TCN";
-constexpr auto kNotifiedTcStateName = TCM_PREFIX_NAME "NOTIFIED_TC";
-constexpr auto kPropagatingStateName = TCM_PREFIX_NAME "PROPAGATING";
-constexpr auto kAcknowledgedStateName = TCM_PREFIX_NAME "ACKNOWLEDGED";
-constexpr auto kActiveStateName = TCM_PREFIX_NAME "ACTIVE";
+class TcmMachine : public Machine {
+public:
+    TcmMachine(BridgeH bridge, PortH port);
+    std::string Name() override;
+};
+
+inline TcmMachine::TcmMachine(BridgeH bridge, PortH port)
+    : Machine{ bridge, port, BeginState::Instance() } {
+}
+
+inline std::string Name() {
+    return "TCM";
+}
 
 inline std::string BeginState::Name() {
-    return kBeginStateName;
+    return "BEGIN";
 }
 
 inline std::string InactiveState::Name() {
-    return kInactiveStateName;
+    return "INACTIVE";
 }
 
 inline std::string LearningState::Name() {
-    return kLearningStateName;
+    return "LEARNING";
 }
 
 inline std::string DetectedState::Name() {
-    return kDetectedStateName;
+    return "DETECTED";
 }
 
 inline std::string NotifiedTcnState::Name() {
-    return kNotifiedTcnStateName;
+    return "NOTIFIED_TCN";
 }
 
 inline std::string NotifiedTcState::Name() {
-    return kNotifiedTcStateName;
+    return "NOTIFIED_TC";
 }
 
 inline std::string PropagatingState::Name() {
-    return kPropagatingStateName;
+    return "PROPAGATING";
 }
 
 inline std::string AcknowledgedState::Name() {
-    return kAcknowledgedStateName;
+    return "ACKNOWLEDGED";
 }
 
 inline std::string ActiveState::Name() {
-    return kActiveStateName;
+    return "ACTIVE";
 }
 
 } // namespace TopologyChange

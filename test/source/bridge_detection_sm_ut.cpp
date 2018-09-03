@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 // Tested project's headers
 #include <stp/sm/bridge_detection.hpp>
 // UT dependencies
@@ -52,7 +58,7 @@ TEST_F(BridgeDetectionTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::BridgeDetection::kBeginStateName);
+                 Stp::BridgeDetection::BeginState::Instance().Name().c_str());
 }
 
 TEST_F(BridgeDetectionTest,
@@ -71,7 +77,7 @@ TEST_F(BridgeDetectionTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::BridgeDetection::kNotEdgeStateName);
+                 Stp::BridgeDetection::NotEdgeState::Instance().Name().c_str());
 }
 
 TEST_F(BridgeDetectionTest,
@@ -90,7 +96,7 @@ TEST_F(BridgeDetectionTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::BridgeDetection::kEdgeStateName);
+                 Stp::BridgeDetection::EdgeState::Instance().Name().c_str());
 }
 
 TEST_F(BridgeDetectionTest,
@@ -104,7 +110,7 @@ TEST_F(BridgeDetectionTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::BridgeDetection::kEdgeStateName);
+                 Stp::BridgeDetection::EdgeState::Instance().Name().c_str());
 }
 
 TEST_F(BridgeDetectionTest,
@@ -121,7 +127,7 @@ TEST_F(BridgeDetectionTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::BridgeDetection::kNotEdgeStateName);
+                 Stp::BridgeDetection::NotEdgeState::Instance().Name().c_str());
 }
 
 TEST_F(BridgeDetectionTest,
@@ -135,7 +141,7 @@ TEST_F(BridgeDetectionTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::BridgeDetection::kNotEdgeStateName);
+                 Stp::BridgeDetection::NotEdgeState::Instance().Name().c_str());
 }
 
 TEST_F(BridgeDetectionTest,
@@ -152,5 +158,5 @@ TEST_F(BridgeDetectionTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::BridgeDetection::kEdgeStateName);
+                 Stp::BridgeDetection::EdgeState::Instance().Name().c_str());
 }

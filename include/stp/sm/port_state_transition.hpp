@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 #pragma once
 
 // This project's headers
@@ -58,26 +64,34 @@ protected:
     std::string Name() override;
 };
 
-#define PST_PREFIX_NAME "PST @ "
-constexpr auto kBeginStateName = PST_PREFIX_NAME "BEGIN";
-constexpr auto kDiscardingStateName = PST_PREFIX_NAME "DISCARDING";
-constexpr auto kLearningStateName = PST_PREFIX_NAME "LEARNING";
-constexpr auto kForwardingStateName = PST_PREFIX_NAME "FORWARDING";
+class PstMachine : public Machine {
+public:
+    PstMachine(BridgeH bridge, PortH port);
+    std::string Name() override;
+};
+
+inline PstMachine::PstMachine(BridgeH bridge, PortH port)
+    : Machine{ bridge, port, BeginState::Instance() } {
+}
+
+inline std::string Name() {
+    return "PST";
+}
 
 inline std::string BeginState::Name() {
-    return kBeginStateName;
+    return "BEGIN";
 }
 
 inline std::string DiscardingState::Name() {
-    return kDiscardingStateName;
+    return "DISCARDING";
 }
 
 inline std::string LearningState::Name() {
-    return kLearningStateName;
+    return "LEARNING";
 }
 
 inline std::string ForwardingState::Name() {
-    return kForwardingStateName;
+    return "FORWARDING";
 }
 
 } // namespace PortStateTransition

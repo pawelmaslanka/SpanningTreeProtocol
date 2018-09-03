@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 #pragma once
 
 // This project's headers
@@ -20,6 +26,7 @@ public:
         : Machine{ bridge, port, _dummyBeginState } {}
     void ChangeState(Stp::State& newState) { Machine::ChangeState(newState); }
     Stp::State& CurrentState() const noexcept { return Stp::Machine::CurrentState(); }
+    std::string Name() override { return "Machine SUT"; }
 
 private:
     class BeginState : public Stp::State {

@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 #pragma once
 
 // This project's headers
@@ -45,21 +51,30 @@ protected:
     std::string Name() override;
 };
 
-#define PTI_PREFIX_NAME "PTI @ "
-constexpr auto kBeginStateName = PTI_PREFIX_NAME "BEGIN";
-constexpr auto kOneSecondStateName = PTI_PREFIX_NAME "ONE_SECOND";
-constexpr auto kTickStateName = PTI_PREFIX_NAME "TICK";
+class PtiMachine : public Machine {
+public:
+    PtiMachine(BridgeH bridge, PortH port);
+    std::string Name() override;
+};
+
+inline PtiMachine::PtiMachine(BridgeH bridge, PortH port)
+    : Machine{ bridge, port, BeginState::Instance() } {
+}
+
+inline std::string Name() {
+    return "PTI";
+}
 
 inline std::string BeginState::Name() {
-    return kBeginStateName;
+    return "BEGIN";
 }
 
 inline std::string OneSecondState::Name() {
-    return kOneSecondStateName;
+    return "ONE_SECOND";
 }
 
 inline std::string TickState::Name() {
-    return kTickStateName;
+    return "TICK";
 }
 
 } // namespace PortTimers

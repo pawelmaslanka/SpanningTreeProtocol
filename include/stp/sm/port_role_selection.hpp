@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 #pragma once
 
 // This project's headers
@@ -45,22 +51,31 @@ protected:
     std::string Name() override;
 };
 
-#define PRS_PREFIX_NAME "PRS @ "
-constexpr auto kBeginStateName = PRS_PREFIX_NAME "BEGIN";
-constexpr auto kInitBridgeStateName = PRS_PREFIX_NAME "INIT_BRIDGE";
-constexpr auto kRoleSelectionStateName = PRS_PREFIX_NAME "ROLE_SELECTION";
+class PrsMachine : public Machine {
+public:
+    PrsMachine(BridgeH bridge, PortH port);
+    std::string Name() override;
+};
+
+inline PrsMachine::PrsMachine(BridgeH bridge, PortH port)
+    : Machine{ bridge, port, BeginState::Instance() } {
+}
+
+inline std::string Name() {
+    return "PRS";
+}
 
 inline std::string BeginState::Name() {
-    return kBeginStateName;
+    return "BEGIN";
 }
 
 inline std::string InitBridgeState::Name() {
-    return kInitBridgeStateName;
+    return "INIT_BRIDGE";
 }
 
 inline std::string RoleSelectionState::Name() {
-    return kRoleSelectionStateName;
+    return "ROLE_SELECTION";
 }
 
-} // namespace PortTransmit
+} // namespace PortRoleSelection
 } // namespace Stp

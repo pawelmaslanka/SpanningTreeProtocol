@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 // This project's headers
 #include "stp/sm/bridge_detection.hpp"
 // Dependencies
@@ -8,14 +14,10 @@ namespace Stp {
 namespace BridgeDetection {
 
 void BdmState::EdgeAction(Machine& machine) {
-    /// @todo Get real name of machine
-    machine.BridgeInstance().SystemLogEntryState(Name().c_str(), Name().c_str());
     machine.PortInstance().SetOperEdge(true);
 }
 
 void BdmState::NotEdgeAction(Machine& machine) {
-    /// @todo Get real name of machine
-    machine.BridgeInstance().SystemLogEntryState(Name().c_str(), Name().c_str());
     machine.PortInstance().SetOperEdge(false);
 }
 
@@ -24,6 +26,8 @@ State& BeginState::Instance() {
 }
 
 void BeginState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (not machine.BridgeInstance().Begin()) {
         return;
     }
@@ -52,6 +56,8 @@ State& EdgeState::Instance() {
 }
 
 void EdgeState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToNotEdge(machine)) {
         NotEdgeAction(machine);
         ChangeState(machine, NotEdgeState::Instance());
@@ -78,6 +84,8 @@ State& NotEdgeState::Instance() {
 }
 
 void NotEdgeState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToEdge(machine)) {
         EdgeAction(machine);
         ChangeState(machine, EdgeState::Instance());

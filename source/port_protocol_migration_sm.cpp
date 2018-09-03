@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 // This project's headers
 #include "stp/sm/port_protocol_migration.hpp"
 // Dependencies
@@ -28,6 +34,8 @@ State& BeginState::Instance() {
 }
 
 void BeginState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToCheckingRstp(machine)) {
         CheckingRstpAction(machine);
         ChangeState(machine, CheckingRstpState::Instance());
@@ -43,6 +51,8 @@ State& CheckingRstpState::Instance() {
 }
 
 void CheckingRstpState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToSensing(machine)) {
         SensingAction(machine);
         ChangeState(machine, SensingState::Instance());
@@ -73,6 +83,8 @@ State& SensingState::Instance() {
 }
 
 void SensingState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToCheckingRstp(machine)) {
         CheckingRstpAction(machine);
         ChangeState(machine, CheckingRstpState::Instance());
@@ -121,6 +133,8 @@ State& SelectingStpState::Instance() {
 }
 
 void SelectingStpState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToSensing(machine)) {
         SensingAction(machine);
         ChangeState(machine, SensingState::Instance());

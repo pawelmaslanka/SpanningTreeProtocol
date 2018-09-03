@@ -1,4 +1,0 @@
-#ifndef LOGGING_SYSTEM_HPP
-#define LOGGING_SYSTEM_HPP
-
-#endif // LOGGING_SYSTEM_HPP

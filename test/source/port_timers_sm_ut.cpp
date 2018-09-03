@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 // Tested project's headers
 #include <stp/sm/port_timers.hpp>
 // UT dependencies
@@ -41,7 +47,7 @@ TEST_F(PortTimersTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTimers::kBeginStateName);
+                 Stp::PortTimers::BeginState::Instance().Name().c_str());
 }
 
 TEST_F(PortTimersTest,
@@ -58,7 +64,7 @@ TEST_F(PortTimersTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTimers::kOneSecondStateName);
+                 Stp::PortTimers::OneSecondState::Instance().Name().c_str());
 }
 
 TEST_F(PortTimersTest,
@@ -72,7 +78,7 @@ TEST_F(PortTimersTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTimers::kOneSecondStateName);
+                 Stp::PortTimers::OneSecondState::Instance().Name().c_str());
 }
 
 TEST_F(PortTimersTest,
@@ -89,7 +95,7 @@ TEST_F(PortTimersTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTimers::kTickStateName);
+                 Stp::PortTimers::TickState::Instance().Name().c_str());
 }
 
 TEST_F(PortTimersTest,
@@ -103,7 +109,7 @@ TEST_F(PortTimersTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTimers::kTickStateName);
+                 Stp::PortTimers::TickState::Instance().Name().c_str());
 }
 
 TEST_F(PortTimersTest,
@@ -120,5 +126,5 @@ TEST_F(PortTimersTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTimers::kOneSecondStateName);
+                 Stp::PortTimers::OneSecondState::Instance().Name().c_str());
 }

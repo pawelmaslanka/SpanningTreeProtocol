@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 // This project's headers
 #include "stp/sm/port_role_selection.hpp"
 // Dependencies
@@ -21,6 +27,8 @@ State& BeginState::Instance() {
 }
 
 void BeginState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToInitBridge(machine)) {
         InitBridgeAction(machine);
         ChangeState(machine, InitBridgeState::Instance());
@@ -36,6 +44,8 @@ State& InitBridgeState::Instance() {
 }
 
 void InitBridgeState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToRoleSelection(machine)) {
         RoleSelectionAction(machine);
         ChangeState(machine, RoleSelectionState::Instance());
@@ -52,6 +62,8 @@ State& RoleSelectionState::Instance() {
 }
 
 void RoleSelectionState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToRoleSelection(machine)) {
         RoleSelectionAction(machine);
         // Leave it as the current state

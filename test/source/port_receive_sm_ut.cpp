@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 // Tested project's headers
 #include <stp/sm/port_protocol_migration.hpp>
 // UT dependencies
@@ -41,7 +47,7 @@ TEST_F(PortReceiveTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortReceive::kBeginStateName);
+                 Stp::PortReceive::BeginState::Instance().Name().c_str());
 }
 
 TEST_F(PortReceiveTest,
@@ -58,7 +64,7 @@ TEST_F(PortReceiveTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortReceive::kDiscardStateName);
+                 Stp::PortReceive::DiscardState::Instance().Name().c_str());
 }
 
 TEST_F(PortReceiveTest,
@@ -72,7 +78,7 @@ TEST_F(PortReceiveTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortReceive::kDiscardStateName);
+                 Stp::PortReceive::DiscardState::Instance().Name().c_str());
 }
 
 TEST_F(PortReceiveTest,
@@ -89,7 +95,7 @@ TEST_F(PortReceiveTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortReceive::kReceiveStateName);
+                 Stp::PortReceive::ReceiveState::Instance().Name().c_str());
 }
 
 TEST_F(PortReceiveTest,
@@ -103,7 +109,7 @@ TEST_F(PortReceiveTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortReceive::kReceiveStateName);
+                 Stp::PortReceive::ReceiveState::Instance().Name().c_str());
 }
 
 TEST_F(PortReceiveTest,
@@ -118,5 +124,5 @@ TEST_F(PortReceiveTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortReceive::kReceiveStateName);
+                 Stp::PortReceive::ReceiveState::Instance().Name().c_str());
 }

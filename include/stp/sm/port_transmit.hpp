@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 #pragma once
 
 // This project's headers
@@ -94,41 +100,46 @@ protected:
     std::string Name() override;
 };
 
-#define PTX_PREFIX_NAME "PTX @ "
-constexpr auto kBeginStateName = PTX_PREFIX_NAME "BEGIN";
-constexpr auto kTransmitInitStateName = PTX_PREFIX_NAME "TRANSMIT_INIT";
-constexpr auto kTransmitPeriodicStateName = PTX_PREFIX_NAME "TRANSMIT_PERIODIC";
-constexpr auto kTransmitConfigStateName = PTX_PREFIX_NAME "TRANSMIT_CONFIG";
-constexpr auto kTransmitTcnStateName = PTX_PREFIX_NAME "TRANSMIT_TCN";
-constexpr auto kTransmitRstpStateName = PTX_PREFIX_NAME "TRANSMIT_RSTP";
-constexpr auto kIdleStateName = PTX_PREFIX_NAME "IDLE";
+class PtxMachine : public Machine {
+public:
+    PtxMachine(BridgeH bridge, PortH port);
+    std::string Name() override;
+};
+
+inline PtxMachine::PtxMachine(BridgeH bridge, PortH port)
+    : Machine{ bridge, port, BeginState::Instance() } {
+}
+
+inline std::string Name() {
+    return "PTX";
+}
 
 inline std::string BeginState::Name() {
-    return kBeginStateName;
+    return "BEGIN";
 }
 
 inline std::string TransmitInitState::Name() {
-    return kTransmitInitStateName;
+    return "TRANSMIT_INIT";
 }
 
 inline std::string TransmitPeriodicState::Name() {
-    return kTransmitPeriodicStateName;
+    return "TRANSMIT_PERIODIC";
 }
 
 inline std::string TransmitConfigState::Name() {
-    return kTransmitConfigStateName;
+    return "TRANSMIT_CONFIG";
 }
 
 inline std::string TransmitTcnState::Name() {
-    return kTransmitTcnStateName;
+    return "TRANSMIT_TCN";
 }
 
 inline std::string TransmitRstpState::Name() {
-    return kTransmitRstpStateName;
+    return "TRANSMIT_RSTP";
 }
 
 inline std::string IdleState::Name() {
-    return kIdleStateName;
+    return "IDLE";
 }
 
 } // namespace PortTransmit

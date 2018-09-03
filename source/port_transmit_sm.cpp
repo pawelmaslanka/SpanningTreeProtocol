@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 // This project's headers
 #include "stp/sm/port_transmit.hpp"
 // Dependencies
@@ -86,6 +92,8 @@ State& BeginState::Instance() {
 }
 
 void BeginState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToTransmitInit(machine)) {
         TransmitInitAction(machine);
         ChangeState(machine, TransmitInitState::Instance());
@@ -101,6 +109,7 @@ State& TransmitInitState::Instance() {
 }
 
 void TransmitInitState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     IdleUctExecute(machine);
 }
 
@@ -109,6 +118,7 @@ State& TransmitPeriodicState::Instance() {
 }
 
 void TransmitPeriodicState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     IdleUctExecute(machine);
 }
 
@@ -117,6 +127,7 @@ State& TransmitConfigState::Instance() {
 }
 
 void TransmitConfigState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     IdleUctExecute(machine);
 }
 
@@ -125,6 +136,7 @@ State& TransmitTcnState::Instance() {
 }
 
 void TransmitTcnState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     IdleUctExecute(machine);
 }
 
@@ -133,6 +145,7 @@ State& TransmitRstpState::Instance() {
 }
 
 void TransmitRstpState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     IdleUctExecute(machine);
 }
 
@@ -141,6 +154,8 @@ State& IdleState::Instance() {
 }
 
 void IdleState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToTransmitPeriodic(machine)) {
         TransmitPeriodicAction(machine);
         ChangeState(machine, TransmitPeriodicState::Instance());

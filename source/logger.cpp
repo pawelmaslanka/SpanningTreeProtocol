@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 // This project's headers
 #include "stp/logger.hpp"
 
@@ -9,24 +15,14 @@ Logger::Logger(Logger::LogSeverity logSeverity)
     // Nothing more to do
 }
 
-void SystemChangeState::Log(const char* machineName, const char* oldStateName,
-                            const char* newStateName) {
-    // Simple assert for any null pointer
-    if (not (machineName && oldStateName && newStateName)) {
-        return;
-    }
-
+void SystemChangeState::Log(const std::string& machineName, const std::string& oldStateName,
+                            const std::string& newStateName) {
     std::string msg{};
     msg.append(oldStateName).append(" -> ").append(newStateName).append(" @ ").append(machineName);
     _logger << std::move(msg);
 }
 
-void SystemEntryState::Log(const char* machineName, const char* stateName) {
-    // Simple assert for any null pointer
-    if (not (machineName && stateName)) {
-        return;
-    }
-
+void SystemEntryState::Log(const std::string& machineName, const std::string& stateName) {
     std::string msg{};
     msg.append(stateName).append(" @ ").append(machineName);
     _logger << std::move(msg);

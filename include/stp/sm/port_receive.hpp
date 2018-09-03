@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 #pragma once
 
 // This project's headers
@@ -49,21 +55,30 @@ protected:
     std::string Name() override;
 };
 
-#define PRX_PREFIX_NAME "PRX @ "
-constexpr auto kBeginStateName = PRX_PREFIX_NAME "BEGIN";
-constexpr auto kDiscardStateName = PRX_PREFIX_NAME "DISCARD";
-constexpr auto kReceiveStateName = PRX_PREFIX_NAME "RECEIVE";
+class PrxMachine : public Machine {
+public:
+    PrxMachine(BridgeH bridge, PortH port);
+    std::string Name() override;
+};
+
+inline PrxMachine::PrxMachine(BridgeH bridge, PortH port)
+    : Machine{ bridge, port, BeginState::Instance() } {
+}
+
+inline std::string PrxMachine::Name() {
+    return "PRX";
+}
 
 inline std::string BeginState::Name() {
-    return kBeginStateName;
+    return "BEGIN";
 }
 
 inline std::string DiscardState::Name() {
-    return kDiscardStateName;
+    return "DISCARD";
 }
 
 inline std::string ReceiveState::Name() {
-    return kReceiveStateName;
+    return "RECEIVE";
 }
 
 } // namespace PortReceive

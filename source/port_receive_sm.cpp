@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 // This project's headers
 #include "stp/sm/port_receive.hpp"
 
@@ -28,6 +34,8 @@ State& BeginState::Instance() {
 }
 
 void BeginState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToDiscard(machine)) {
         DiscardAction(machine);
         ChangeState(machine, DiscardState::Instance());
@@ -58,6 +66,8 @@ State& DiscardState::Instance() {
 }
 
 void DiscardState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToReceive(machine)) {
         ReceiveAction(machine);
         ChangeState(machine, ReceiveState::Instance());
@@ -81,6 +91,8 @@ State& ReceiveState::Instance() {
 }
 
 void ReceiveState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToReceive(machine)) {
         ReceiveAction(machine);
         // Leave it as current state

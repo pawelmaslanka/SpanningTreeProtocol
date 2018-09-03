@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 // This project's headers
 #include "stp/sm/topology_change.hpp"
 // Dependencies
@@ -79,6 +85,8 @@ State& BeginState::Instance() {
 }
 
 void BeginState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToInactive(machine)) {
         InactiveAction(machine);
         ChangeState(machine, InactiveState::Instance());
@@ -94,6 +102,8 @@ State& InactiveState::Instance() {
 }
 
 void InactiveState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToLearning(machine)) {
         LearningAction(machine);
         ChangeState(machine, LearningState::Instance());
@@ -116,6 +126,8 @@ State& LearningState::Instance() {
 }
 
 void LearningState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToDetected(machine)) {
         DetectedAction(machine);
         ChangeState(machine, DetectedState::Instance());
@@ -199,6 +211,7 @@ State& DetectedState::Instance() {
 }
 
 void DetectedState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     ActiveUctExecute(machine);
 }
 
@@ -207,6 +220,8 @@ State& NotifiedTcnState::Instance() {
 }
 
 void NotifiedTcnState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToNotifiedTc(machine)) {
         NotifiedTcAction(machine);
         ChangeState(machine, NotifiedTcState::Instance());
@@ -223,6 +238,7 @@ State& NotifiedTcState::Instance() {
 }
 
 void NotifiedTcState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     ActiveUctExecute(machine);
 }
 
@@ -231,6 +247,7 @@ State& PropagatingState::Instance() {
 }
 
 void PropagatingState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     ActiveUctExecute(machine);
 }
 
@@ -239,6 +256,7 @@ State& AcknowledgedState::Instance() {
 }
 
 void AcknowledgedState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     ActiveUctExecute(machine);
 }
 
@@ -247,6 +265,8 @@ State& ActiveState::Instance() {
 }
 
 void ActiveState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToLearning(machine)) {
         LearningAction(machine);
         ChangeState(machine, LearningState::Instance());

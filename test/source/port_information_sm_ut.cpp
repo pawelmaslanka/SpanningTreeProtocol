@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 // Tested project's headers
 #include <stp/sm/port_information.hpp>
 // UT dependencies
@@ -41,7 +47,7 @@ TEST_F(PortInformationTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortInformation::kBeginStateName);
+                 Stp::PortInformation::BeginState::Instance().Name().c_str());
 }
 
 TEST_F(PortInformationTest,
@@ -58,5 +64,5 @@ TEST_F(PortInformationTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortInformation::kDisabledStateName);
+                 Stp::PortInformation::DisabledState::Instance().Name().c_str());
 }

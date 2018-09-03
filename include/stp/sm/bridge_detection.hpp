@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 #pragma once
 
 // This project's headers
@@ -45,21 +51,30 @@ protected:
     std::string Name() override;
 };
 
-#define BDM_PREFIX_NAME "BDM @ "
-constexpr auto kBeginStateName = BDM_PREFIX_NAME "BEGIN";
-constexpr auto kEdgeStateName = BDM_PREFIX_NAME "EDGE";
-constexpr auto kNotEdgeStateName = BDM_PREFIX_NAME "NOT_EDGE";
+class BdmMachine : public Machine {
+public:
+    BdmMachine(BridgeH bridge, PortH port);
+    std::string Name() override;
+};
+
+inline BdmMachine::BdmMachine(BridgeH bridge, PortH port)
+    : Machine{ bridge, port, BeginState::Instance() } {
+}
+
+inline std::string Name() {
+    return "BDM";
+}
 
 inline std::string BeginState::Name() {
-    return kBeginStateName;
+    return "BEGIN";
 }
 
 inline std::string EdgeState::Name() {
-    return kEdgeStateName;
+    return "EDGE";
 }
 
 inline std::string NotEdgeState::Name() {
-    return kNotEdgeStateName;
+    return "NOT_EDGE";
 }
 
 } // namespace BridgeDetection

@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 #pragma once
 
 // This project's headers
@@ -5,7 +11,6 @@
 #include "stp/specifiers.hpp"
 #include "stp/state_machine.hpp"
 #include "stp/port.hpp"
-#include "stp/utils.hpp"
 
 // C++ Standard Library
 #include <memory>
@@ -66,26 +71,34 @@ protected:
     std::string Name() override;
 };
 
-#define PPM_PREFIX_NAME "PPM @ "
-constexpr auto kBeginStateName = PPM_PREFIX_NAME "BEGIN";
-constexpr auto kCheckingRstpStateName = PPM_PREFIX_NAME "CHECKING_RSTP";
-constexpr auto kSelectingStpStateName = PPM_PREFIX_NAME "SELECTING_STP";
-constexpr auto kSensingStateName = PPM_PREFIX_NAME "SENSING";
+class PpmMachine : public Machine {
+public:
+    PpmMachine(BridgeH bridge, PortH port);
+    std::string Name() override;
+};
+
+inline PpmMachine::PpmMachine(BridgeH bridge, PortH port)
+    : Machine{ bridge, port, BeginState::Instance() } {
+}
+
+inline std::string PpmMachine::Name() {
+    return "PPM";
+}
 
 inline std::string BeginState::Name() {
-    return kBeginStateName;
+    return "BEGIN";
 }
 
 inline std::string CheckingRstpState::Name() {
-    return kCheckingRstpStateName;
+    return "CHECKING_RSTP";
 }
 
 inline std::string SelectingStpState::Name() {
-    return kSelectingStpStateName;
+    return "SELECTING_STP";
 }
 
 inline std::string SensingState::Name() {
-    return kSensingStateName;
+    return "SENSING";
 }
 
 } // namespace PortProtocolMigration

@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 // This project's headers
 #include "stp/sm/port_state_transition.hpp"
 // Dependencies
@@ -30,6 +36,8 @@ State& BeginState::Instance() {
 }
 
 void BeginState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToDiscarding(machine)) {
         DiscardingAction(machine);
         ChangeState(machine, DiscardingState::Instance());
@@ -45,6 +53,8 @@ State& DiscardingState::Instance() {
 }
 
 void DiscardingState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToLearning(machine)) {
         LearningAction(machine);
         ChangeState(machine, LearningState::Instance());
@@ -60,6 +70,8 @@ State& LearningState::Instance() {
 }
 
 void LearningState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToForwarding(machine)) {
         ForwardingAction(machine);
         ChangeState(machine, ForwardingState::Instance());
@@ -83,6 +95,8 @@ State& ForwardingState::Instance() {
 }
 
 void ForwardingState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToDiscarding(machine)) {
         DiscardingAction(machine);
         ChangeState(machine, DiscardingState::Instance());
@@ -93,5 +107,5 @@ bool ForwardingState::GoToDiscarding(Machine& machine) {
     return not machine.PortInstance().Forward();
 }
 
-} // namespace BridgeDetection
+} // namespace PortStateTransition
 } // namespace Stp

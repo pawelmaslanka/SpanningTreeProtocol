@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 // Tested project's headers
 #include <stp/sm/port_transmit.hpp>
 // UT dependencies
@@ -45,7 +51,7 @@ TEST_F(PortTransmitTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTransmit::kBeginStateName);
+                 Stp::PortTransmit::BeginState::Instance().Name().c_str());
 }
 
 TEST_F(PortTransmitTest,
@@ -62,7 +68,7 @@ TEST_F(PortTransmitTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTransmit::kTransmitInitStateName);
+                 Stp::PortTransmit::TransmitInitState::Instance().Name().c_str());
 }
 
 TEST_F(PortTransmitTest,
@@ -76,7 +82,7 @@ TEST_F(PortTransmitTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTransmit::kTransmitInitStateName);
+                 Stp::PortTransmit::TransmitInitState::Instance().Name().c_str());
 }
 
 TEST_F(PortTransmitTest,
@@ -94,7 +100,7 @@ TEST_F(PortTransmitTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTransmit::kIdleStateName);
+                 Stp::PortTransmit::IdleState::Instance().Name().c_str());
 }
 
 TEST_F(PortTransmitTest,
@@ -109,7 +115,7 @@ TEST_F(PortTransmitTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTransmit::kTransmitPeriodicStateName);
+                 Stp::PortTransmit::TransmitPeriodicState::Instance().Name().c_str());
 }
 
 TEST_F(PortTransmitTest,
@@ -128,7 +134,7 @@ TEST_F(PortTransmitTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTransmit::kIdleStateName);
+                 Stp::PortTransmit::IdleState::Instance().Name().c_str());
 }
 
 TEST_F(PortTransmitTest,
@@ -143,7 +149,7 @@ TEST_F(PortTransmitTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTransmit::kTransmitConfigStateName);
+                 Stp::PortTransmit::TransmitConfigState::Instance().Name().c_str());
 }
 
 TEST_F(PortTransmitTest,
@@ -162,7 +168,7 @@ TEST_F(PortTransmitTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTransmit::kIdleStateName);
+                 Stp::PortTransmit::IdleState::Instance().Name().c_str());
 }
 
 TEST_F(PortTransmitTest,
@@ -177,7 +183,7 @@ TEST_F(PortTransmitTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTransmit::kTransmitTcnStateName);
+                 Stp::PortTransmit::TransmitTcnState::Instance().Name().c_str());
 }
 
 TEST_F(PortTransmitTest,
@@ -196,7 +202,7 @@ TEST_F(PortTransmitTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTransmit::kIdleStateName);
+                 Stp::PortTransmit::IdleState::Instance().Name().c_str());
 }
 
 TEST_F(PortTransmitTest,
@@ -211,7 +217,7 @@ TEST_F(PortTransmitTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTransmit::kTransmitRstpStateName);
+                 Stp::PortTransmit::TransmitRstpState::Instance().Name().c_str());
 }
 
 TEST_F(PortTransmitTest,
@@ -230,7 +236,7 @@ TEST_F(PortTransmitTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTransmit::kIdleStateName);
+                 Stp::PortTransmit::IdleState::Instance().Name().c_str());
 }
 
 TEST_F(PortTransmitTest,
@@ -251,7 +257,7 @@ TEST_F(PortTransmitTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTransmit::kIdleStateName);
+                 Stp::PortTransmit::IdleState::Instance().Name().c_str());
 }
 
 TEST_F(PortTransmitTest,
@@ -270,7 +276,7 @@ TEST_F(PortTransmitTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTransmit::kTransmitPeriodicStateName);
+                 Stp::PortTransmit::TransmitPeriodicState::Instance().Name().c_str());
 }
 
 TEST_F(PortTransmitTest,
@@ -291,7 +297,7 @@ TEST_F(PortTransmitTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTransmit::kTransmitConfigStateName);
+                 Stp::PortTransmit::TransmitConfigState::Instance().Name().c_str());
 }
 
 TEST_F(PortTransmitTest,
@@ -314,7 +320,7 @@ TEST_F(PortTransmitTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTransmit::kTransmitTcnStateName);
+                 Stp::PortTransmit::TransmitTcnState::Instance().Name().c_str());
 }
 
 TEST_F(PortTransmitTest,
@@ -339,5 +345,5 @@ TEST_F(PortTransmitTest,
     _sutMachine.Run();
 
     EXPECT_STREQ(_sutMachine.CurrentState().Name().c_str(),
-                 Stp::PortTransmit::kTransmitRstpStateName);
+                 Stp::PortTransmit::TransmitRstpState::Instance().Name().c_str());
 }

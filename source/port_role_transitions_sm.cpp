@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 // This project's headers
 #include "stp/sm/port_role_transitions.hpp"
 // Dependencies
@@ -211,6 +217,8 @@ State& BeginState::Instance() {
 }
 
 void BeginState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToInitPort(machine)) {
         InitPortAction(machine);
         ChangeState(machine, InitPortState::Instance());
@@ -226,6 +234,8 @@ State& InitPortState::Instance() {
 }
 
 void InitPortState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (GoToDisablePort(machine)) {
         DisablePortAction(machine);
         ChangeState(machine, DisablePortState::Instance());
@@ -242,6 +252,8 @@ State& DisablePortState::Instance() {
 }
 
 void DisablePortState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (not ContinueExecute(machine)) {
         return;
     }
@@ -271,6 +283,8 @@ State& DisabledPortState::Instance() {
 }
 
 void DisabledPortState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (not ContinueExecute(machine)) {
         return;
     }
@@ -309,6 +323,7 @@ State& RootProposedState::Instance() {
 }
 
 void RootProposedState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     RootPortUctExecute(machine);
 }
 
@@ -322,6 +337,7 @@ State& RootAgreedState::Instance() {
 }
 
 void RootAgreedState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     RootPortUctExecute(machine);
 }
 
@@ -335,6 +351,7 @@ State& ReRootState::Instance() {
 }
 
 void ReRootState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     RootPortUctExecute(machine);
 }
 
@@ -348,6 +365,7 @@ State& RootForwardState::Instance() {
 }
 
 void RootForwardState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     RootPortUctExecute(machine);
 }
 
@@ -361,6 +379,7 @@ State& RootLearnState::Instance() {
 }
 
 void RootLearnState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     RootPortUctExecute(machine);
 }
 
@@ -374,6 +393,7 @@ State& ReRootedState::Instance() {
 }
 
 void ReRootedState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     RootPortUctExecute(machine);
 }
 
@@ -387,6 +407,8 @@ State& RootPortState::Instance() {
 }
 
 void RootPortState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (not ContinueExecute(machine)) {
         return;
     }
@@ -522,6 +544,7 @@ State& DesignatedProposeState::Instance() {
 }
 
 void DesignatedProposeState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     DesignatedPortUctExecute(machine);
 }
 
@@ -535,6 +558,7 @@ State& DesignatedSyncedState::Instance() {
 }
 
 void DesignatedSyncedState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     DesignatedPortUctExecute(machine);
 }
 
@@ -548,6 +572,7 @@ State& DesignatedRetiredState::Instance() {
 }
 
 void DesignatedRetiredState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     DesignatedPortUctExecute(machine);
 }
 
@@ -561,6 +586,7 @@ State& DesignatedForwardState::Instance() {
 }
 
 void DesignatedForwardState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     DesignatedPortUctExecute(machine);
 }
 
@@ -574,6 +600,7 @@ State& DesignatedLearnState::Instance() {
 }
 
 void DesignatedLearnState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     DesignatedPortUctExecute(machine);
 }
 
@@ -587,6 +614,7 @@ State& DesignatedDiscardState::Instance() {
 }
 
 void DesignatedDiscardState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     DesignatedPortUctExecute(machine);
 }
 
@@ -600,6 +628,8 @@ State& DesignatedPortState::Instance() {
 }
 
 void DesignatedPortState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (not ContinueExecute(machine)) {
         return;
     }
@@ -778,6 +808,7 @@ State& AlternateProposedState::Instance() {
 }
 
 void AlternateProposedState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     AlternatePortUctExecute(machine);
 }
 
@@ -791,6 +822,7 @@ State& AlternateAgreedState::Instance() {
 }
 
 void AlternateAgreedState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     AlternatePortUctExecute(machine);
 }
 
@@ -804,6 +836,8 @@ State& BlockPortState::Instance() {
 }
 
 void BlockPortState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (not ContinueExecute(machine)) {
         return;
     }
@@ -833,6 +867,7 @@ State& BackupPortState::Instance() {
 }
 
 void BackupPortState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
     AlternatePortUctExecute(machine);
 }
 
@@ -846,6 +881,8 @@ State& AlternatePortState::Instance() {
 }
 
 void AlternatePortState::Execute(Machine& machine) {
+    machine.BridgeInstance().SystemLogEntryState(machine.Name(), Name());
+
     if (not ContinueExecute(machine)) {
         return;
     }

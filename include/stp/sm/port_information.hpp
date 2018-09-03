@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 #pragma once
 
 // This project's headers
@@ -144,61 +150,62 @@ protected:
     std::string Name() override;
 };
 
-#define PIM_PREFIX_NAME "PIM @ "
-constexpr auto kBeginStateName = PIM_PREFIX_NAME "BEGIN";
-constexpr auto kDisabledStateName = PIM_PREFIX_NAME "DISABLED";
-constexpr auto kAgedStateName = PIM_PREFIX_NAME "AGED";
-constexpr auto kUpdateStateName = PIM_PREFIX_NAME "UPDATE";
-constexpr auto kSuperiorDesignatedStateName = PIM_PREFIX_NAME "SUPERIOR_DESIGNATED";
-constexpr auto kRepeatedDesignatedStateName = PIM_PREFIX_NAME "REPEATED_DESIGNATED";
-constexpr auto kInferiorDesignatedStateName = PIM_PREFIX_NAME "INFERIOR_DESIGNATED";
-constexpr auto kNotDesignatedStateName = PIM_PREFIX_NAME "NOT_DESIGNATED";
-constexpr auto kOtherStateName = PIM_PREFIX_NAME "OTHER";
-constexpr auto kCurrentStateName = PIM_PREFIX_NAME "CURRENT";
-constexpr auto kReceiveStateName = PIM_PREFIX_NAME "RECEIVE";
+class PimMachine : public Machine {
+public:
+    PimMachine(BridgeH bridge, PortH port);
+    std::string Name() override;
+};
+
+inline PimMachine::PimMachine(BridgeH bridge, PortH port)
+    : Machine{ bridge, port, BeginState::Instance() } {
+}
+
+inline std::string PimMachine::Name() {
+    return "PIM";
+}
 
 inline std::string BeginState::Name() {
-    return kBeginStateName;
+    return "BEGIN";
 }
 
 inline std::string DisabledState::Name() {
-    return kDisabledStateName;
+    return "DISABLED";
 }
 
 inline std::string AgedState::Name() {
-    return kAgedStateName;
+    return "AGED";
 }
 
 inline std::string UpdateState::Name() {
-    return kUpdateStateName;
+    return "UPDATE";
 }
 
 inline std::string SuperiorDesignatedState::Name() {
-    return kSuperiorDesignatedStateName;
+    return "SUPERIOR_DESIGNATED";
 }
 
 inline std::string RepeatedDesignatedState::Name() {
-    return kRepeatedDesignatedStateName;
+    return "REPEATED_DESIGNATED";
 }
 
 inline std::string InferiorDesignatedState::Name() {
-    return kInferiorDesignatedStateName;
+    return "INFERIOR_DESIGNATED";
 }
 
 inline std::string NotDesignatedState::Name() {
-    return kNotDesignatedStateName;
+    return "NOT_DESIGNATED";
 }
 
 inline std::string OtherState::Name() {
-    return kOtherStateName;
+    return "OTHER";
 }
 
 inline std::string CurrentState::Name() {
-    return kCurrentStateName;
+    return "CURRENT";
 }
 
 inline std::string ReceiveState::Name() {
-    return kReceiveStateName;
+    return "RECEIVE";
 }
 
 } // namespace PortInformation

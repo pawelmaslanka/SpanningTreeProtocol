@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 #pragma once
 
 // This project's headers
@@ -34,7 +40,7 @@ class EntryState {
 protected:
     friend class SystemLoggingManager;
     EntryState(Logger& logger);
-    virtual void Log(const char* machineName, const char* stateName) = 0;
+    virtual void Log(const std::string& machineName, const std::string& stateName) = 0;
     virtual ~EntryState() = default;
     Logger& _logger;
 };
@@ -43,21 +49,22 @@ class NullEntryState : public EntryState {
 protected:
     friend class SystemLoggingManager;
     NullEntryState(Logger& logger);
-    void Log(const char* machineName, const char* stateName) override;
+    void Log(const std::string& machineName, const std::string& stateName) override;
 };
 
 class SystemEntryState : public EntryState {
 protected:
     friend class SystemLoggingManager;
     SystemEntryState(Logger& logger);
-    void Log(const char* machineName, const char* stateName) override;
+    void Log(const std::string& machineName, const std::string& stateName) override;
 };
 
 class ChangeState {
 protected:
     friend class SystemLoggingManager;
     ChangeState(Logger& logger);
-    virtual void Log(const char* machineName, const char* oldStateName, const char* newStateName) = 0;
+    virtual void Log(const std::string& machineName, const std::string& oldStateName,
+                     const std::string& newStateName) = 0;
     virtual ~ChangeState() = default;
     Logger& _logger;
 };
@@ -66,24 +73,25 @@ class NullChangeState : public ChangeState {
 protected:
     friend class SystemLoggingManager;
     NullChangeState(Logger& logger);
-    virtual void Log(const char* machineName, const char* oldStateName,
-                     const char* newStateName) override;
+    virtual void Log(const std::string& machineName, const std::string& oldStateName,
+                     const std::string& newStateName) override;
 };
 
 class SystemChangeState : public ChangeState {
 protected:
     friend class SystemLoggingManager;
     SystemChangeState(Logger& logger);
-    void Log(const char* machineName, const char* oldStateName, const char* newStateName) override;
+    void Log(const std::string& machineName, const std::string& oldStateName,
+             const std::string& newStateName) override;
 };
 
 class SystemLoggingManager {
 public:
     SystemLoggingManager(LoggerH logger);
 
-    __virtual void LogEntryState(const char* machineName, const char* stateName);
-    __virtual void LogChangeState(const char* machineName, const char* oldStateName,
-                                        const char* newStateName);
+    __virtual void LogEntryState(const std::string& machineName, const std::string& stateName);
+    __virtual void LogChangeState(const std::string& machineName, const std::string& oldStateName,
+                                  const std::string& newStateName);
     __virtual void SetLogSeverity(const Logger::LogSeverity logSeverity);
 
 private:
@@ -97,14 +105,14 @@ private:
     SystemChangeState _systemChangeStateLogger;
 };
 
-inline void SystemLoggingManager::LogEntryState(const char* machineName,
-                                                      const char* stateName) {
+inline void SystemLoggingManager::LogEntryState(const std::string& machineName,
+                                                const std::string& stateName) {
     _entryStateLogger->Log(machineName, stateName);
 }
 
-inline void SystemLoggingManager::LogChangeState(const char* machineName,
-                                                       const char* oldStateName,
-                                                       const char* newStateName) {
+inline void SystemLoggingManager::LogChangeState(const std::string& machineName,
+                                                 const std::string& oldStateName,
+                                                 const std::string& newStateName) {
     _changeStateLogger->Log(machineName, oldStateName, newStateName);
 }
 
@@ -116,7 +124,7 @@ inline NullEntryState::NullEntryState(Logger& logger)
     : EntryState { logger } {
 }
 
-inline void NullEntryState::Log(const char*, const char*) {
+inline void NullEntryState::Log(const std::string&, const std::string&) {
 }
 
 inline SystemEntryState::SystemEntryState(Logger& logger)
@@ -131,7 +139,7 @@ inline NullChangeState::NullChangeState(Logger& logger)
     : ChangeState{ logger } {
 }
 
-inline void NullChangeState::Log(const char*, const char*, const char*) {
+inline void NullChangeState::Log(const std::string&, const std::string&, const std::string&) {
 }
 
 inline SystemChangeState::SystemChangeState(Logger& logger)

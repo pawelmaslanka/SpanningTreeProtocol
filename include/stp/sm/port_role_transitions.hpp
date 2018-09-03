@@ -1,3 +1,9 @@
+/**
+ * @author Pawel Maslanka (pawmas)
+ *
+ * Contact: pawmas@hotmail.com
+ */
+
 #pragma once
 
 // This project's headers
@@ -313,129 +319,114 @@ protected:
     std::string Name() override;
 };
 
-#define PRT_PREFIX_NAME "PRT @ "
-// Disabled Port State's names
-constexpr auto kBeginStateName = PRT_PREFIX_NAME "BEGIN";
-constexpr auto kInitPortStateName = PRT_PREFIX_NAME "INIT_PORT";
-constexpr auto kDisablePortStateName = PRT_PREFIX_NAME "DISABLE_PORT";
-constexpr auto kDisabledPortStateName = PRT_PREFIX_NAME "DISABLED_PORT";
-// Root Port State's names
-constexpr auto kRootProposedStateName = PRT_PREFIX_NAME "ROOT_PROPOSED";
-constexpr auto kRootAgreedStateName = PRT_PREFIX_NAME "ROOT_AGREED";
-constexpr auto kReRootStateName = PRT_PREFIX_NAME "REROOT";
-constexpr auto kRootForwardStateName = PRT_PREFIX_NAME "ROOT_FORWARD";
-constexpr auto kRootLearnStateName = PRT_PREFIX_NAME "ROOT_LEARN";
-constexpr auto kRootPortStateName = PRT_PREFIX_NAME "ROOT_PORT";
-// Designated Port State's names
-constexpr auto kDesignatedProposeStateName = PRT_PREFIX_NAME "DESIGNATED_PROPOSE";
-constexpr auto kDesignatedSyncedStateName = PRT_PREFIX_NAME "DESIGNATED_SYNCED";
-constexpr auto kDesignatedRetiredStateName = PRT_PREFIX_NAME "DESIGNATED_RETIRED";
-constexpr auto kDesignatedForwardStateName = PRT_PREFIX_NAME "DESIGNATED_FORWARD";
-constexpr auto kDesignatedLearnStateName = PRT_PREFIX_NAME "DESIGNATED_LEARN";
-constexpr auto kDesignatedDiscardStateName = PRT_PREFIX_NAME "DESIGNATED_DISCARD";
-constexpr auto kDesignatedPortStateName = PRT_PREFIX_NAME "DESIGNATED_PORT";
+class PrtMachine : public Machine {
+public:
+    PrtMachine(BridgeH bridge, PortH port);
+    std::string Name() override;
+};
 
-// Alternate and Backup Port State's names
-constexpr auto kAlternateProposedStateName = PRT_PREFIX_NAME "ALTERNATE_PROPOSED";
-constexpr auto kAlternateAgreedStateName = PRT_PREFIX_NAME "ALTERNATE_AGREED";
-constexpr auto kBlockPortStateName = PRT_PREFIX_NAME "BLOCK_PORT";
-constexpr auto kBackupPortStateName = PRT_PREFIX_NAME "BACKUP_PORT";
-constexpr auto kAlternatePortStateName = PRT_PREFIX_NAME "ALTERNATE_PORT";
+inline PrtMachine::PrtMachine(BridgeH bridge, PortH port)
+    : Machine{ bridge, port, BeginState::Instance() } {
+}
+
+inline std::string Name() {
+    return "PRT";
+}
 
 // Disabled Port State's names
 inline std::string BeginState::Name() {
-    return kBeginStateName;
+    return "BEGIN";
 }
 
 inline std::string InitPortState::Name() {
-    return kInitPortStateName;
+    return "INIT_PORT";
 }
 
 inline std::string DisablePortState::Name() {
-    return kDisablePortStateName;
+    return "DISABLE_PORT";
 }
 
 inline std::string DisabledPortState::Name() {
-    return kDisabledPortStateName;
+    return "DISABLED_PORT";
 }
 
 // Root Port State's names
 inline std::string RootProposedState::Name() {
-    return kRootProposedStateName;
+    return "ROOT_PROPOSED";
 }
 
 inline std::string RootAgreedState::Name() {
-    return kRootAgreedStateName;
+    return "ROOT_AGREED";
 }
 
 inline std::string ReRootState::Name() {
-    return kReRootStateName;
+    return "REROOT";
 }
 
 inline std::string RootForwardState::Name() {
-    return kRootForwardStateName;
+    return "ROOT_FORWARD";
 }
 
 inline std::string RootLearnState::Name() {
-    return kRootLearnStateName;
+    return "ROOT_LEARN";
 }
 
 inline std::string ReRootedState::Name() {
-    return kReRootStateName;
+    return "REROOT";
 }
 
 inline std::string RootPortState::Name() {
-    return kRootPortStateName;
+    return "ROOT_PORT";
 }
 
 // Designated Port State's names
 inline std::string DesignatedProposeState::Name() {
-    return kDesignatedProposeStateName;
+    return "DESIGNATED_PROPOSE";
 }
 
 inline std::string DesignatedSyncedState::Name() {
-    return kDesignatedSyncedStateName;
+    return "DESIGNATED_SYNCED";
 }
 
 inline std::string DesignatedRetiredState::Name() {
-    return kDesignatedRetiredStateName;
+    return "DESIGNATED_RETIRED";
 }
 
 inline std::string DesignatedForwardState::Name() {
-    return kDesignatedForwardStateName;
+    return "DESIGNATED_FORWARD";
 }
 
 inline std::string DesignatedLearnState::Name() {
-    return kDesignatedLearnStateName;
+    return "DESIGNATED_LEARN";
 }
 
 inline std::string DesignatedDiscardState::Name() {
-    return kDesignatedDiscardStateName;
+    return "DESIGNATED_DISCARD";
 }
 
 inline std::string DesignatedPortState::Name() {
-    return kDesignatedPortStateName;
+    return "DESIGNATED_PORT";
 }
 
 // Alternate and Backup Port State's names
 inline std::string AlternateProposedState::Name() {
-    return kAlternateProposedStateName;
+    return "ALTERNATE_PROPOSED";
 }
 
 inline std::string AlternateAgreedState::Name() {
-    return kAlternateAgreedStateName;
+    return "ALTERNATE_AGREED";
 }
 
 inline std::string BlockPortState::Name() {
-    return kBlockPortStateName;
+    return "BLOCK_PORT";
 }
 
 inline std::string BackupPortState::Name() {
-    return kBackupPortStateName;
+    return "BACKUP_PORT";
 }
 
 inline std::string AlternatePortState::Name() {
-    return kAlternatePortStateName;
+    return "ALTERNATE_PORT";
 }
 
 } // namespace PortRoleTransitions
