@@ -10,11 +10,6 @@
 namespace Stp {
 namespace LoggingSystem {
 
-Logger::Logger(Logger::LogSeverity logSeverity)
-    : _logSeverity { logSeverity } {
-    // Nothing more to do
-}
-
 void SystemChangeState::Log(const std::string& machineName, const std::string& oldStateName,
                             const std::string& newStateName) {
     std::string msg{};

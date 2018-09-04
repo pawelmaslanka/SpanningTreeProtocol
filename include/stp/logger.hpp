@@ -22,14 +22,11 @@ public:
         EntryState,
         ChangeState
     };
-    Logger(const LogSeverity severityLevel = LogSeverity::None);
+
     virtual void operator<<(std::string&& msg) noexcept = 0;
 
 protected:
     ~Logger() = default;
-
-private:
-    LogSeverity _logSeverity;
 };
 
 using LoggerH = Sptr<Logger>;

@@ -61,7 +61,7 @@ inline PtiMachine::PtiMachine(BridgeH bridge, PortH port)
     : Machine{ bridge, port, BeginState::Instance() } {
 }
 
-inline std::string Name() {
+inline std::string PtiMachine::Name() {
     return "PTI";
 }
 

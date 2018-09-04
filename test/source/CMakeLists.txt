@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-message(STATUS "Unit testing of SpanningTree main directory...")
+message(STATUS "Unit testing of Spanning Tree Protocol main directory...")
 # Configure test environment
 if(NOT TEST_CONF)
     include(${CMAKE_CURRENT_LIST_DIR}/../unit_tests.cmake RESULT_VARIABLE TEST_CONF)

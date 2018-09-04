@@ -19,8 +19,6 @@ public:
 
 class SystemLogger : public LoggingSystem::Logger {
 public:
-    SystemLogger(LoggingSystem::Logger::LogSeverity msgLogSeverity)
-        : LoggingSystem::Logger{ msgLogSeverity } {}
     void operator<<(std::string&& msg) noexcept override { std::ignore = msg; }
 };
 
@@ -44,9 +42,10 @@ int main() {
         0x0f, 0x00, // Forward Delay: 15
         0x00 // Version 1 Length
     };
-    LoggingSystem::LoggerH logger = std::make_shared<SystemLogger>(LoggingSystem::Logger::LogSeverity::None);
+    LoggingSystem::LoggerH logger = std::make_shared<SystemLogger>();
     SystemH system = std::make_shared<System>(std::make_shared<SystemOutInterface>(), logger);
     Stp::Management::RunStp(Mac{}, system);
+    Stp::Management::SetLogSeverity(LoggingSystem::Logger::LogSeverity::EntryState);
     Stp::Management::AddPort(1, 10000 /* MB */, true);
     ByteStreamH bpduData =
             std::make_shared<ByteStream>(&bpdu[0], bpdu + (sizeof (bpdu) / sizeof (bpdu[0])));

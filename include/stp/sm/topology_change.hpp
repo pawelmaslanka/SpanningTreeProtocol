@@ -136,7 +136,7 @@ inline TcmMachine::TcmMachine(BridgeH bridge, PortH port)
     : Machine{ bridge, port, BeginState::Instance() } {
 }
 
-inline std::string Name() {
+inline std::string TcmMachine::Name() {
     return "TCM";
 }
 

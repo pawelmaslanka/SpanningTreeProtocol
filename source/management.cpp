@@ -34,16 +34,16 @@ class StateMachine {
 public:
     StateMachine(BridgeH bridge, PortH port)
         : _machines {
-              Machine{ bridge, port, PortTimers::BeginState::Instance() },
-              Machine{ bridge, port, PortReceive::BeginState::Instance() },
-              Machine{ bridge, port, PortProtocolMigration::BeginState::Instance() },
-              Machine{ bridge, port, BridgeDetection::BeginState::Instance() },
-              Machine{ bridge, port, PortTransmit::BeginState::Instance() },
-              Machine{ bridge, port, PortInformation::BeginState::Instance() },
-              Machine{ bridge, port, PortRoleSelection::BeginState::Instance() },
-              Machine{ bridge, port, PortRoleTransitions::BeginState::Instance() },
-              Machine{ bridge, port, PortStateTransition::BeginState::Instance() },
-              Machine{ bridge, port, TopologyChange::BeginState::Instance() }
+              std::make_unique<PortTimers::PtiMachine>(bridge, port),
+              std::make_unique<PortReceive::PrxMachine>(bridge, port),
+              std::make_unique<PortProtocolMigration::PpmMachine>(bridge, port),
+              std::make_unique<BridgeDetection::BdmMachine>(bridge, port),
+              std::make_unique<PortTransmit::PtxMachine>(bridge, port),
+              std::make_unique<PortInformation::PimMachine>(bridge, port),
+              std::make_unique<PortRoleSelection::PrsMachine>(bridge, port),
+              std::make_unique<PortRoleTransitions::PrtMachine>(bridge, port),
+              std::make_unique<PortStateTransition::PstMachine>(bridge, port),
+              std::make_unique<TopologyChange::TcmMachine>(bridge, port)
           } {
         // Nothing more to do
     }
@@ -51,13 +51,13 @@ public:
     void TickEvent() {
         static u8 idx;
         for (idx = 0; idx < _kMaxMachines; ++idx) {
-            _machines[idx].Run();
+            _machines[idx]->Run();
         }
     }
 
 private:
     static constexpr u8 _kMaxMachines = 10;
-    Machine _machines[_kMaxMachines];
+    MachineH _machines[_kMaxMachines];
 };
 
 class StpManager {
@@ -73,6 +73,7 @@ private:
     void AddPortHandle(AddPortReq& req);
     void RemovePortHandle(RemovePortReq& req);
     void ProcessBpduHandle(ProcessBpduReq& req);
+    void SetLogSeverity(SetLogSeverityReq& req);
     void RunStateMachine();
     void ProcessRequest();
     BridgeH _bridge;
@@ -159,11 +160,13 @@ void StpManager::ProcessRequest() {
             StpManager::RemovePortHandle(dynamic_cast<RemovePortReq&>(*req));
             break;
         case RequestId::ProcessBpdu:
-            //            StpManager::ProcessBpduHandle(dynamic_cast<ProcessBpduReq&>(*req));
+            StpManager::ProcessBpduHandle(dynamic_cast<ProcessBpduReq&>(*req));
+            break;
+        case RequestId::SetLogSeverity:
+            StpManager::SetLogSeverity(dynamic_cast<SetLogSeverityReq&>(*req));
             break;
         default:
-            throw std::runtime_error{ "Unexpected user request command" };
-            break;
+            break; // Unhandled user request
         }
 
         req.reset();
@@ -216,6 +219,10 @@ void StpManager::ProcessBpduHandle(ProcessBpduReq& req) {
     port->SetRcvdBpdu(true);
 }
 
+inline void StpManager::SetLogSeverity(SetLogSeverityReq& req) {
+    _bridge->SetSystemLogSeverity(req.GetLogSeverity());
+}
+
 namespace Stp {
 
 Result Management::AddPort(const u16 portNo, const u32 speed, const bool enabled) {
@@ -231,6 +238,12 @@ Result Management::RemovePort(const u16 portNo) {
 
 Result Management::ProcessBpdu(ByteStreamH bpdu) {
     StpManager::Instance().SubmitRequest(std::make_unique<ProcessBpduReq>(ProcessBpduReq{ bpdu }));
+    return Result::Success;
+}
+
+Result Management::SetLogSeverity(const LoggingSystem::Logger::LogSeverity logSeverity) {
+    StpManager::Instance().SubmitRequest(
+                std::make_unique<SetLogSeverityReq>(SetLogSeverityReq{ logSeverity }));
     return Result::Success;
 }
 

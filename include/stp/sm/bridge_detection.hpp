@@ -61,7 +61,7 @@ inline BdmMachine::BdmMachine(BridgeH bridge, PortH port)
     : Machine{ bridge, port, BeginState::Instance() } {
 }
 
-inline std::string Name() {
+inline std::string BdmMachine::Name() {
     return "BDM";
 }
 

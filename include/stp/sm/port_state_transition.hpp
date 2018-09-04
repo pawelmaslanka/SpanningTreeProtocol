@@ -74,7 +74,7 @@ inline PstMachine::PstMachine(BridgeH bridge, PortH port)
     : Machine{ bridge, port, BeginState::Instance() } {
 }
 
-inline std::string Name() {
+inline std::string PstMachine::Name() {
     return "PST";
 }
 

@@ -86,6 +86,7 @@ public:
     __virtual void SystemLogChangeState(const std::string& machineName,
                                         const std::string& oldStateName,
                                         const std::string& newStateName);
+    __virtual void SetSystemLogSeverity(const LoggingSystem::Logger::LogSeverity logSeverity);
 
 private:
     /// @brief 17.18.1
@@ -178,6 +179,10 @@ inline void Bridge::SystemLogEntryState(const std::string& machineName,
 inline void Bridge::SystemLogChangeState(const std::string& machineName, const std::string& oldStateName,
                                          const std::string& newStateName) {
     _systemLoggingManager.LogChangeState(machineName, oldStateName, newStateName);
+}
+
+inline void Bridge::SetSystemLogSeverity(const LoggingSystem::Logger::LogSeverity logSeverity) {
+    _systemLoggingManager.SetLogSeverity(logSeverity);
 }
 
 

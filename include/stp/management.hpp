@@ -18,7 +18,7 @@ enum class RequestId : u8 {
     AddPort,
     RemovePort,
     ProcessBpdu,
-    ChangeLogMsgSeverityLevel
+    SetLogSeverity
 };
 
 class Management {
@@ -26,6 +26,7 @@ public:
     static Result AddPort(const u16 portNo, const u32 speed, const bool enabled);
     static Result RemovePort(const u16 portNo);
     static Result ProcessBpdu(ByteStreamH bpdu);
+    static Result SetLogSeverity(const LoggingSystem::Logger::LogSeverity logSeverity);
     static Result RunStp(Mac bridgeAddr, SystemH system);
 };
 
@@ -74,9 +75,13 @@ private:
     u16 _rxPortNo; ///< Port number from which received BPDU
 };
 
-class ChangeLogMsgSeverityReq : public Command {
+class SetLogSeverityReq : public Command {
 public:
-    ChangeLogMsgSeverityReq(LoggingSystem::Logger::LogSeverity msgSeverity);
+    SetLogSeverityReq(LoggingSystem::Logger::LogSeverity logSeverity);
+    LoggingSystem::Logger::LogSeverity GetLogSeverity() const noexcept;
+
+private:
+    LoggingSystem::Logger::LogSeverity _logSeverity;
 };
 
 inline Command::Command(const RequestId reqId)
@@ -122,6 +127,14 @@ inline ByteStream& ProcessBpduReq::GetBpduData() {
 
 inline u16 ProcessBpduReq::GetRxPortNo() const noexcept {
     return _rxPortNo;
+}
+
+inline SetLogSeverityReq::SetLogSeverityReq(LoggingSystem::Logger::LogSeverity logSeverity)
+    : Command{ RequestId::SetLogSeverity }, _logSeverity{ logSeverity } {
+}
+
+inline LoggingSystem::Logger::LogSeverity SetLogSeverityReq::GetLogSeverity() const noexcept {
+    return _logSeverity;
 }
 
 } // namespace Stp

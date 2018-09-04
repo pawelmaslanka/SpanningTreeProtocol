@@ -37,7 +37,7 @@ class Machine {
 public:
     explicit Machine(BridgeH bridge, PortH port, State& initState);
     void Run();
-    virtual std::string Name() { return std::string{}; }
+    virtual std::string Name() = 0;
     __virtual Bridge& BridgeInstance() const noexcept;
     Port& PortInstance() const noexcept;
 
@@ -57,6 +57,8 @@ private:
     PortH _port;
     State* _state;
 };
+
+using MachineH = Uptr<Machine>;
 
 inline void Machine::Run() {
     _state->Execute(*this);

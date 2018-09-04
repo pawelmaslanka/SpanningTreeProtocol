@@ -61,7 +61,7 @@ inline PrsMachine::PrsMachine(BridgeH bridge, PortH port)
     : Machine{ bridge, port, BeginState::Instance() } {
 }
 
-inline std::string Name() {
+inline std::string PrsMachine::Name() {
     return "PRS";
 }
 
