@@ -6,13 +6,6 @@ enable_testing()
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
-#find_library(GTEST_LIBRARY
-#                NAMES gtest
-#                      libgtest
-#                      libgtest.a
-#                PATHS "${GTEST_DIR}"
-#                PATH_SUFFIXES lib)
-
 find_library(GTEST gtest)
 find_library(GTEST_MAIN gtest_main)
 
@@ -37,8 +30,4 @@ else()
     message(FATAL "Test libraries not found")
 endif()
 
-# Set global variables of sources and its directories
-
-# It is done by RSTP_SOURCES
-#set(RSTP_SRCDIR ${CMAKE_CURRENT_LIST_DIR}/../)
 set(MOCK_DIR ${CMAKE_CURRENT_LIST_DIR}/mock)

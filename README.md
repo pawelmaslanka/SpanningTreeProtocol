@@ -26,3 +26,5 @@ Contact: pawmas@hotmail.com
 * Continue work with unit tests for other state machines
 * Add comment into source code (or just add reference point to the STP's specification) to be more
   understood for other developers
+* Run RSTP conformance tests (IXIA/Spirent)
+* Evaluate project into MSTP (according to specification IEEE 802.1s)
