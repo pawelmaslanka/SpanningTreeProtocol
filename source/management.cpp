@@ -236,8 +236,9 @@ Result Management::RemovePort(const u16 portNo) {
     return Result::Success;
 }
 
-Result Management::ProcessBpdu(ByteStreamH bpdu) {
-    StpManager::Instance().SubmitRequest(std::make_unique<ProcessBpduReq>(ProcessBpduReq{ bpdu }));
+Result Management::ProcessBpdu(const u16 rxPortNo, ByteStreamH bpdu) {
+    StpManager::Instance().SubmitRequest(
+                std::make_unique<ProcessBpduReq>(ProcessBpduReq{ rxPortNo, bpdu }));
     return Result::Success;
 }
 
