@@ -119,7 +119,7 @@ public:
 
 private:
     u16 _rxPortNo; ///< Port number from which received BPDU
-    ByteStreamH _bpdu;
+    ByteStreamH _bpdu; ///< Received BPDU data
 };
 
 /**

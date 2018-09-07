@@ -17,12 +17,20 @@ namespace LoggingSystem {
 
 class Logger {
 public:
+    /**
+     * @brief The LogSeverity enum represents IDs of different log message event
+     */
     enum class LogSeverity : u8 {
-        None,
-        EntryState,
-        ChangeState
+        None, ///< Disable log any message
+        EntryState, ///< Enable log message on entry to state
+        ChangeState ///< Enable log message on change state
     };
 
+    /**
+     * @brief operator<< should be implemented in derived class in order to save message
+     *        from the RSTP
+     * @param msg message from the RSTP what should be log
+     */
     virtual void operator<<(std::string&& msg) noexcept = 0;
 
 protected:
