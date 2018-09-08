@@ -15,6 +15,10 @@ function without checking every time if instance has been created).
 At the moment (September, 2018), the project have few unit tests written based on framework
 *Google Test*.
 
+## How to run the RSTP?
+Source file *main.cpp* contains example how to run the RSTP and how to communicate with it or
+just to configure its parameters in run-time.
+
 ## Author
 
 * **Pawel Maslanka** - *Main developer* - [pawmas] (https://github.com/pawmas)
