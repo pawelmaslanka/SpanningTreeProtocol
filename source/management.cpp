@@ -141,9 +141,10 @@ inline void StpManager::RunStateMachine() {
 
 void StpManager::ProcessRequest() {
     Uptr<Command> req{}; // Represents single client request to perform
-    std::unique_lock<std::mutex> requestsGuard{ _mtxUserRequests };
-    requestsGuard.unlock();
+    std::unique_lock<std::mutex> requestsGuard{ _mtxUserRequests, std::defer_lock };
+
     while (true) {
+        requestsGuard.lock();
         if (_userRequests.empty()) {
             requestsGuard.unlock();
             return;
@@ -152,6 +153,7 @@ void StpManager::ProcessRequest() {
         req.reset(_userRequests.front().release());
         _userRequests.pop();
         requestsGuard.unlock();
+
         switch (req->Id()) {
         case RequestId::AddPort:
             StpManager::AddPortHandle(dynamic_cast<AddPortReq&>(*req));

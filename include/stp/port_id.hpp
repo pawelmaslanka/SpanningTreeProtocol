@@ -45,7 +45,8 @@ private:
     u8 _priority;
 };
 
-inline PortId::PortId() noexcept : PortId({{ 0xFF, 0xFF }}) { }
+inline PortId::PortId() noexcept 
+    : PortId(Bpdu::PortIdHandler{{ 0xFF, 0xFF }}) { }
 
 inline bool PortId::operator==(const PortId& comparedTo) const noexcept {
     return (_priority == comparedTo._priority)

@@ -13,8 +13,12 @@
 
 namespace Stp {
 
+// bridgeId[0] & bridgeId[1] makes priority number
 BridgeId::BridgeId(const Bpdu::BridgeIdHandler& bridgeId) noexcept
-    : _addr({{ bridgeId[2], bridgeId[3], bridgeId[4], bridgeId[5], bridgeId[6], bridgeId[7] }}) {
+    : _addr(Bpdu::BridgeSystemIdHandler{{ bridgeId[2], bridgeId[3],
+                                          bridgeId[4], bridgeId[5], 
+                                          bridgeId[6], bridgeId[7] 
+                                       }}) {
     // Priority is encoded on more significant nibble of byte
     _priority = ((bridgeId[0] & 0xF0) >> 4) * +PriorityVector::RecommendedBridgePriority::Step;
     // The most significant nibble of system extension is encoded on the least significant nibble

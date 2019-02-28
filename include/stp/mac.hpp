@@ -66,7 +66,8 @@ private:
     u64 _addr;
 };
 
-inline Mac::Mac() noexcept : Mac({{ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF }}) { }
+inline Mac::Mac() noexcept 
+    : Mac(Bpdu::BridgeSystemIdHandler{{ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF }}) { }
 
 inline bool Mac::operator==(const Mac& comparedTo) const noexcept {
     return _addr == comparedTo._addr;

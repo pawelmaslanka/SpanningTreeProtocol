@@ -55,11 +55,14 @@ int main() {
     // Start log every states that is launching
     Stp::Management::SetLogSeverity(LoggingSystem::Logger::LogSeverity::EntryState);
     // Add port to STP in order to run state machines on it
-    Stp::Management::AddPort(1, 10000 /* Mb */, true);
+    constexpr Stp::Lib::u16 portNo { 1 };
+    constexpr Stp::Lib::u32 portSpeed { 10000 }; // [Mb]
+    constexpr bool portEnabled { true };
+    Stp::Management::AddPort(portNo, portSpeed, portEnabled);
     ByteStreamH bpduData =
             std::make_shared<ByteStream>(&bpdu[0], bpdu + (sizeof (bpdu) / sizeof (bpdu[0])));
     // Simulate receive BPDU and pass it to process by STP
-    Stp::Management::ProcessBpdu(1, bpduData);
+    Stp::Management::ProcessBpdu(portNo, bpduData);
 
     // Go sleep or do other things... STP works in background as a separated thread
 

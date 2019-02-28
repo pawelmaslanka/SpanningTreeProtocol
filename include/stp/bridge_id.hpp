@@ -51,7 +51,8 @@ private:
     u16 _priority;
 };
 
-inline BridgeId::BridgeId() noexcept : BridgeId({{ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF }}) { }
+inline BridgeId::BridgeId() noexcept 
+    : BridgeId(Bpdu::BridgeIdHandler{{ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF }}) { }
 
 inline const Mac& BridgeId::Address() const noexcept { return _addr; }
 inline Mac& BridgeId::GetAddress() noexcept { return _addr; }
